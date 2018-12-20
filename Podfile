@@ -6,7 +6,6 @@ target 'LifeClient' do
   use_frameworks!
 
   # Pods for LifeClient
-  pod ‘ReachabilitySwift’
   pod ‘SwiftNIO’
   pod ’SwiftNIOFoundationCompat’
 

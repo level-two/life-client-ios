@@ -16,32 +16,17 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
-import Reachability
 import NIO
 import NIOFoundationCompat
 
 final class JsonDes: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
-    public typealias ChannelEventHandler = (ChannelEvent, [String:Any]?) -> Void
+    public typealias MessageHandler = ([String:Any]) -> Void
     
-    enum ChannelEvent {
-        case channelOpened
-        case channelClosed
-        case channelRead
-    }
+    private let messageHandler: MessageHandler
     
-    private let channelEventHandler: ChannelEventHandler
-    
-    init(channelEventHandler: @escaping ChannelEventHandler) {
-        self.channelEventHandler = channelEventHandler
-    }
-    
-    public func channelActive(ctx: ChannelHandlerContext) {
-        self.channelEventHandler(.channelOpened, nil)
-    }
-    
-    public func channelInactive(ctx: ChannelHandlerContext) {
-        self.channelEventHandler(.channelClosed, nil)
+    init(messageHandler: @escaping MessageHandler) {
+        self.messageHandler = messageHandler
     }
     
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
@@ -52,7 +37,7 @@ final class JsonDes: ChannelInboundHandler {
         guard let message = jsonObject as? [String:Any] else { return }
         
         print(message)
-        self.channelEventHandler(.channelRead, message)
+        self.messageHandler(message)
     }
     
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
@@ -84,101 +69,91 @@ final class JsonSer: ChannelOutboundHandler {
     }
 }
 
-
 protocol NetClientDelegate {
     func onConnectionEstablished()
     func onConnectionClosed()
+    func onConnectionFailed()
     func onConnection(received message:[String:Any])
-    func onNetReachable()
-    func onNetNotReachable()
 }
-
 
 class NetClient {
     static let shared = NetClient()
     
     var delegate = MulticastDelegate<NetClientDelegate>()
     
-    // Reachability
-    var reachabilityStatus: Reachability.Connection = .none
-    let reachability = Reachability()
-    var isNetworkAvailable : Bool {
-        return reachabilityStatus != .none
-    }
-    
     // Connection
     let port = 1337
-    let host = "::1"
+    //let host = "::1"
+    let host = "192.168.100.28"
     let group: MultiThreadedEventLoopGroup
     var channel: Channel? = nil
     
     var bootstrap: ClientBootstrap {
-        let channelEventHandler: JsonDes.ChannelEventHandler = { [weak self] channelEventType, message in
-            switch channelEventType {
-            case .channelOpened:
-                self?.delegate.invoke { $0.onConnectionEstablished() }
-            case .channelClosed:
-                self?.delegate.invoke { $0.onConnectionClosed() }
-            case .channelRead:
-                guard let message = message else { return }
-                self?.delegate.invoke { $0.onConnection(received: message) }
-            }
+        let messageHandler: JsonDes.MessageHandler = { [weak self] message in
+            self?.delegate.invoke { $0.onConnection(received: message) }
         }
         
         return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
             .channelInitializer { channel in
                 channel.pipeline.add(handler:JsonSer()).then { _ in
-                    channel.pipeline.add(handler:
-                        JsonDes(channelEventHandler:channelEventHandler))
-                }
-        }
-    }
-    
-    fileprivate init() {
-        self.group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-        
-        reachability?.whenReachable = { [weak self] _ in
-            self?.delegate.invoke { $0.onNetReachable() }
-        }
-        
-        reachability?.whenUnreachable = { [weak self] _ in
-            self?.delegate.invoke { $0.onNetNotReachable() }
-        }
-    }
-    
-    deinit {
-        // Close all open sockets...
-        try! self.group.syncShutdownGracefully()
-    }
-    
-    // Reachability
-    func startNetReachabilityMonitoring() {
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            print("Unable to start notifier")
-        }
-    }
-    
-    func stopNetReachabilityMonitoring() {
-        reachability?.stopNotifier()
-    }
-    
-    // Client
-    func connectToServer() throws {
-        self.bootstrap
-            .connect(host: self.host, port: self.port)
-            .whenSuccess { [weak self] channel in
-                self?.channel = channel
-                self?.channel?.closeFuture.whenComplete { [weak self] in
-                    self?.delegate.invoke { $0.onConnectionClosed() }
-                    self?.channel = nil
+                    channel.pipeline.add(handler:JsonDes(messageHandler: messageHandler))
                 }
             }
     }
     
-    public func send(message: [String:Any]) {
+    fileprivate init() {
+        self.group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    }
+    
+    func appEnterForeground() {
+        connectToServer()
+    }
+    
+    func appEnterBackground() {
+        closeConnection()
+    }
+    
+    func appTerminate() {
+        try! self.group.syncShutdownGracefully()
+    }
+    
+    func send(message: [String:Any]) {
         self.channel?.write(message, promise:nil)
+    }
+    
+    fileprivate func connectToServer() {
+        let channelFuture = self.bootstrap.connect(host: self.host, port: self.port)
+            
+        channelFuture.whenSuccess { [weak self] channel in
+            print("Connected")
+            self?.channel = channel
+            self?.delegate.invoke { $0.onConnectionEstablished() }
+            
+            self?.channel?.closeFuture.whenSuccess { [weak self] in
+                print("Connection closed")
+                self?.delegate.invoke { $0.onConnectionClosed() }
+                self?.channel = nil
+            }
+            
+            self?.channel?.closeFuture.whenFailure { [weak self] error in
+                print("Disconnected with error: \(error)")
+                self?.delegate.invoke { $0.onConnectionFailed() }
+                self?.channel = nil
+                sleep(1)
+                self?.connectToServer()
+            }
+        }
+        
+        channelFuture.whenFailure { [weak self] error in
+            print("Connection attempt failed: \(error)")
+            self?.delegate.invoke { $0.onConnectionFailed() }
+            sleep(1)
+            self?.connectToServer()
+        }
+    }
+    
+    fileprivate func closeConnection() {
+        _ = self.channel?.close()
     }
 }

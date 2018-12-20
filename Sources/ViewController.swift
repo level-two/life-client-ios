@@ -18,12 +18,28 @@
 import UIKit
 
 class ViewController: UIViewController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        NetClient.shared.delegate.add(delegate: self as NetClientDelegate)
     }
-
-
 }
 
+extension ViewController: NetClientDelegate {
+    func onConnectionEstablished() {
+        print("Called onConnectionEstablished")
+        NetClient.shared.send(message: ["login":["userId":1]])
+    }
+    
+    func onConnectionClosed() {
+        print("Called onConnectionClosed")
+    }
+    
+    func onConnection(received message:[String:Any]) {
+        print("Called onConnection received with message: \(message)")
+    }
+    
+    func onConnectionFailed() {
+        print("Called onConnectionFailed")
+    }
+}
