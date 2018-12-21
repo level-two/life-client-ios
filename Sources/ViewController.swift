@@ -21,11 +21,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        NetClient.shared.delegate.add(delegate: self as NetClientDelegate)
+        NetClient.shared.onConnectionEstablishedEvent.addHandler(target: self, handler: ViewController.onConnectionEstablished)
+        NetClient.shared.onConnectionClosedEvent.addHandler(target: self, handler: ViewController.onConnectionClosed)
+        NetClient.shared.onConnectionFailedEvent.addHandler(target: self, handler: ViewController.onConnectionFailed)
+        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: ViewController.onConnectionReceivedMessage)
     }
-}
-
-extension ViewController: NetClientDelegate {
+    
     func onConnectionEstablished() {
         print("Called onConnectionEstablished")
         NetClient.shared.send(message: ["login":["userId":1]])
@@ -35,7 +36,7 @@ extension ViewController: NetClientDelegate {
         print("Called onConnectionClosed")
     }
     
-    func onConnection(received message:[String:Any]) {
+    func onConnectionReceivedMessage(message: [String:Any]) {
         print("Called onConnection received with message: \(message)")
     }
     

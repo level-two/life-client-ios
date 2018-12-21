@@ -69,17 +69,13 @@ final class JsonSer: ChannelOutboundHandler {
     }
 }
 
-protocol NetClientDelegate {
-    func onConnectionEstablished()
-    func onConnectionClosed()
-    func onConnectionFailed()
-    func onConnection(received message:[String:Any])
-}
-
 class NetClient {
     static let shared = NetClient()
     
-    var delegate = MulticastDelegate<NetClientDelegate>()
+    let onConnectionEstablishedEvent = Event0()
+    let onConnectionClosedEvent = Event0()
+    let onConnectionFailedEvent = Event0()
+    let onConnectionReceivedMessageEvent = Event1<[String:Any]>()
     
     // Connection
     let port = 1337
@@ -90,7 +86,7 @@ class NetClient {
     
     var bootstrap: ClientBootstrap {
         let messageHandler: JsonDes.MessageHandler = { [weak self] message in
-            self?.delegate.invoke { $0.onConnection(received: message) }
+            self?.onConnectionReceivedMessageEvent.raise(with: message)
         }
         
         return ClientBootstrap(group: self.group)
@@ -128,17 +124,17 @@ class NetClient {
         channelFuture.whenSuccess { [weak self] channel in
             print("Connected")
             self?.channel = channel
-            self?.delegate.invoke { $0.onConnectionEstablished() }
+            self?.onConnectionEstablishedEvent.raise()
             
             self?.channel?.closeFuture.whenSuccess { [weak self] in
                 print("Connection closed")
-                self?.delegate.invoke { $0.onConnectionClosed() }
+                self?.onConnectionClosedEvent.raise()
                 self?.channel = nil
             }
             
             self?.channel?.closeFuture.whenFailure { [weak self] error in
                 print("Disconnected with error: \(error)")
-                self?.delegate.invoke { $0.onConnectionFailed() }
+                self?.onConnectionFailedEvent.raise()
                 self?.channel = nil
                 sleep(1)
                 self?.connectToServer()
@@ -147,7 +143,7 @@ class NetClient {
         
         channelFuture.whenFailure { [weak self] error in
             print("Connection attempt failed: \(error)")
-            self?.delegate.invoke { $0.onConnectionFailed() }
+            self?.onConnectionFailedEvent.raise()
             sleep(1)
             self?.connectToServer()
         }

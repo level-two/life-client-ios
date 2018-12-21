@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
 		9338015221C8FF680056C349 /* NetClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetClient.swift */; };
-		9338015821C915340056C349 /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015721C915340056C349 /* MulticastDelegate.swift */; };
+		9392844B21CCF18400F6C55B /* Event1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844A21CCF18400F6C55B /* Event1.swift */; };
+		9392844D21CCF23F00F6C55B /* Event0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844C21CCF23F00F6C55B /* Event0.swift */; };
 		93B4F87421C8636F00A2354E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F86C21C8636F00A2354E /* ViewController.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
@@ -21,7 +22,8 @@
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9338015121C8FF680056C349 /* NetClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetClient.swift; sourceTree = "<group>"; };
-		9338015721C915340056C349 /* MulticastDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MulticastDelegate.swift; sourceTree = "<group>"; };
+		9392844A21CCF18400F6C55B /* Event1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event1.swift; sourceTree = "<group>"; };
+		9392844C21CCF23F00F6C55B /* Event0.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event0.swift; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86C21C8636F00A2354E /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -94,7 +96,8 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				9338015721C915340056C349 /* MulticastDelegate.swift */,
+				9392844C21CCF23F00F6C55B /* Event0.swift */,
+				9392844A21CCF18400F6C55B /* Event1.swift */,
 				93B4F86C21C8636F00A2354E /* ViewController.swift */,
 				93B4F87221C8636F00A2354E /* AppDelegate.swift */,
 				9338015121C8FF680056C349 /* NetClient.swift */,
@@ -234,10 +237,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9392844B21CCF18400F6C55B /* Event1.swift in Sources */,
 				93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */,
 				9338015221C8FF680056C349 /* NetClient.swift in Sources */,
-				9338015821C915340056C349 /* MulticastDelegate.swift in Sources */,
 				93B4F87421C8636F00A2354E /* ViewController.swift in Sources */,
+				9392844D21CCF23F00F6C55B /* Event0.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
