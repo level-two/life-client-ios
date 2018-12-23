@@ -14,7 +14,7 @@ class ColorPickSlider: UIControl {
     let trackLayer = ColorPickSliderTrackLayer()
     let thumbLayer = ColorPickSliderThumbLayer()
     var thumbSize: CGFloat {
-        return CGFloat(bounds.height)
+        return bounds.height
     }
     var curvaceousness: CGFloat = 1.0 {
         didSet {
@@ -28,9 +28,15 @@ class ColorPickSlider: UIControl {
     var value = 0.0  {
         didSet {
             updateLayerFrames()
-            print(value)
         }
     }
+    
+    let gradientColors: [UIColor] = [
+        UIColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0),
+        UIColor(red: 0.2, green: 1.0, blue: 0.2, alpha: 1.0),
+        UIColor(red: 0.2, green: 0.2, blue: 1.0, alpha: 1.0),
+        UIColor(red: 1.0, green: 0.2, blue: 0.2, alpha: 1.0),
+        ]
     
     var previousLocation = CGPoint()
     
@@ -71,7 +77,7 @@ class ColorPickSlider: UIControl {
         trackLayer.frame = bounds.insetBy(dx: thumbSize/2.0, dy: bounds.height/3.0)
         trackLayer.setNeedsDisplay()
         
-        let thumbCenter = CGFloat(positionForValue(value))
+        let thumbCenter = positionForValue(value).cgFloat
         thumbLayer.frame = CGRect(x: thumbCenter - thumbSize / 2.0, y: 0.0,
                                   width: thumbSize, height: thumbSize)
         thumbLayer.setNeedsDisplay()
@@ -113,11 +119,35 @@ class ColorPickSlider: UIControl {
     override func endTracking(_ touch: UITouch?, with event: UIEvent?) {
         thumbLayer.highlighted = false
     }
+    
+    var pickedColor: UIColor {
+        // Ensure val is in range 0...1
+        let val = value.clamped(minimumValue, maximumValue)/(maximumValue-minimumValue)
+        let count = Double(gradientColors.count-1)
+        let i1 = (val * count).rounded(.down)
+        let i2 = (val * count).rounded(.up)
+        
+        let c1 = gradientColors[Int(i1)].cgColor.components!
+        let c2 = gradientColors[Int(i2)].cgColor.components!
+        
+        // for transition between colors
+        let rem = CGFloat((val*count).truncatingRemainder(dividingBy: 1.0))
+        
+        var c = [CGFloat].init(repeating: 0, count: 4)
+        for i in 0..<4 {
+            c[i] = c1[i]+(c2[i]-c1[i])*rem
+        }
+        return UIColor(red: c[0], green: c[1], blue: c[2], alpha: c[3])
+    }
 }
 
 extension Double {
     func clamped(_ lower: Double, _ upper: Double) -> Double {
         return min(max(self, lower), upper)
+    }
+    
+    var cgFloat: CGFloat {
+        return CGFloat(self)
     }
 }
 
@@ -146,17 +176,19 @@ class ColorPickSliderThumbLayer: CALayer {
     override func draw(in ctx: CGContext) {
         guard let slider = colorPickSlider else { return }
         
+        UIGraphicsPushContext(ctx)
+        
         let thumbFrame = bounds.insetBy(dx: 2.0, dy: 2.0)
         let cornerRadius = thumbFrame.height * slider.curvaceousness / 2.0
         let thumbPath = UIBezierPath(roundedRect: thumbFrame, cornerRadius: cornerRadius).cgPath
         
         // Fill - with a subtle shadow
         let shadowColor = UIColor.gray.cgColor
-        
         ctx.setShadow(offset: CGSize(width: 0.0, height: 1.0), blur: 1.0, color: shadowColor)
-        ctx.setFillColor(UIColor.red.cgColor)
+        ctx.setFillColor(slider.pickedColor.cgColor)
         ctx.addPath(thumbPath)
         ctx.fillPath()
+ 
         
         // Outline
         ctx.setStrokeColor(shadowColor)
@@ -164,11 +196,7 @@ class ColorPickSliderThumbLayer: CALayer {
         ctx.addPath(thumbPath)
         ctx.strokePath()
         
-        if highlighted {
-            ctx.setFillColor(UIColor(white: 0.0, alpha: 0.1).cgColor)
-            ctx.addPath(thumbPath)
-            ctx.fillPath()
-        }
+        UIGraphicsPopContext()
     }
 }
 
@@ -178,14 +206,32 @@ class ColorPickSliderTrackLayer: CALayer {
     override func draw(in ctx: CGContext) {
         guard let slider = colorPickSlider else { return }
         
+        UIGraphicsPushContext(ctx)
+        
         // Clip
         let cornerRadius = bounds.height * slider.curvaceousness / 2.0
-        let path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
-        ctx.addPath(path)
+        let path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
+        //ctx.addPath(path.cgPath)
         
         // Fill the track
-        ctx.setFillColor(UIColor.green.cgColor)
-        ctx.addPath(path)
-        ctx.fillPath()
+        let leftPoint = CGPoint.zero
+        let rightPoint = CGPoint(x: bounds.size.width, y: 0)
+        drawLinearGradient(in: ctx, inside: path, start: leftPoint, end: rightPoint, colors: slider.gradientColors)
+        
+        UIGraphicsPopContext()
+    }
+    
+    func drawLinearGradient(in ctx:CGContext, inside path:UIBezierPath, start:CGPoint, end:CGPoint, colors:[UIColor])
+    {
+        ctx.saveGState()
+        path.addClip() // use the path as the clipping region
+        
+        let cgColors = colors.map({ $0.cgColor })
+        guard let gradient = CGGradient(colorsSpace: nil, colors: cgColors as CFArray, locations: nil)
+            else { return }
+        
+        ctx.drawLinearGradient(gradient, start: start, end: end, options: [])
+        
+        ctx.restoreGState() // remove the clipping region for future draw operations
     }
 }
