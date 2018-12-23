@@ -206,12 +206,12 @@ class ColorPickSliderTrackLayer: CALayer {
     override func draw(in ctx: CGContext) {
         guard let slider = colorPickSlider else { return }
         
+        // We need to push context as described here: https://stackoverflow.com/a/27990923
         UIGraphicsPushContext(ctx)
         
         // Clip
         let cornerRadius = bounds.height * slider.curvaceousness / 2.0
         let path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius)
-        //ctx.addPath(path.cgPath)
         
         // Fill the track
         let leftPoint = CGPoint.zero
