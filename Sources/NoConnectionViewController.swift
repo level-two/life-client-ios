@@ -17,16 +17,24 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class NoConnectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        NetClient.shared.onConnectionEstablishedEvent.addHandler(target: self, handler: ViewController.onConnectionEstablished)
-        NetClient.shared.onConnectionClosedEvent.addHandler(target: self, handler: ViewController.onConnectionClosed)
-        NetClient.shared.onConnectionFailedEvent.addHandler(target: self, handler: ViewController.onConnectionFailed)
-        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: ViewController.onConnectionReceivedMessage)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        NetClient.shared.onConnectionEstablishedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionEstablished)
+        NetClient.shared.onConnectionClosedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionClosed)
+        NetClient.shared.onConnectionFailedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionFailed)
+        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionReceivedMessage)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NetClient.shared.onConnectionEstablishedEvent.removeTarget(self)
+        NetClient.shared.onConnectionClosedEvent.removeTarget(self)
+        NetClient.shared.onConnectionFailedEvent.removeTarget(self)
+        NetClient.shared.onConnectionReceivedMessageEvent.removeTarget(self)
+    }
     func onConnectionEstablished() {
         print("Called onConnectionEstablished")
         NetClient.shared.send(message: ["login":["userId":1]])

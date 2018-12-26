@@ -19,7 +19,7 @@ import Foundation
 import NIO
 import NIOFoundationCompat
 
-final class JsonDes: ChannelInboundHandler {
+final class JsonDesChannelInboundHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
     public typealias MessageHandler = ([String:Any]) -> Void
     
@@ -41,13 +41,13 @@ final class JsonDes: ChannelInboundHandler {
     }
     
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-        print("error: ", error)
+        print("JsonDesChannelInboundHandler error: ", error)
         ctx.close(promise: nil)
     }
 }
 
 
-final class JsonSer: ChannelOutboundHandler {
+final class JsonSerChannelOutboundHandler: ChannelOutboundHandler {
     public typealias OutboundIn = [String:Any]
     public typealias OutboundOut = ByteBuffer
     
@@ -64,92 +64,92 @@ final class JsonSer: ChannelOutboundHandler {
     }
     
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-        print("error: ", error)
+        print("JsonSerChannelOutboundHandler error: ", error)
         ctx.close(promise: nil)
     }
 }
 
-class NetClient {
-    static let shared = NetClient()
+class NetworkManager {
+    // MARK: - Types
+    enum Status {
+        case none
+        case connected
+    }
     
-    let onConnectionEstablishedEvent = Event0()
-    let onConnectionClosedEvent = Event0()
-    let onConnectionFailedEvent = Event0()
-    let onConnectionReceivedMessageEvent = Event1<[String:Any]>()
+    typealias StatusHandler = (Status)->()
+    typealias MessageHandler = ([String:Any])->()
     
-    // Connection
-    let port = 1337
+    // MARK: - Variables
     //let host = "::1"
     let host = "192.168.100.28"
-    let group: MultiThreadedEventLoopGroup
-    var channel: Channel? = nil
+    let port = 1337
     
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     var bootstrap: ClientBootstrap {
-        let messageHandler: JsonDes.MessageHandler = { [weak self] message in
-            self?.onConnectionReceivedMessageEvent.raise(with: message)
+        let jsonInboundHandler = JsonDesChannelInboundHandler { [weak self] message in
+            print("Received message: \(message)")
+            self?.messageHandler?(message)
         }
         
         return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
             .channelInitializer { channel in
-                channel.pipeline.add(handler:JsonSer()).then { _ in
-                    channel.pipeline.add(handler:JsonDes(messageHandler: messageHandler))
+                channel.pipeline.add(handler: jsonInboundHandler).then { _ in
+                    channel.pipeline.add(handler: JsonSerChannelOutboundHandler())
                 }
-            }
+        }
+    }
+    var channel: Channel? = nil
+    
+    var statusHandler: StatusHandler?
+    var messageHandler: MessageHandler?
+    
+    var isConnected = false {
+        didSet {
+            statusHandler?(isConnected ? .connected : .none)
+        }
     }
     
-    fileprivate init() {
-        self.group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    }
-    
-    func appEnterForeground() {
+    // MARK: - Methods
+    init() {
         connectToServer()
     }
     
-    func appEnterBackground() {
-        closeConnection()
-    }
-    
-    func appTerminate() {
-        try! self.group.syncShutdownGracefully()
-    }
-    
     func send(message: [String:Any]) {
-        self.channel?.write(message, promise:nil)
+        self.channel?.write(message, promise: nil)
     }
     
-    fileprivate func connectToServer() {
+    private func connectToServer() {
+        print("Connecting to \(host):\(port)...")
         let channelFuture = self.bootstrap.connect(host: self.host, port: self.port)
-            
+        
+        channelFuture.whenFailure { [weak self] error in
+            print("Connection failed: \(error)")
+            self?.isConnected = false
+        }
+        
         channelFuture.whenSuccess { [weak self] channel in
             print("Connected")
             self?.channel = channel
-            self?.onConnectionEstablishedEvent.raise()
+            self?.isConnected = true
             
             self?.channel?.closeFuture.whenSuccess { [weak self] in
                 print("Connection closed")
-                self?.onConnectionClosedEvent.raise()
+                self?.isConnected = false
                 self?.channel = nil
             }
             
             self?.channel?.closeFuture.whenFailure { [weak self] error in
                 print("Disconnected with error: \(error)")
-                self?.onConnectionFailedEvent.raise()
+                self?.isConnected = false
                 self?.channel = nil
                 sleep(1)
                 self?.connectToServer()
             }
         }
-        
-        channelFuture.whenFailure { [weak self] error in
-            print("Connection attempt failed: \(error)")
-            self?.onConnectionFailedEvent.raise()
-            sleep(1)
-            self?.connectToServer()
-        }
     }
     
-    fileprivate func closeConnection() {
+    private func closeConnection() {
         _ = self.channel?.close()
     }
 }

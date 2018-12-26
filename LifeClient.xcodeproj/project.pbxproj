@@ -8,31 +8,47 @@
 
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
-		9338015221C8FF680056C349 /* NetClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetClient.swift */; };
-		9392844B21CCF18400F6C55B /* Event1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844A21CCF18400F6C55B /* Event1.swift */; };
-		9392844D21CCF23F00F6C55B /* Event0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844C21CCF23F00F6C55B /* Event0.swift */; };
+		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
+		9337CCFF21D2D9D0009A1FA3 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */; };
+		9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0021D41E48009A1FA3 /* Promises.swift */; };
+		9338015221C8FF680056C349 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetworkManager.swift */; };
 		9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */; };
-		93B4F87421C8636F00A2354E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F86C21C8636F00A2354E /* ViewController.swift */; };
+		9392845121D030D800F6C55B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845021D030D800F6C55B /* LoginViewController.swift */; };
+		9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845221D030EC00F6C55B /* CreateUserViewController.swift */; };
+		9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845421D030FD00F6C55B /* GameplayViewController.swift */; };
+		9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845621D0310A00F6C55B /* ChatViewController.swift */; };
+		9392845921D0311800F6C55B /* NoConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845821D0311800F6C55B /* NoConnectionViewController.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
 		93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F87221C8636F00A2354E /* AppDelegate.swift */; };
+		93C9826021D183EE00738709 /* LoginNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* LoginNavigator.swift */; };
+		93C9826221D18AC700738709 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826121D18AC700738709 /* SessionManager.swift */; };
+		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9338015121C8FF680056C349 /* NetClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetClient.swift; sourceTree = "<group>"; };
-		9392844A21CCF18400F6C55B /* Event1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event1.swift; sourceTree = "<group>"; };
-		9392844C21CCF23F00F6C55B /* Event0.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event0.swift; sourceTree = "<group>"; };
+		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
+		9337CD0021D41E48009A1FA3 /* Promises.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promises.swift; sourceTree = "<group>"; };
+		9338015121C8FF680056C349 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickSlider.swift; sourceTree = "<group>"; };
+		9392845021D030D800F6C55B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		9392845221D030EC00F6C55B /* CreateUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserViewController.swift; sourceTree = "<group>"; };
+		9392845421D030FD00F6C55B /* GameplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameplayViewController.swift; sourceTree = "<group>"; };
+		9392845621D0310A00F6C55B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		9392845821D0311800F6C55B /* NoConnectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoConnectionViewController.swift; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		93B4F86C21C8636F00A2354E /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		93B4F87121C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		93B4F87221C8636F00A2354E /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		93B4F87321C8636F00A2354E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93C9825F21D183EE00738709 /* LoginNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginNavigator.swift; sourceTree = "<group>"; };
+		93C9826121D18AC700738709 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		93C9826321D18B5400738709 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		B1D04ECAD47EA6B965018B9E /* Pods-LifeClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,12 +114,20 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				9392844C21CCF23F00F6C55B /* Event0.swift */,
-				9392844A21CCF18400F6C55B /* Event1.swift */,
-				93B4F86C21C8636F00A2354E /* ViewController.swift */,
-				93B4F87221C8636F00A2354E /* AppDelegate.swift */,
-				9338015121C8FF680056C349 /* NetClient.swift */,
+				93C9826321D18B5400738709 /* User.swift */,
+				9338015121C8FF680056C349 /* NetworkManager.swift */,
+				93C9826121D18AC700738709 /* SessionManager.swift */,
+				9337CD0021D41E48009A1FA3 /* Promises.swift */,
+				9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */,
+				9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */,
+				93C9825F21D183EE00738709 /* LoginNavigator.swift */,
+				9392845021D030D800F6C55B /* LoginViewController.swift */,
+				9392845221D030EC00F6C55B /* CreateUserViewController.swift */,
 				9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */,
+				9392845421D030FD00F6C55B /* GameplayViewController.swift */,
+				9392845621D0310A00F6C55B /* ChatViewController.swift */,
+				9392845821D0311800F6C55B /* NoConnectionViewController.swift */,
+				93B4F87221C8636F00A2354E /* AppDelegate.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -240,12 +264,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9392844B21CCF18400F6C55B /* Event1.swift in Sources */,
+				9392845121D030D800F6C55B /* LoginViewController.swift in Sources */,
+				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
+				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
+				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
+				93C9826421D18B5400738709 /* User.swift in Sources */,
 				93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */,
-				9338015221C8FF680056C349 /* NetClient.swift in Sources */,
-				93B4F87421C8636F00A2354E /* ViewController.swift in Sources */,
-				9392844D21CCF23F00F6C55B /* Event0.swift in Sources */,
+				93C9826221D18AC700738709 /* SessionManager.swift in Sources */,
+				9392845921D0311800F6C55B /* NoConnectionViewController.swift in Sources */,
+				93C9826021D183EE00738709 /* LoginNavigator.swift in Sources */,
+				9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */,
+				9337CCFF21D2D9D0009A1FA3 /* Navigator.swift in Sources */,
+				9338015221C8FF680056C349 /* NetworkManager.swift in Sources */,
+				9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

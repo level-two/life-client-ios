@@ -13,7 +13,7 @@
         <!--No connection View Controller-->
         <scene sceneID="7DL-Qz-ikq">
             <objects>
-                <viewController title="No connection View Controller" id="Zpu-Lk-gHf" sceneMemberID="viewController">
+                <viewController title="No connection View Controller" id="Zpu-Lk-gHf" customClass="NoConnectionViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dFp-xz-rgQ">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -37,7 +37,7 @@
         <!--Login View Controller-->
         <scene sceneID="hXX-UK-KBv">
             <objects>
-                <viewController title="Login View Controller" id="K5h-4e-VxS" customClass="ViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Login View Controller" id="K5h-4e-VxS" customClass="LoginViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="osL-9c-dkI">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -47,7 +47,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="New player"/>
                                 <connections>
-                                    <segue destination="32s-3G-4Iy" kind="presentation" id="I12-qj-08B"/>
+                                    <action selector="onNewPlayerButton" destination="K5h-4e-VxS" eventType="touchUpInside" id="uPO-zS-pZ6"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Player name" textAlignment="center" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="1Rb-ym-PQC">
@@ -61,11 +61,17 @@
                                 <rect key="frame" x="141" y="145" width="199" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Login"/>
+                                <connections>
+                                    <action selector="onLoginButton" destination="K5h-4e-VxS" eventType="touchUpInside" id="PZ8-3A-tT5"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="uhB-OV-HPf"/>
                     </view>
+                    <connections>
+                        <outlet property="playerNameTextField" destination="1Rb-ym-PQC" id="Ys5-PB-3F5"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U7N-0k-HWF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -74,7 +80,7 @@
         <!--Game-->
         <scene sceneID="5YO-u9-HRD">
             <objects>
-                <viewController title="Game" id="evA-YL-1Rd" sceneMemberID="viewController">
+                <viewController title="Game" id="evA-YL-1Rd" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bsG-b6-yQO">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -89,7 +95,7 @@
         <!--New Player-->
         <scene sceneID="Alu-tt-dX9">
             <objects>
-                <viewController title="New Player" id="32s-3G-4Iy" sceneMemberID="viewController">
+                <viewController title="New Player" id="32s-3G-4Iy" customClass="CreateUserViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2gb-ym-Twv">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -113,20 +119,17 @@
                                 <rect key="frame" x="139" y="184" width="203" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </slider>
-                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QDN-zv-POT">
-                                <rect key="frame" x="0.0" y="0.0" width="480" height="32"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                                <items>
-                                    <navigationItem title="New player" id="QeZ-On-x73">
-                                        <barButtonItem key="leftBarButtonItem" title="Cancel" id="Pqh-VD-98o"/>
-                                        <barButtonItem key="rightBarButtonItem" title="Create" id="al6-9e-t6o"/>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kXb-L0-QQn" customClass="ColorPickSlider" customModule="LifeClient">
                                 <rect key="frame" x="125" y="221" width="230" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </view>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KRI-ot-5v6">
+                                <rect key="frame" x="0.0" y="0.0" width="480" height="32"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <items>
+                                    <navigationItem title="Title" id="GZT-1a-q4e"/>
+                                </items>
+                            </navigationBar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="Ybj-oV-kPe"/>
@@ -139,18 +142,34 @@
         <!--Chat View Controller-->
         <scene sceneID="Rqs-Zz-gok">
             <objects>
-                <tableViewController title="Chat View Controller" id="Ny8-zR-28f" sceneMemberID="viewController">
+                <tableViewController title="Chat View Controller" id="Ny8-zR-28f" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="z0D-TH-mup">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="KVs-tR-EqS">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="MessageCell" textLabel="r7d-0r-KHA" detailTextLabel="r6Z-SI-kN7" style="IBUITableViewCellStyleValue1" id="KVs-tR-EqS">
                                 <rect key="frame" x="0.0" y="28" width="480" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="KVs-tR-EqS" id="ZNT-YQ-MmB">
                                     <rect key="frame" x="0.0" y="0.0" width="480" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="r7d-0r-KHA">
+                                            <rect key="frame" x="16" y="12" width="33.5" height="20.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Detail" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="r6Z-SI-kN7">
+                                            <rect key="frame" x="420" y="12" width="44" height="20.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
