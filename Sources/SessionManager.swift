@@ -22,6 +22,7 @@ class SessionManager {
     // Types
     enum SessionManagerError: Error {
         case loginError(String)
+        case createUserError(String)
     }
     
     typealias MessageHandler = ([String:Any]) -> Void
@@ -31,6 +32,7 @@ class SessionManager {
     private var messageHandler: MessageHandler?
     
     private var loginPromise: Promise<User>?
+    private var createUserPromise: Promise<User>?
     private var user: User?
     private var isLoggedIn = false
     private var sessionId: Int?
@@ -55,6 +57,12 @@ class SessionManager {
             else if let resp = message["userLoginError"] as? String {
                 self.process(loginErrorResponse: resp)
             }
+            else if let resp = message["userCreated"] as? [String:Any] {
+                self.process(createUserResponse: resp)
+            }
+            else if let resp = message["userCreationError"] as? String {
+                self.process(createUserErrorResponse: resp)
+            }
             else if let _ = message["sessionRestored"] as? Bool {
                 // Good =)
             }
@@ -63,6 +71,23 @@ class SessionManager {
                 self.messageHandler?(message)
             }
         }
+    }
+    
+    func createUserAndLogin(userName: String, color: [Double]) -> Future<User> {
+        createUserPromise = Promise<User>()
+        
+        if networkManager.isConnected {
+            networkManager.send(message: ["create": ["userName": userName, "color":color]])
+        }
+        else {
+            createUserPromise!.reject(with: SessionManagerError.loginError("No connection to the server"))
+        }
+        
+        let createUserAndLoginPromise = createUserPromise!.chained { [unowned self] user -> Future<User> in
+            return self.login(userName: user.userName)
+        }
+        
+        return createUserAndLoginPromise
     }
     
     func login(userName: String) -> Future<User> {
@@ -78,13 +103,13 @@ class SessionManager {
         return loginPromise!
     }
     
-    func process(loginResponse: [String:Any]) {
+    func process(loginResponse response: [String:Any]) {
         guard
-            let userName = loginResponse["userName"] as? String,
-            let userId = loginResponse["userId"] as? Int,
-            let color = loginResponse["color"] as? [Double],
-            color.count == 3,
-            let newSessionId = loginResponse["sessionId"] as? Int
+            let userName = response["userName"] as? String,
+            let userId = response["userId"] as? Int,
+            let color = response["color"] as? [Double],
+            color.count == 4,
+            let newSessionId = response["sessionId"] as? Int
         else {
             loginPromise?.reject(with: SessionManagerError.loginError("Invalid server response"))
             loginPromise = nil
@@ -97,8 +122,30 @@ class SessionManager {
         loginPromise = nil
     }
     
-    func process(loginErrorResponse: String) {
-        loginPromise?.reject(with: SessionManagerError.loginError(loginErrorResponse))
+    func process(loginErrorResponse response: String) {
+        loginPromise?.reject(with: SessionManagerError.loginError(response))
         loginPromise = nil
+    }
+    
+    func process(createUserResponse response: [String:Any]) {
+        guard
+            let userName = response["userName"] as? String,
+            let userId = response["userId"] as? Int,
+            let color = response["color"] as? [Double],
+            color.count == 4
+        else {
+            createUserPromise?.reject(with: SessionManagerError.createUserError("Invalid server response"))
+            createUserPromise = nil
+            return
+        }
+        
+        user = User(userName: userName, userId: userId, color:color)
+        createUserPromise?.resolve(with: user!)
+        createUserPromise = nil
+    }
+    
+    func process(createUserErrorResponse response: String) {
+        createUserPromise?.reject(with: SessionManagerError.createUserError(response))
+        createUserPromise = nil
     }
 }

@@ -36,7 +36,6 @@ final class JsonDesChannelInboundHandler: ChannelInboundHandler {
         guard let jsonObject = try? JSONSerialization.jsonObject(with: readData, options: []) else { return }
         guard let message = jsonObject as? [String:Any] else { return }
         
-        print(message)
         self.messageHandler(message)
     }
     
