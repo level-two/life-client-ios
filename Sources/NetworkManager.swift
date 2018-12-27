@@ -80,8 +80,8 @@ class NetworkManager {
     typealias MessageHandler = ([String:Any])->()
     
     // MARK: - Variables
-    //let host = "::1"
-    let host = "192.168.100.28"
+    let host = "localhost"
+    //let host = "192.168.100.28"
     let port = 1337
     
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
@@ -137,6 +137,8 @@ class NetworkManager {
                 print("Connection closed")
                 self?.isConnected = false
                 self?.channel = nil
+                sleep(1)
+                self?.connectToServer()
             }
             
             self?.channel?.closeFuture.whenFailure { [weak self] error in

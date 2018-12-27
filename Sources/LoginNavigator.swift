@@ -42,8 +42,11 @@ class LoginNavigator: Navigator {
     
     // MARK: - Navigator
     func navigate(to destination: Destination) {
-        let viewController = makeViewController(for: destination)
-        navigationController?.pushViewController(viewController, animated: true)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            let viewController = self.makeViewController(for: destination)
+            self.navigationController?.pushViewController(viewController, animated: true)
+        }
     }
     
     // MARK: - Private

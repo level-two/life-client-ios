@@ -13,7 +13,7 @@
         <!--No connection View Controller-->
         <scene sceneID="7DL-Qz-ikq">
             <objects>
-                <viewController title="No connection View Controller" id="Zpu-Lk-gHf" customClass="NoConnectionViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoConnectionViewController" title="No connection View Controller" id="Zpu-Lk-gHf" customClass="NoConnectionViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dFp-xz-rgQ">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -37,7 +37,7 @@
         <!--Login View Controller-->
         <scene sceneID="hXX-UK-KBv">
             <objects>
-                <viewController title="Login View Controller" id="K5h-4e-VxS" customClass="LoginViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LoginViewController" title="Login View Controller" id="K5h-4e-VxS" customClass="LoginViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="osL-9c-dkI">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -80,7 +80,7 @@
         <!--Game-->
         <scene sceneID="5YO-u9-HRD">
             <objects>
-                <viewController title="Game" id="evA-YL-1Rd" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GameViewController" title="Game" id="evA-YL-1Rd" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bsG-b6-yQO">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -95,7 +95,7 @@
         <!--New Player-->
         <scene sceneID="Alu-tt-dX9">
             <objects>
-                <viewController title="New Player" id="32s-3G-4Iy" customClass="CreateUserViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreateUserViewController" title="New Player" id="32s-3G-4Iy" customClass="CreateUserViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2gb-ym-Twv">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -142,7 +142,7 @@
         <!--Chat View Controller-->
         <scene sceneID="Rqs-Zz-gok">
             <objects>
-                <tableViewController title="Chat View Controller" id="Ny8-zR-28f" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="ChatViewController" title="Chat View Controller" id="Ny8-zR-28f" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="z0D-TH-mup">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
