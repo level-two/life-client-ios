@@ -35,48 +35,6 @@ class ChatViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        subscribeToEvents()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        unsubscribeFromEvents()
-    }
-    
-}
-
-// Events handling
-extension ChatViewController {
-    func subscribeToEvents() {
-        NetClient.shared.onConnectionEstablishedEvent.addHandler(target: self, handler: ChatViewController.onConnectionEstablished)
-        NetClient.shared.onConnectionClosedEvent.addHandler(target: self, handler: ChatViewController.onConnectionClosed)
-        NetClient.shared.onConnectionFailedEvent.addHandler(target: self, handler: ChatViewController.onConnectionFailed)
-        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: ChatViewController.onConnectionReceivedMessage)
-    }
-    
-    func unsubscribeFromEvents() {
-        NetClient.shared.onConnectionEstablishedEvent.removeTarget(self)
-        NetClient.shared.onConnectionClosedEvent.removeTarget(self)
-        NetClient.shared.onConnectionFailedEvent.removeTarget(self)
-        NetClient.shared.onConnectionReceivedMessageEvent.removeTarget(self)
-    }
-    
-    func onConnectionEstablished() {
-        print("Called onConnectionEstablished")
-        NetClient.shared.send(message: ["login":["userId":1]])
-    }
-    
-    func onConnectionClosed() {
-        print("Called onConnectionClosed")
-    }
-    
-    func onConnectionReceivedMessage(message: [String:Any]) {
-        print("Called onConnection received with message: \(message)")
-    }
-    
-    func onConnectionFailed() {
-        print("Called onConnectionFailed")
-    }
 }
 
 // Table view handling

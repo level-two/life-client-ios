@@ -20,9 +20,8 @@ import UIKit
 
 class SessionManager {
     // Types
-    enum LoginResult {
-        case loggedIn(User)
-        case error(String)
+    enum SessionManagerError: Error {
+        case loginError(String)
     }
     
     typealias MessageHandler = ([String:Any]) -> Void
@@ -31,7 +30,7 @@ class SessionManager {
     private let networkManager: NetworkManager
     private var messageHandler: MessageHandler?
     
-    private var loginPromise: Promise<LoginResult>?
+    private var loginPromise: Promise<User>?
     private var user: User?
     private var isLoggedIn = false
     private var sessionId: Int?
@@ -50,26 +49,30 @@ class SessionManager {
         networkManager.messageHandler = { [weak self] message in
             guard let self = self else { return }
             
-            if let loginResponse = message["userLoggedIn"] as? [String:Any] {
-                self.process(loginResponse: loginResponse)
+            if let resp = message["userLoggedIn"] as? [String:Any] {
+                self.process(loginResponse: resp)
             }
-            if let restoreResponse = message["sessionRestored"] as? Bool {
+            else if let resp = message["userLoginError"] as? String {
+                self.process(loginErrorResponse: resp)
+            }
+            else if let _ = message["sessionRestored"] as? Bool {
                 // Good =)
             }
             else if self.isLoggedIn {
                 // pass message to the session delegates
+                self.messageHandler?(message)
             }
         }
     }
     
-    func login(userName: String) -> Future<LoginResult> {
-        loginPromise = Promise<LoginResult>()
+    func login(userName: String) -> Future<User> {
+        loginPromise = Promise<User>()
         
         if networkManager.isConnected {
             networkManager.send(message: ["login": ["userName": userName]])
         }
         else {
-            loginPromise?.resolve(with: .error("No connection to the server"))
+            loginPromise?.reject(with: SessionManagerError.loginError("No connection to the server"))
         }
         
         return loginPromise!
@@ -83,27 +86,19 @@ class SessionManager {
             color.count == 3,
             let newSessionId = loginResponse["sessionId"] as? Int
         else {
-            loginPromise?.resolve(with: .error("Invalid server response"))
+            loginPromise?.reject(with: SessionManagerError.loginError("Invalid server response"))
             loginPromise = nil
             return
         }
-        user = User(userName: userName, userId: userId, color:color)
+        
         sessionId = newSessionId
-        loginPromise?.resolve(with: .loggedIn(user!))
+        user = User(userName: userName, userId: userId, color:color)
+        loginPromise?.resolve(with: user!)
         loginPromise = nil
     }
     
-    /*
-    func appEnterForeground() {
-        connectToServer()
+    func process(loginErrorResponse: String) {
+        loginPromise?.reject(with: SessionManagerError.loginError(loginErrorResponse))
+        loginPromise = nil
     }
-    
-    func appEnterBackground() {
-        closeConnection()
-    }
-    
-    func appTerminate() {
-        try! self.group.syncShutdownGracefully()
-    }
-     */
 }

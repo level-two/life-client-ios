@@ -22,33 +22,4 @@ class NoConnectionViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        NetClient.shared.onConnectionEstablishedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionEstablished)
-        NetClient.shared.onConnectionClosedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionClosed)
-        NetClient.shared.onConnectionFailedEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionFailed)
-        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: NoConnectionViewController.onConnectionReceivedMessage)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        NetClient.shared.onConnectionEstablishedEvent.removeTarget(self)
-        NetClient.shared.onConnectionClosedEvent.removeTarget(self)
-        NetClient.shared.onConnectionFailedEvent.removeTarget(self)
-        NetClient.shared.onConnectionReceivedMessageEvent.removeTarget(self)
-    }
-    func onConnectionEstablished() {
-        print("Called onConnectionEstablished")
-        NetClient.shared.send(message: ["login":["userId":1]])
-    }
-    
-    func onConnectionClosed() {
-        print("Called onConnectionClosed")
-    }
-    
-    func onConnectionReceivedMessage(message: [String:Any]) {
-        print("Called onConnection received with message: \(message)")
-    }
-    
-    func onConnectionFailed() {
-        print("Called onConnectionFailed")
-    }
 }

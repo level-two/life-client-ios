@@ -37,19 +37,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.navigator = navigator
         self.sessionManager = sessionManager
     }
-    
-    private func handleLoginButtonTap() {
-        /*
-        performLogin { [weak self] result in
-            switch result {
-            case .success(let user):
-                self?.navigator.navigate(to: .loginCompleted(user: user))
-            case .failure(let error):
-                self?.show(error)
-            }
-        }
-        */
-    }
 }
 
 // UI Actions
@@ -60,24 +47,31 @@ extension LoginViewController {
     
     @IBAction func onLoginButton() {
         guard
-            let playerName = playerNameTextField.text,
-            playerName.isEmpty == false
+            let userName = playerNameTextField.text,
+            userName.isEmpty == false
         else {
-            let alert = UIAlertController(title: "Alert", message: "Please enter player name to login", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            alert("Please enter player name to login")
             return
         }
         
-        if NetClient.shared.isConnectedToServer == false {
-            let alert = UIAlertController(title: "Alert", message: "Failed to connect to server. Please check if network is available", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
+        let future = sessionManager?.login(userName: userName)
         
-        // Show busy view and block UI
-        NetClient.shared.send(message: ["login":playerName])
+        future?.observe { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .value:
+                self.navigator?.navigate(to: .loginCompleted)
+            case .error(let error):
+                self.alert(error.localizedDescription)
+            }
+        }
+    }
+    
+    func alert(_ description: String) {
+        let alert = UIAlertController(title: "Alert", message: description, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -90,40 +84,5 @@ extension LoginViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
-    }
-}
-
-// Events handling
-extension LoginViewController {
-    func subscribeToEvents() {
-        NetClient.shared.onConnectionReceivedMessageEvent.addHandler(target: self, handler: LoginViewController.onConnectionReceivedMessage)
-    }
-    
-    func unsubscribeFromEvents() {
-        NetClient.shared.onConnectionReceivedMessageEvent.removeTarget(self)
-    }
-    
-    func onConnectionReceivedMessage(message: [String:Any]) {
-        print("Called onConnection received with message: \(message)")
-        
-        // Hide Busy view
-        
-        if let errorMessage = message["userLoggedIn"] as? String {
-            let alert = UIAlertController(title: "Alert", message: errorMessage, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
-        
-        guard
-            let successDic = message["userLoggedIn"] as? [String:Any],
-            let userId = successDic["userId"] as? String,
-            let userName = successDic["userName"] as? String
-        else {
-            let alert = UIAlertController(title: "Alert", message: "Failed to login", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
     }
 }
