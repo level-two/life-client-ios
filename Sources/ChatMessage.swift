@@ -16,35 +16,59 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
-import UIKit
+import MessageKit
 
-struct User {
-    var userName: String
-    var userId: Int
-    var color: [Double]
+struct ChatMessage {
+    let userName: String
+    let message: String
+    let messageIntId: Int
     
-    var toDictionary: Any {
-        return [
-            "userName": userName,
-            "userId": userId,
-            "color": color
-        ]
+    init(userName: String, message: String, messageIntId: Int) {
+        self.userName = userName
+        self.message = message
+        self.messageIntId = messageIntId
     }
     
     init?(withDictionary jsonDictionary: Any) {
         guard
             let data = jsonDictionary as? [String: Any],
             let userName = data["userName"] as? String,
-            let userId = data["userId"] as? Int,
-            let color = data["color"] as? [Double],
-            color.count == 4
+            let message = data["message"] as? String,
+            let messageIntId = data["messageId"] as? Int
         else {
             print("Failed to create User from provided dictionary:\n \(jsonDictionary)")
             return nil
         }
         
         self.userName = userName
-        self.userId = userId
-        self.color = color
+        self.message = message
+        self.messageIntId = messageIntId
+    }
+    
+    var toDictionary: Any {
+        return [
+            "userName": userName,
+            "message": message,
+            "messageId": messageIntId
+        ]
+    }
+}
+
+extension ChatMessage: MessageType {
+    var messageId: String {
+        return String(messageIntId)
+    }
+    
+    var sender: Sender {
+        return Sender(id: userName, displayName: userName)
+    }
+    
+    // TODO
+    var sentDate: Date {
+        return Date()
+    }
+    
+    var kind: MessageKind {
+        return .text(message)
     }
 }

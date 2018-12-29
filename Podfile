@@ -6,7 +6,7 @@ target 'LifeClient' do
   use_frameworks!
 
   # Pods for LifeClient
-  pod ‘SwiftNIO’
-  pod ’SwiftNIOFoundationCompat’
-
+  pod 'SwiftNIO'
+  pod 'SwiftNIOFoundationCompat'
+  pod 'MessageKit'
 end

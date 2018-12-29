@@ -21,7 +21,7 @@ import NIOFoundationCompat
 
 final class JsonDesChannelInboundHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
-    public typealias MessageHandler = ([String:Any]) -> Void
+    public typealias MessageHandler = (Any) -> Void
     
     private let messageHandler: MessageHandler
     
@@ -33,9 +33,7 @@ final class JsonDesChannelInboundHandler: ChannelInboundHandler {
         let byteBuf = self.unwrapInboundIn(data)
         let readData = byteBuf.getData(at:byteBuf.readerIndex, length:byteBuf.readableBytes)!
         
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: readData, options: []) else { return }
-        guard let message = jsonObject as? [String:Any] else { return }
-        
+        guard let message = try? JSONSerialization.jsonObject(with: readData, options: []) else { return }
         self.messageHandler(message)
     }
     
@@ -47,7 +45,7 @@ final class JsonDesChannelInboundHandler: ChannelInboundHandler {
 
 
 final class JsonSerChannelOutboundHandler: ChannelOutboundHandler {
-    public typealias OutboundIn = [String:Any]
+    public typealias OutboundIn = Any
     public typealias OutboundOut = ByteBuffer
     
     public func write(ctx: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
@@ -76,7 +74,7 @@ class NetworkManager {
     }
     
     typealias StatusHandler = (Status)->()
-    typealias MessageHandler = ([String:Any])->()
+    typealias MessageHandler = (Any)->()
     
     // MARK: - Variables
     let host = "localhost"
@@ -114,7 +112,7 @@ class NetworkManager {
         connectToServer()
     }
     
-    func send(message: [String:Any]) {
+    func send(message: Any) {
         self.channel?.write(message, promise: nil)
     }
     

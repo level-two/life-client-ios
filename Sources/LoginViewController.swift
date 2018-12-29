@@ -21,8 +21,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var playerNameTextField: UITextField!
     // TODO Busy notification view
     
-    private var navigator: LoginNavigator?
-    private var sessionManager: SessionManager?
+    private var navigator: LoginNavigator!
+    private var sessionManager: SessionManager!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -42,7 +42,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 // UI Actions
 extension LoginViewController {
     @IBAction func onNewPlayerButton() {
-        navigator?.navigate(to: .createUser)
+        navigator.navigate(to: .createUser)
     }
     
     @IBAction func onLoginButton() {
@@ -54,14 +54,14 @@ extension LoginViewController {
             return
         }
         
-        let future = sessionManager?.login(userName: userName)
+        let future = sessionManager.login(userName: userName)
         
-        future?.observe { [weak self] result in
+        future.observe { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .value:
-                self.navigator?.navigate(to: .loginCompleted)
+                self.navigator.navigate(to: .loginCompleted)
             case .error(let error):
                 self.alert(error.localizedDescription)
             }

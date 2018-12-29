@@ -18,8 +18,8 @@
 import UIKit
 
 class CreateUserViewController: UIViewController, UITextFieldDelegate {
-    private var navigator: LoginNavigator?
-    private var sessionManager: SessionManager?
+    private var navigator: LoginNavigator!
+    private var sessionManager: SessionManager!
     
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var colorPickSlider: ColorPickSlider!
@@ -42,7 +42,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func onCancelButton() {
-        self.navigator?.navigate(to: .login)
+        self.navigator.navigate(to: .login)
     }
     
     @IBAction func onCreateButton() {
@@ -55,14 +55,14 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         }
         
         let color = self.colorPickSlider.pickedColor.rgbComponents()!
-        let future = sessionManager?.createUserAndLogin(userName: userName, color: color)
+        let future = sessionManager.createUserAndLogin(userName: userName, color: color)
         
-        future?.observe { [weak self] result in
+        future.observe { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .value:
-                self.navigator?.navigate(to: .loginCompleted)
+                self.navigator.navigate(to: .loginCompleted)
             case .error(let error):
                 self.alert(error.localizedDescription)
             }
