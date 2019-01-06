@@ -42,7 +42,7 @@ class ChatViewController: MessagesViewController {
     private var navigator: LoginNavigator!
     private var sessionManager: SessionManager!
     private var networkManager: NetworkManager!
-    private var networkEvents: NetworkEvents!
+    private var networkMessages: NetworkMessages!
     
     var messages: [ChatMessage] = []
     var user: User!
@@ -51,11 +51,11 @@ class ChatViewController: MessagesViewController {
         super.init(coder: coder)
     }
     
-    func setupDependencies(navigator: LoginNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkEvents: NetworkEvents) {
+    func setupDependencies(navigator: LoginNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkMessages: NetworkMessages) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.networkManager = networkManager
-        self.networkEvents = networkEvents
+        self.networkMessages = networkMessages
         self.user = sessionManager.user.require()
     }
     
@@ -65,15 +65,15 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesLayoutDelegate = self
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        self.networkEvents.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
-        self.networkEvents.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
+        self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
+        self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
         
-        self.networkManager.send(message: GetRecentChatMessages())
+        self.networkMessages.send(message: GetRecentChatMessages())
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.networkEvents.chatMessage.removeTarget(self)
-        self.networkEvents.chatMessagesResponse.removeTarget(self)
+        self.networkMessages.chatMessage.removeTarget(self)
+        self.networkMessages.chatMessagesResponse.removeTarget(self)
     }
     
     private func onChatMessage(message: ChatMessage) {
@@ -154,6 +154,6 @@ extension ChatViewController: MessageInputBarDelegate {
         //inputBar.inputTextView.text = ""
         //messagesCollectionView.reloadData()
         //messagesCollectionView.scrollToBottom(animated: true)
-        self.networkManager.send(message: newMessage)
+        self.networkMessages.send(message: newMessage)
     }
 }

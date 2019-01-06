@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
+		930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930759FE21E2B4210070A545 /* NetworkMessages.swift */; };
 		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
 		9337CCFF21D2D9D0009A1FA3 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */; };
 		9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0021D41E48009A1FA3 /* Promises.swift */; };
@@ -35,6 +36,7 @@
 /* Begin PBXFileReference section */
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		930759FE21E2B4210070A545 /* NetworkMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMessages.swift; sourceTree = "<group>"; };
 		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		9337CD0021D41E48009A1FA3 /* Promises.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promises.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 			children = (
 				937F429E21DD5B1D003F3E31 /* Event.swift */,
 				93C9826321D18B5400738709 /* User.swift */,
+				930759FE21E2B4210070A545 /* NetworkMessages.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				93C9826121D18AC700738709 /* SessionManager.swift */,
 				9337CD0021D41E48009A1FA3 /* Promises.swift */,
@@ -293,6 +296,7 @@
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
 				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
 				93C9826421D18B5400738709 /* User.swift in Sources */,
+				930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */,
 				9337CD0921D63C15009A1FA3 /* Require.swift in Sources */,
 				93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */,
 				93C9826221D18AC700738709 /* SessionManager.swift in Sources */,

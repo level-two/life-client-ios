@@ -32,7 +32,7 @@ class SessionManager {
     var messageHandler: MessageHandler?
     
     private let networkManager: NetworkManager
-    private let networkEvents: NetworkEvents
+    private let networkMessages: NetworkMessages
     private var loginPromise: Promise<User>?
     private var createUserPromise: Promise<User>?
     private var sessionDown = false
@@ -40,12 +40,12 @@ class SessionManager {
     private var sessionId: Int?
     
     // Methods
-    init(networkManager: NetworkManager, networkEvents: NetworkEvents) {
+    init(networkManager: NetworkManager, networkMessages: NetworkMessages) {
         self.networkManager = networkManager
-        self.networkEvents = networkEvents
-        self.networkEvents.loginResponse.addHandler(target: self, handler: SessionManager.onLoginResponse)
+        self.networkMessages = networkMessages
+        self.networkMessages.loginResponse.addHandler(target: self, handler: SessionManager.onLoginResponse)
         //self.networkEvents.logoutResponse.addHandler(target: self, handler: SessionManager.onLogoutResponse)
-        self.networkEvents.createUserResponse.addHandler(target: self, handler: SessionManager.onCreateResponse)
+        self.networkMessages.createUserResponse.addHandler(target: self, handler: SessionManager.onCreateResponse)
         
         networkManager.connectionStateHandler = { [weak self] state in
             guard let self = self else { return }
@@ -53,22 +53,22 @@ class SessionManager {
             switch (self.isLoggedIn, state) {
             case (false, _         ): ()
             case (true , .none     ): self.sessionDown = true
-            case (true , .connected): self.networkManager.send(message: Login(userName: self.user.require().userName))
+            case (true , .connected): self.networkMessages.send(message: Login(userName: self.user.require().userName))
             }
         }
     }
     
     deinit {
-        self.networkEvents.loginResponse.removeTarget(self)
+        self.networkMessages.loginResponse.removeTarget(self)
         //self.networkEvents.logoutResponse.removeTarget(self)
-        self.networkEvents.createUserResponse.removeTarget(self)
+        self.networkMessages.createUserResponse.removeTarget(self)
     }
     
     func createUserAndLogin(userName: String, color: [Double]) -> Future<User> {
         createUserPromise = Promise<User>()
         
         if networkManager.isConnected {
-            networkManager.send(message: CreateUser(user: User(userName: userName, userId: nil, color: color)))
+            networkMessages.send(message: CreateUser(user: User(userName: userName, userId: nil, color: color)))
         }
         else {
             createUserPromise!.reject(with: SessionManagerError.loginError("No connection to the server"))
@@ -85,7 +85,7 @@ class SessionManager {
         loginPromise = Promise<User>()
         
         if networkManager.isConnected {
-            networkManager.send(message: Login(userName: userName))
+            networkMessages.send(message: Login(userName: userName))
         }
         else {
             loginPromise?.reject(with: SessionManagerError.loginError("No connection to the server"))
