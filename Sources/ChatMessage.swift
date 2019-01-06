@@ -18,6 +18,7 @@
 import Foundation
 import MessageKit
 
+/*
 struct ChatMessage {
     let userName: String
     let message: String
@@ -53,22 +54,4 @@ struct ChatMessage {
         ]
     }
 }
-
-extension ChatMessage: MessageType {
-    var messageId: String {
-        return String(messageIntId)
-    }
-    
-    var sender: Sender {
-        return Sender(id: userName, displayName: userName)
-    }
-    
-    // TODO
-    var sentDate: Date {
-        return Date()
-    }
-    
-    var kind: MessageKind {
-        return .text(message)
-    }
-}
+ */

@@ -30,8 +30,9 @@ protocol NavigatorFactory {
 
 class DependencyContainer {
     private lazy var storyboard = UIStoryboard(name: "Main", bundle: nil)
-    private lazy var networkManager = NetworkManager()
-    private lazy var sessionManager = SessionManager(networkManager: networkManager)
+    private lazy var networkEvents = NetworkEvents()
+    private lazy var networkManager = NetworkManager(networkEvents: networkEvents)
+    private lazy var sessionManager = SessionManager(networkManager: networkManager, networkEvents: networkEvents)
     private lazy var loginNavigator = LoginNavigator(viewControllerFactory: self, navigationController: navigationController)
     
     private weak var navigationController: UINavigationController?
@@ -63,7 +64,7 @@ extension DependencyContainer: ViewControllerFactory {
     
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
-        vc.setupDependencies(navigator: loginNavigator, sessionManager: sessionManager)
+        vc.setupDependencies(navigator: loginNavigator, sessionManager: sessionManager, networkManager: networkManager, networkEvents: networkEvents)
         return vc
     }
 }

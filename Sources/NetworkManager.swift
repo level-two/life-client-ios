@@ -19,10 +19,137 @@ import Foundation
 import NIO
 import NIOFoundationCompat
 
-final class JsonDesChannelInboundHandler: ChannelInboundHandler {
-    public typealias InboundIn = ByteBuffer
-    public typealias MessageHandler = (Any) -> Void
+
+struct CreateUser: Encodable {
+    let user: User
+}
+
+struct CreateUserResponse: Decodable {
+    let user: User?
+    let error: String?
+}
+
+struct Login: Encodable {
+    let userName: String
+}
+
+struct LoginResponse: Decodable {
+    let user: User?
+    let error: String?
+}
+
+struct Logout: Encodable {
+    let userName: String
+}
+
+struct LogoutResponse: Decodable {
+    let user: User?
+    let error: String?
+}
+
+struct ChatMessage: Codable {
+    let user: User
+    let message: String
+    let id: Int
+}
+
+struct GetRecentChatMessages: Encodable {
+}
+
+struct GetChatMessages: Encodable {
+    let fromId: Int
+    let count: Int
+}
+
+struct ChatMessagesResponse: Decodable {
+    let chatHistory: [ChatMessage]?
+    let error: String?
+}
+
+
+extension JSONDecoder {
+    struct DecodableWrapper<T>: Decodable where T: Decodable {
+        let wrapper: T
+        
+        struct CodingKeyType: CodingKey {
+            var stringValue: String = ""
+            var intValue: Int? = nil
+            init?(stringValue: String) { self.stringValue = stringValue }
+            init?(intValue: Int) { self.intValue = intValue }
+        }
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeyType.self)
+            let typeName = String(describing: T.self)
+            wrapper = try container.decode(T.self, forKey: CodingKeyType(stringValue: typeName)!)
+        }
+    }
     
+    func decodeWrapped<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
+        let wrapped = try self.decode(DecodableWrapper<T>.self, from: data)
+        return wrapped.wrapper
+    }
+}
+
+extension JSONEncoder {
+    struct EncodableWrapper<T>: Encodable where T: Encodable {
+        let wrapped: T
+
+        init(_ value: T) { self.wrapped = value }
+        
+        struct CodingKeyType: CodingKey {
+            var stringValue: String = ""
+            var intValue: Int? = nil
+            init?(stringValue: String) { self.stringValue = stringValue }
+            init?(intValue: Int) { self.intValue = intValue }
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeyType.self)
+            let typeName = String(describing: T.self)
+            try container.encode(wrapped, forKey: CodingKeyType(stringValue: typeName)!)
+        }
+    }
+    
+    func encodeWrapped<T>(_ value: T) throws -> Data where T : Encodable {
+        return try self.encode(EncodableWrapper(value))
+    }
+}
+
+class NetworkEvents {
+    let createUserResponse   = Event<CreateUserResponse>()
+    let loginResponse        = Event<LoginResponse>()
+    let logoutResponse       = Event<LogoutResponse>()
+    let chatMessage          = Event<ChatMessage>()
+    let chatMessagesResponse = Event<ChatMessagesResponse>()
+    
+    func produceEvent(withJsonData jsonData: Data) {
+        if let msg = try? JSONDecoder().decodeWrapped(CreateUserResponse.self, from: jsonData) {
+            createUserResponse.raise(with: msg)
+        }
+        else if let msg = try? JSONDecoder().decodeWrapped(LoginResponse.self, from: jsonData) {
+            loginResponse.raise(with: msg)
+        }
+        else if let msg = try? JSONDecoder().decodeWrapped(LogoutResponse.self, from: jsonData) {
+            logoutResponse.raise(with: msg)
+        }
+        else if let msg = try? JSONDecoder().decodeWrapped(ChatMessage.self, from: jsonData) {
+            chatMessage.raise(with: msg)
+        }
+        else if let msg = try? JSONDecoder().decodeWrapped(ChatMessagesResponse.self, from: jsonData) {
+            chatMessagesResponse.raise(with: msg)
+        }
+        else {
+            print("Failed to decode object from JSON")
+        }
+    }
+}
+
+
+final class ChannelInboundBridge: ChannelInboundHandler {
+    public typealias InboundIn = ByteBuffer
+    public typealias MessageHandler = (Data) -> Void
+
     private let messageHandler: MessageHandler
     
     init(messageHandler: @escaping MessageHandler) {
@@ -31,10 +158,8 @@ final class JsonDesChannelInboundHandler: ChannelInboundHandler {
     
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         let byteBuf = self.unwrapInboundIn(data)
-        let readData = byteBuf.getData(at:byteBuf.readerIndex, length:byteBuf.readableBytes)!
-        
-        guard let message = try? JSONSerialization.jsonObject(with: readData, options: []) else { return }
-        self.messageHandler(message)
+        guard let data = byteBuf.getData(at:byteBuf.readerIndex, length:byteBuf.readableBytes) else { return }
+        self.messageHandler(data)
     }
     
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
@@ -44,76 +169,83 @@ final class JsonDesChannelInboundHandler: ChannelInboundHandler {
 }
 
 
-final class JsonSerChannelOutboundHandler: ChannelOutboundHandler {
-    public typealias OutboundIn = Any
-    public typealias OutboundOut = ByteBuffer
-    
-    public func write(ctx: ChannelHandlerContext, data: NIOAny, promise: EventLoopPromise<Void>?) {
-        let message = self.unwrapOutboundIn(data)
-        
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: message, options: .prettyPrinted) else { return }
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return }
-        
-        var buffer = ctx.channel.allocator.buffer(capacity: jsonString.count)
-        buffer.write(string: jsonString)
-        //ctx.channel.writeAndFlush(buffer, promise: nil)
-        ctx.writeAndFlush(self.wrapOutboundOut(buffer), promise: promise)
-    }
-    
-    public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-        print("JsonSerChannelOutboundHandler error: ", error)
-        ctx.close(promise: nil)
-    }
-}
-
 class NetworkManager {
     // MARK: - Types
-    enum Status {
+    enum ConnectionState {
         case none
         case connected
     }
     
-    typealias StatusHandler = (Status)->()
-    typealias MessageHandler = (Any)->()
+    enum NetworkManagerError: Error {
+        case error(String)
+    }
+    
+    typealias ConnectionStateHandler = (ConnectionState)->()
     
     // MARK: - Variables
+    let networkEvents: NetworkEvents
     let host = "localhost"
-    //let host = "192.168.100.28"
     let port = 1337
-    
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     var bootstrap: ClientBootstrap {
-        let jsonInboundHandler = JsonDesChannelInboundHandler { [weak self] message in
-            print("Received message: \(message)")
-            self?.messageHandler?(message)
+        let inboundBridge = ChannelInboundBridge { [weak self] jsonData in
+            self?.networkEvents.produceEvent(withJsonData: jsonData)
         }
         
         return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .channelInitializer { channel in
-                channel.pipeline.add(handler: jsonInboundHandler).then { _ in
-                    channel.pipeline.add(handler: JsonSerChannelOutboundHandler())
-                }
+            .channelInitializer { channel in channel.pipeline.add(handler: inboundBridge)
         }
     }
     var channel: Channel? = nil
-    
-    var statusHandler: StatusHandler?
-    var messageHandler: MessageHandler?
-    
+    var connectionStateHandler: ConnectionStateHandler?
     var isConnected = false {
         didSet {
-            statusHandler?(isConnected ? .connected : .none)
+            connectionStateHandler?(isConnected ? .connected : .none)
         }
     }
     
     // MARK: - Methods
-    init() {
+    init(networkEvents: NetworkEvents) {
+        self.networkEvents = networkEvents
         connectToServer()
     }
     
-    func send(message: Any) {
-        self.channel?.write(message, promise: nil)
+    @discardableResult
+    func send<T>(message: T) -> Future<Void> where T: Encodable {
+        let promise = Promise<Void>()
+        
+        guard let jsonData = try? JSONEncoder().encodeWrapped(message) else {
+            promise.reject(with: NetworkManagerError.error("Failed to serialize to JSON"))
+            return promise
+        }
+        
+        print("Sending: \(String(data: jsonData, encoding: .utf8)!)")
+        
+        guard let ch = self.channel else {
+            promise.reject(with: NetworkManagerError.error("No Connection"))
+            return promise
+        }
+        
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
+            promise.reject(with: NetworkManagerError.error("Conversion from jsonData to String failed"))
+            return promise
+        }
+        
+        var buffer = ch.allocator.buffer(capacity: jsonString.count)
+        buffer.write(string: jsonString)
+        
+        let writePromise = ch.writeAndFlush(buffer)
+        writePromise.whenSuccess {
+            print("Message sent")
+            promise.resolve(with: ())
+        }
+        writePromise.whenFailure { error in
+            print("Failed to send message: \(error)")
+            promise.reject(with: error)
+        }
+        
+        return promise
     }
     
     private func connectToServer() {

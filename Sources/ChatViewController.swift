@@ -19,9 +19,30 @@ import UIKit
 import MessageKit
 import MessageInputBar
 
+extension ChatMessage: MessageType {
+    var messageId: String {
+        return String(id)
+    }
+    
+    var sender: Sender {
+        return Sender(id: user.userName, displayName: user.userName)
+    }
+    
+    // TODO
+    var sentDate: Date {
+        return Date()
+    }
+    
+    var kind: MessageKind {
+        return .text(message)
+    }
+}
+
 class ChatViewController: MessagesViewController {
     private var navigator: LoginNavigator!
     private var sessionManager: SessionManager!
+    private var networkManager: NetworkManager!
+    private var networkEvents: NetworkEvents!
     
     var messages: [ChatMessage] = []
     var user: User!
@@ -30,9 +51,11 @@ class ChatViewController: MessagesViewController {
         super.init(coder: coder)
     }
     
-    func setupDependencies(navigator: LoginNavigator, sessionManager: SessionManager) {
+    func setupDependencies(navigator: LoginNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkEvents: NetworkEvents) {
         self.navigator = navigator
         self.sessionManager = sessionManager
+        self.networkManager = networkManager
+        self.networkEvents = networkEvents
         self.user = sessionManager.user.require()
     }
     
@@ -42,19 +65,32 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesLayoutDelegate = self
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        self.networkEvents.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
+        self.networkEvents.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
         
-        sessionManager.sendSessionMessage(["recentMessagesRequest"])
-        //sessionManager.messagesHandler = { [weak self] message in
-        //    guard let self = self else { return }
-        //    self.tryProcessMessage(message)
-        //}
+        self.networkManager.send(message: GetRecentChatMessages())
     }
     
-    //private func tryProcessMessage(_ message: )
+    override func viewWillDisappear(_ animated: Bool) {
+        self.networkEvents.chatMessage.removeTarget(self)
+        self.networkEvents.chatMessagesResponse.removeTarget(self)
+    }
+    
+    private func onChatMessage(message: ChatMessage) {
+        print(message)
+        addMessage(message: message)
+    }
+    
+    private func onChatMessagesResponse(response: ChatMessagesResponse) {
+        guard let chatHistory = response.chatHistory else { return }
+        for message in chatHistory {
+            addMessage(message: message)
+        }
+    }
     
     private func addMessage(message: ChatMessage) {
-        if let idx = messages.firstIndex(where: { $0.messageIntId >= message.messageIntId }) {
-            if messages[idx].messageIntId != message.messageIntId {
+        if let idx = messages.firstIndex(where: { $0.id >= message.id }) {
+            if messages[idx].id != message.id {
                 messages.insert(message, at: idx)
             }
         }
@@ -106,18 +142,18 @@ extension ChatViewController: MessagesDisplayDelegate {
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
         let message = messages[indexPath.section]
-        //let color = message.user.color
-        //avatarView.backgroundColor = UIColor(withRgbComponents: color)
+        let color = message.user.color
+        avatarView.backgroundColor = UIColor(withRgbComponents: color)
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        let newMessage = ChatMessage(userName: user.userName, message: text, messageIntId: 0)
+        let newMessage = ChatMessage(user: user, message: text, id: 0)
         //messages.append(newMessage)
         //inputBar.inputTextView.text = ""
         //messagesCollectionView.reloadData()
         //messagesCollectionView.scrollToBottom(animated: true)
-        sessionManager.sendSessionMessage(newMessage.toDictionary)
+        self.networkManager.send(message: newMessage)
     }
 }

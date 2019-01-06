@@ -32,6 +32,7 @@ class SessionManager {
     var messageHandler: MessageHandler?
     
     private let networkManager: NetworkManager
+    private let networkEvents: NetworkEvents
     private var loginPromise: Promise<User>?
     private var createUserPromise: Promise<User>?
     private var sessionDown = false
@@ -39,38 +40,35 @@ class SessionManager {
     private var sessionId: Int?
     
     // Methods
-    init(networkManager: NetworkManager) {
+    init(networkManager: NetworkManager, networkEvents: NetworkEvents) {
         self.networkManager = networkManager
+        self.networkEvents = networkEvents
+        self.networkEvents.loginResponse.addHandler(target: self, handler: SessionManager.onLoginResponse)
+        //self.networkEvents.logoutResponse.addHandler(target: self, handler: SessionManager.onLogoutResponse)
+        self.networkEvents.createUserResponse.addHandler(target: self, handler: SessionManager.onCreateResponse)
         
-        networkManager.statusHandler = { [weak self] status in
+        networkManager.connectionStateHandler = { [weak self] state in
             guard let self = self else { return }
             
-            if self.isLoggedIn == false {
-                // do nothing
-            }
-            else if status == .none {
-                self.sessionDown = true
-            }
-            else if status == .connected {
-                self.networkManager.send(message: ["restoreSession": ["sessionId": self.sessionId]])
+            switch (self.isLoggedIn, state) {
+            case (false, _         ): ()
+            case (true , .none     ): self.sessionDown = true
+            case (true , .connected): self.networkManager.send(message: Login(userName: self.user.require().userName))
             }
         }
-        
-        networkManager.messageHandler = { [weak self] message in
-            guard let self = self else { return }
-            let isProcessed = self.tryProcessSessionMessage(message: message)
-            if !isProcessed && self.isLoggedIn {
-                // pass message to the session delegates
-                self.messageHandler?(message)
-            }
-        }
+    }
+    
+    deinit {
+        self.networkEvents.loginResponse.removeTarget(self)
+        //self.networkEvents.logoutResponse.removeTarget(self)
+        self.networkEvents.createUserResponse.removeTarget(self)
     }
     
     func createUserAndLogin(userName: String, color: [Double]) -> Future<User> {
         createUserPromise = Promise<User>()
         
         if networkManager.isConnected {
-            networkManager.send(message: ["create": ["userName": userName, "color":color]])
+            networkManager.send(message: CreateUser(user: User(userName: userName, userId: nil, color: color)))
         }
         else {
             createUserPromise!.reject(with: SessionManagerError.loginError("No connection to the server"))
@@ -87,7 +85,7 @@ class SessionManager {
         loginPromise = Promise<User>()
         
         if networkManager.isConnected {
-            networkManager.send(message: ["login": ["userName": userName]])
+            networkManager.send(message: Login(userName: userName))
         }
         else {
             loginPromise?.reject(with: SessionManagerError.loginError("No connection to the server"))
@@ -96,100 +94,41 @@ class SessionManager {
         return loginPromise!
     }
     
-    @discardableResult func sendSessionMessage(_ message: Any) -> Bool {
-        if isLoggedIn && !sessionDown {
-            networkManager.send(message: message)
-            return true
+    func onLoginResponse(response: LoginResponse) {
+        if let error = response.error {
+            isLoggedIn = false
+            loginPromise?.reject(with: SessionManagerError.loginError(error))
+            loginPromise = nil
+            return
         }
-        return false
-    }
-    
-    private func tryProcessSessionMessage(message rawMessage: Any) -> Bool {
-        guard let message = rawMessage as? [String:Any] else {
-            return false
-        }
-        var isProcessed = true
-        if let resp = message["userLoggedIn"] {
-            process(loginResponse: resp)
-        }
-        else if let resp = message["userLoginError"] {
-            process(loginErrorResponse: resp)
-        }
-        else if let resp = message["userCreated"] {
-            process(createUserResponse: resp)
-        }
-        else if let resp = message["userCreationError"] {
-            process(createUserErrorResponse: resp)
-        }
-        else if let _ = message["sessionRestored"] {
-            // Good =)
-        }
-        else {
-            isProcessed = false
-        }
-        return isProcessed
-    }
-    
-    private func process(loginResponse response: Any) {
-        guard
-            let data = response as? [String:Any],
-            let newSessionId = data["sessionId"] as? Int,
-            let user = User(withDictionary: response)
-        else {
-            loginPromise?.reject(with: SessionManagerError.loginError("Invalid server response"))
+        
+        guard let user = response.user else {
+            isLoggedIn = false
+            loginPromise?.reject(with: SessionManagerError.loginError("User is nil in the login response"))
             loginPromise = nil
             return
         }
         
         self.user = user
-        sessionId = newSessionId
         isLoggedIn = true
         loginPromise?.resolve(with: user)
         loginPromise = nil
     }
     
-    private func process(loginErrorResponse response: Any) {
-        guard let message = response as? String else {
-            print("Invalid response. Expected String")
-            return
-        }
-        isLoggedIn = false
-        loginPromise?.reject(with: SessionManagerError.loginError(message))
-        loginPromise = nil
-    }
-    
-    private func process(createUserResponse response: Any) {
-        guard let user = User(withDictionary: response) else {
-            createUserPromise?.reject(with: SessionManagerError.createUserError("Invalid server response"))
+    func onCreateResponse(response: CreateUserResponse) {
+        if let error = response.error {
+            createUserPromise?.reject(with: SessionManagerError.createUserError(error))
             createUserPromise = nil
             return
         }
+        
+        guard let user = response.user else {
+            createUserPromise?.reject(with: SessionManagerError.createUserError("User is nil in the user create response"))
+            createUserPromise = nil
+            return
+        }
+        
         createUserPromise?.resolve(with: user)
         createUserPromise = nil
-    }
-    
-    private func process(createUserErrorResponse response: Any) {
-        guard let message = response as? String else {
-            print("Invalid response. Expected String")
-            return
-        }
-        createUserPromise?.reject(with: SessionManagerError.createUserError(message))
-        createUserPromise = nil
-    }
-    
-    private func process(sessionResponse response: Any) {
-        guard let isRestored = response as? Bool else {
-            print("Invalid response. Expected Bool")
-            return
-        }
-        sessionDown = !isRestored
-    }
-    
-    private func process(sessionErrorResponse response: Any) {
-        guard let message = response as? String else {
-            print("Invalid response. Expected String")
-            return
-        }
-        print("Failed to restore session: \(message)")
     }
 }

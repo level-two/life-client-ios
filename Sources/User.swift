@@ -18,33 +18,8 @@
 import Foundation
 import UIKit
 
-struct User {
+struct User: Codable {
     var userName: String
-    var userId: Int
+    var userId: Int?
     var color: [Double]
-    
-    var toDictionary: Any {
-        return [
-            "userName": userName,
-            "userId": userId,
-            "color": color
-        ]
-    }
-    
-    init?(withDictionary jsonDictionary: Any) {
-        guard
-            let data = jsonDictionary as? [String: Any],
-            let userName = data["userName"] as? String,
-            let userId = data["userId"] as? Int,
-            let color = data["color"] as? [Double],
-            color.count == 4
-        else {
-            print("Failed to create User from provided dictionary:\n \(jsonDictionary)")
-            return nil
-        }
-        
-        self.userName = userName
-        self.userId = userId
-        self.color = color
-    }
 }

@@ -16,6 +16,7 @@
 		9337CD0721D63867009A1FA3 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0621D63867009A1FA3 /* ChatMessage.swift */; };
 		9337CD0921D63C15009A1FA3 /* Require.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0821D63C15009A1FA3 /* Require.swift */; };
 		9338015221C8FF680056C349 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetworkManager.swift */; };
+		937F429F21DD5B1E003F3E31 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F429E21DD5B1D003F3E31 /* Event.swift */; };
 		9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */; };
 		9392845121D030D800F6C55B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845021D030D800F6C55B /* LoginViewController.swift */; };
 		9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845221D030EC00F6C55B /* CreateUserViewController.swift */; };
@@ -42,6 +43,7 @@
 		9337CD0621D63867009A1FA3 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		9337CD0821D63C15009A1FA3 /* Require.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Require.swift; sourceTree = "<group>"; };
 		9338015121C8FF680056C349 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		937F429E21DD5B1D003F3E31 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickSlider.swift; sourceTree = "<group>"; };
 		9392845021D030D800F6C55B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9392845221D030EC00F6C55B /* CreateUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserViewController.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				937F429E21DD5B1D003F3E31 /* Event.swift */,
 				93C9826321D18B5400738709 /* User.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				93C9826121D18AC700738709 /* SessionManager.swift */,
@@ -286,6 +289,7 @@
 				9337CD0721D63867009A1FA3 /* ChatMessage.swift in Sources */,
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
+				937F429F21DD5B1E003F3E31 /* Event.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
 				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
 				93C9826421D18B5400738709 /* User.swift in Sources */,
