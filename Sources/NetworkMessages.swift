@@ -78,27 +78,22 @@ class NetworkMessages {
     
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
-        self.networkManager.messageHandler = { [weak self] string in
-            guard
-                let self = self,
-                let jsonData = string.data(using: .utf8)
-            else {
-                return
-            }
+        self.networkManager.messageHandler = { [weak self] jsonString in
+            guard let self = self else { return }
             
-            if let msg = try? JSONDecoder().decodeWrapped(CreateUserResponse.self, from: jsonData) {
+            if let msg = try? JSONDecoder().decodeWrapped(CreateUserResponse.self, from: jsonString) {
                 self.createUserResponse.raise(with: msg)
             }
-            else if let msg = try? JSONDecoder().decodeWrapped(LoginResponse.self, from: jsonData) {
+            else if let msg = try? JSONDecoder().decodeWrapped(LoginResponse.self, from: jsonString) {
                 self.loginResponse.raise(with: msg)
             }
-            else if let msg = try? JSONDecoder().decodeWrapped(LogoutResponse.self, from: jsonData) {
+            else if let msg = try? JSONDecoder().decodeWrapped(LogoutResponse.self, from: jsonString) {
                 self.logoutResponse.raise(with: msg)
             }
-            else if let msg = try? JSONDecoder().decodeWrapped(ChatMessage.self, from: jsonData) {
+            else if let msg = try? JSONDecoder().decodeWrapped(ChatMessage.self, from: jsonString) {
                 self.chatMessage.raise(with: msg)
             }
-            else if let msg = try? JSONDecoder().decodeWrapped(ChatMessagesResponse.self, from: jsonData) {
+            else if let msg = try? JSONDecoder().decodeWrapped(ChatMessagesResponse.self, from: jsonString) {
                 self.chatMessagesResponse.raise(with: msg)
             }
             else {
@@ -109,31 +104,11 @@ class NetworkMessages {
     
     @discardableResult
     func send<T>(message: T) -> Future<Void> where T: Encodable {
-        let promise = Promise<Void>()
-        
-        guard let jsonData = try? JSONEncoder().encodeWrapped(message) else {
-            promise.reject(with: NetworkMessagesError.error("Failed to serialize to JSON"))
-            return promise
-        }
-        
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else {
-            promise.reject(with: NetworkMessagesError.error("Conversion from jsonData to String failed"))
-            return promise
-        }
-        
-        let sendFuture = networkManager.send(string: jsonString)
-        sendFuture.observe { result in
-            switch result {
-            case .value(_):
-                promise.resolve(with: ())
-            case .error(let error):
-                promise.reject(with: error)
-            }
-        }
-        return promise
+        return Promise(value: message)
+            .transformed { try JSONEncoder().encodeWrapped($0) }
+            .chained { [unowned self] in self.networkManager.send(string: $0) }
     }
 }
-
 
 extension JSONDecoder {
     struct DecodableWrapper<T>: Decodable where T: Decodable {
@@ -153,8 +128,9 @@ extension JSONDecoder {
         }
     }
     
-    func decodeWrapped<T>(_ type: T.Type, from data: Data) throws -> T where T : Decodable {
-        let wrapped = try self.decode(DecodableWrapper<T>.self, from: data)
+    func decodeWrapped<T>(_ type: T.Type, from string: String) throws -> T where T : Decodable {
+        let jsonData = string.data(using: .utf8).require()
+        let wrapped = try self.decode(DecodableWrapper<T>.self, from: jsonData)
         return wrapped.wrapper
     }
 }
@@ -179,7 +155,8 @@ extension JSONEncoder {
         }
     }
     
-    func encodeWrapped<T>(_ value: T) throws -> Data where T : Encodable {
-        return try self.encode(EncodableWrapper(value))
+    func encodeWrapped<T>(_ value: T) throws -> String where T : Encodable {
+        let jsonData = try self.encode(EncodableWrapper(value))
+        return String(data: jsonData, encoding: .utf8).require()
     }
 }
