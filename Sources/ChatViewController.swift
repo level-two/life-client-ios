@@ -38,12 +38,19 @@ extension ChatMessage: MessageType {
     }
 }
 
+extension ChatMessage {
+    static var dummy: ChatMessage {
+        return ChatMessage(user: User(userName:"", userId:0, color:[0.0, 0.0, 0.0, 0.0]), message:"", id:0)
+    }
+}
+
 class ChatViewController: MessagesViewController {
     private var navigator: LoginNavigator!
     private var sessionManager: SessionManager!
     private var networkManager: NetworkManager!
     private var networkMessages: NetworkMessages!
     
+    let threadSafe = ThreadSafeHelper(withQueueName: "com.yauheni-lychkouski.life-client.ChatViewControllerLockQueue")
     var messages: [ChatMessage] = []
     var user: User!
     
@@ -78,13 +85,27 @@ class ChatViewController: MessagesViewController {
     
     private func onChatMessage(message: ChatMessage) {
         print(message)
-        addMessage(message: message)
+        
+        threadSafe.performAsyncBarrier { [weak self] in
+            self?.addMessage(message: message)
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.messagesCollectionView.reloadDataAndKeepOffset()
+            }
+        }
     }
     
     private func onChatMessagesResponse(response: ChatMessagesResponse) {
         guard let chatHistory = response.chatHistory else { return }
-        for message in chatHistory {
-            addMessage(message: message)
+        
+        threadSafe.performAsyncBarrier { [weak self] in
+            for message in chatHistory {
+                self?.addMessage(message: message)
+            }
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.messagesCollectionView.reloadDataAndKeepOffset()
+            }
         }
     }
     
@@ -102,7 +123,11 @@ class ChatViewController: MessagesViewController {
 
 extension ChatViewController: MessagesDataSource {
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messages.count
+        var count: Int?
+        threadSafe.performSyncConcurrent { [weak self] in
+            count = self?.messages.count
+        }
+        return count ?? 0
     }
     
     func currentSender() -> Sender {
@@ -111,7 +136,11 @@ extension ChatViewController: MessagesDataSource {
     
     func messageForItem(at indexPath: IndexPath,
                         in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messages[indexPath.section]
+        var message: ChatMessage?
+        threadSafe.performSyncConcurrent { [weak self] in
+            message = self?.messages[indexPath.section]
+        }
+        return message ?? .dummy
     }
     
     func messageTopLabelHeight(for message: MessageType,
@@ -141,19 +170,28 @@ extension ChatViewController: MessagesDisplayDelegate {
                              for message: MessageType,
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
-        let message = messages[indexPath.section]
-        let color = message.user.color
+        var message: ChatMessage?
+        threadSafe.performSyncConcurrent { [weak self] in
+            message = self?.messages[indexPath.section]
+        }
+        guard let color = message?.user.color else { return }
         avatarView.backgroundColor = UIColor(withRgbComponents: color)
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        let newMessage = ChatMessage(user: user, message: text, id: 0)
-        //messages.append(newMessage)
-        //inputBar.inputTextView.text = ""
-        //messagesCollectionView.reloadData()
-        //messagesCollectionView.scrollToBottom(animated: true)
-        self.networkMessages.send(message: newMessage)
+        
+        self.networkMessages.send(message: SendChatMessage(message: text)).observe { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                switch result {
+                case .error:
+                    self?.alert("Failed to send message")
+                case .value:
+                    inputBar.inputTextView.text = ""
+                    self?.messagesCollectionView.scrollToBottom(animated: true)
+                }
+            }
+        }
     }
 }

@@ -44,10 +44,18 @@ struct LogoutResponse: Decodable {
     let error: String?
 }
 
-struct ChatMessage: Codable {
+struct SendChatMessage: Encodable {
+    let message: String
+}
+
+struct ChatMessage: Decodable {
     let user: User
     let message: String
     let id: Int
+}
+
+struct ChatError: Decodable {
+    let error: String
 }
 
 struct GetRecentChatMessages: Encodable {
@@ -74,12 +82,15 @@ class NetworkMessages {
     let loginResponse        = Event<LoginResponse>()
     let logoutResponse       = Event<LogoutResponse>()
     let chatMessage          = Event<ChatMessage>()
+    let chatError            = Event<ChatError>()
     let chatMessagesResponse = Event<ChatMessagesResponse>()
     
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
         self.networkManager.messageHandler = { [weak self] jsonString in
             guard let self = self else { return }
+            
+            print("Received message: \(jsonString)")
             
             if let msg = try? JSONDecoder().decodeWrapped(CreateUserResponse.self, from: jsonString) {
                 self.createUserResponse.raise(with: msg)
@@ -92,6 +103,9 @@ class NetworkMessages {
             }
             else if let msg = try? JSONDecoder().decodeWrapped(ChatMessage.self, from: jsonString) {
                 self.chatMessage.raise(with: msg)
+            }
+            else if let msg = try? JSONDecoder().decodeWrapped(ChatError.self, from: jsonString) {
+                self.chatError.raise(with: msg)
             }
             else if let msg = try? JSONDecoder().decodeWrapped(ChatMessagesResponse.self, from: jsonString) {
                 self.chatMessagesResponse.raise(with: msg)

@@ -21,8 +21,8 @@ import UIKit
 class SessionManager {
     // Types
     enum SessionManagerError: Error {
-        case loginError(String)
-        case createUserError(String)
+        case loginError
+        case createUserError
     }
     
     typealias MessageHandler = (Any) -> ()
@@ -65,70 +65,69 @@ class SessionManager {
     }
     
     func createUserAndLogin(userName: String, color: [Double]) -> Future<User> {
-        createUserPromise = Promise<User>()
-        
-        if networkManager.isConnected {
-            networkMessages.send(message: CreateUser(user: User(userName: userName, userId: nil, color: color)))
-        }
-        else {
-            createUserPromise!.reject(with: SessionManagerError.loginError("No connection to the server"))
-        }
-        
-        let createUserAndLoginPromise = createUserPromise!.chained { [unowned self] user -> Future<User> in
-            return self.login(userName: user.userName)
-        }
-        
-        return createUserAndLoginPromise
+        return Promise<User>(value: User(userName: userName, userId: nil, color: color))
+            .chained { [weak self] user -> Future<Void> in
+                guard let self = self else { throw SessionManagerError.createUserError }
+                return self.networkMessages.send(message: CreateUser(user: user))
+            }
+            .chained { [weak self] () -> Future<User> in
+                guard let self = self else { throw SessionManagerError.createUserError }
+                let createUserPromise = Promise<User>()
+                self.createUserPromise = createUserPromise
+                return createUserPromise
+            }
+            .chained { [weak self] user -> Future<User> in
+                guard let self = self else { throw SessionManagerError.createUserError }
+                return self.login(userName: user.userName)
+            }
     }
     
     func login(userName: String) -> Future<User> {
-        loginPromise = Promise<User>()
-        
-        if networkManager.isConnected {
-            networkMessages.send(message: Login(userName: userName))
-        }
-        else {
-            loginPromise?.reject(with: SessionManagerError.loginError("No connection to the server"))
-        }
-        
-        return loginPromise!
+        return Promise<String>(value: userName)
+            .chained { [weak self] in
+                guard let self = self else { throw SessionManagerError.loginError }
+                return self.networkMessages.send(message: Login(userName: $0))
+            }
+            .chained { [weak self] in
+                guard let self = self else { throw SessionManagerError.loginError }
+                self.loginPromise = Promise<User>()
+                return self.loginPromise!
+            }
     }
     
-    func onLoginResponse(response: LoginResponse) {
+    func onCreateResponse(response: CreateUserResponse) {
         if let error = response.error {
-            isLoggedIn = false
-            loginPromise?.reject(with: SessionManagerError.loginError(error))
-            loginPromise = nil
+            print("User creation failed: \(error)")
+            createUserPromise?.reject(with: SessionManagerError.createUserError)
             return
         }
         
         guard let user = response.user else {
-            isLoggedIn = false
-            loginPromise?.reject(with: SessionManagerError.loginError("User is nil in the login response"))
-            loginPromise = nil
+            print("User creation: Invalid response")
+            createUserPromise?.reject(with: SessionManagerError.createUserError)
+            return
+        }
+        
+        createUserPromise?.resolve(with: user)
+    }
+    
+    func onLoginResponse(response: LoginResponse) {
+        isLoggedIn = false
+        
+        if let error = response.error {
+            print("Login failed: \(error)")
+            loginPromise?.reject(with: SessionManagerError.loginError)
+            return
+        }
+        
+        guard let user = response.user else {
+            print("Login: Invalid response")
+            loginPromise?.reject(with: SessionManagerError.loginError)
             return
         }
         
         self.user = user
         isLoggedIn = true
         loginPromise?.resolve(with: user)
-        loginPromise = nil
-    }
-    
-    func onCreateResponse(response: CreateUserResponse) {
-        if let error = response.error {
-            createUserPromise?.reject(with: SessionManagerError.createUserError(error))
-            createUserPromise = nil
-            return
-        }
-        
-        guard let user = response.user else {
-            createUserPromise?.reject(with: SessionManagerError.createUserError("User is nil in the user create response"))
-            createUserPromise = nil
-            return
-        }
-        
-        createUserPromise?.resolve(with: user)
-        createUserPromise = nil
     }
 }
