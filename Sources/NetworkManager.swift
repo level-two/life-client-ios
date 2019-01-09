@@ -24,6 +24,7 @@ final class ChannelInboundBridge: ChannelInboundHandler {
     public typealias MessageHandler = (String) -> Void
 
     private let messageHandler: MessageHandler
+    private var receivedMessage = ""
     
     init(messageHandler: @escaping MessageHandler) {
         self.messageHandler = messageHandler
@@ -32,7 +33,13 @@ final class ChannelInboundBridge: ChannelInboundHandler {
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         let byteBuf = self.unwrapInboundIn(data)
         guard let string = byteBuf.getString(at:byteBuf.readerIndex, length:byteBuf.readableBytes) else { return }
-        self.messageHandler(string)
+        
+        receivedMessage += string
+        while let range = receivedMessage.rangeOfCharacter(from: .newlines) {
+            let message = receivedMessage[..<range.lowerBound]
+            self.messageHandler(String(message))
+            receivedMessage.removeSubrange(..<range.upperBound)
+        }
     }
     
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {

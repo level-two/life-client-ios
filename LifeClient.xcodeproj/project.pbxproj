@@ -126,26 +126,26 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				937F429E21DD5B1D003F3E31 /* Event.swift */,
-				93C9826321D18B5400738709 /* User.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				930759FE21E2B4210070A545 /* NetworkMessages.swift */,
 				93C9826121D18AC700738709 /* SessionManager.swift */,
-				9337CD0021D41E48009A1FA3 /* Promises.swift */,
 				9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */,
 				9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */,
 				93C9825F21D183EE00738709 /* LoginNavigator.swift */,
 				9392845021D030D800F6C55B /* LoginViewController.swift */,
 				9392845221D030EC00F6C55B /* CreateUserViewController.swift */,
-				9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */,
 				9392845421D030FD00F6C55B /* GameplayViewController.swift */,
 				9392845621D0310A00F6C55B /* ChatViewController.swift */,
 				9337CD0621D63867009A1FA3 /* ChatMessage.swift */,
+				93C9826321D18B5400738709 /* User.swift */,
 				9392845821D0311800F6C55B /* NoConnectionViewController.swift */,
 				93B4F87221C8636F00A2354E /* AppDelegate.swift */,
+				9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */,
+				9337CD0021D41E48009A1FA3 /* Promises.swift */,
+				9337CD0821D63C15009A1FA3 /* Require.swift */,
+				937F429E21DD5B1D003F3E31 /* Event.swift */,
 				9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */,
 				9337CD0421D582CE009A1FA3 /* UIColor+Components.swift */,
-				9337CD0821D63C15009A1FA3 /* Require.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
