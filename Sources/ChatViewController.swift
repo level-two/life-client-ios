@@ -50,7 +50,6 @@ class ChatViewController: MessagesViewController {
     private var networkManager: NetworkManager!
     private var networkMessages: NetworkMessages!
     
-    let threadSafe = ThreadSafeHelper(withQueueName: "com.yauheni-lychkouski.life-client.ChatViewControllerLockQueue")
     var messages: [ChatMessage] = []
     var user: User!
     
@@ -75,6 +74,9 @@ class ChatViewController: MessagesViewController {
         self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
         self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
         
+        scrollsToBottomOnKeyboardBeginsEditing = true // default false
+        maintainPositionOnKeyboardFrameChanged = true // default false
+        
         self.networkMessages.send(message: GetRecentChatMessages())
     }
     
@@ -84,28 +86,19 @@ class ChatViewController: MessagesViewController {
     }
     
     private func onChatMessage(message: ChatMessage) {
-        print(message)
-        
-        threadSafe.performAsyncBarrier { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             self?.addMessage(message: message)
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.messagesCollectionView.reloadDataAndKeepOffset()
-            }
+            self?.messagesCollectionView.reloadData()
         }
     }
     
     private func onChatMessagesResponse(response: ChatMessagesResponse) {
-        guard let chatHistory = response.chatHistory else { return }
-        
-        threadSafe.performAsyncBarrier { [weak self] in
+        DispatchQueue.main.async { [weak self] in
+            guard let chatHistory = response.chatHistory else { return }
             for message in chatHistory {
                 self?.addMessage(message: message)
             }
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.messagesCollectionView.reloadDataAndKeepOffset()
-            }
+            self?.messagesCollectionView.reloadDataAndKeepOffset()
         }
     }
     
@@ -123,24 +116,15 @@ class ChatViewController: MessagesViewController {
 
 extension ChatViewController: MessagesDataSource {
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        var count: Int?
-        threadSafe.performSyncConcurrent { [weak self] in
-            count = self?.messages.count
-        }
-        return count ?? 0
+        return messages.count
     }
     
     func currentSender() -> Sender {
         return Sender(id: user.userName, displayName: user.userName)
     }
     
-    func messageForItem(at indexPath: IndexPath,
-                        in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        var message: ChatMessage?
-        threadSafe.performSyncConcurrent { [weak self] in
-            message = self?.messages[indexPath.section]
-        }
-        return message ?? .dummy
+    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        return messages[indexPath.section]
     }
     
     func messageTopLabelHeight(for message: MessageType,
@@ -170,18 +154,14 @@ extension ChatViewController: MessagesDisplayDelegate {
                              for message: MessageType,
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
-        var message: ChatMessage?
-        threadSafe.performSyncConcurrent { [weak self] in
-            message = self?.messages[indexPath.section]
-        }
-        guard let color = message?.user.color else { return }
+        let message = messages[indexPath.section]
+        let color = message.user.color
         avatarView.backgroundColor = UIColor(withRgbComponents: color)
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        
         self.networkMessages.send(message: SendChatMessage(message: text)).observe { [weak self] result in
             DispatchQueue.main.async { [weak self] in
                 switch result {

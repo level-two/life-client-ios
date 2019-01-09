@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
 		930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930759FE21E2B4210070A545 /* NetworkMessages.swift */; };
-		93075A0121E55BE90070A545 /* ThreadSafeHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93075A0021E55BE90070A545 /* ThreadSafeHelper.swift */; };
 		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
 		9337CCFF21D2D9D0009A1FA3 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */; };
 		9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0021D41E48009A1FA3 /* Promises.swift */; };
@@ -38,7 +37,6 @@
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		930759FE21E2B4210070A545 /* NetworkMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMessages.swift; sourceTree = "<group>"; };
-		93075A0021E55BE90070A545 /* ThreadSafeHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThreadSafeHelper.swift; sourceTree = "<group>"; };
 		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		9337CCFE21D2D9D0009A1FA3 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		9337CD0021D41E48009A1FA3 /* Promises.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promises.swift; sourceTree = "<group>"; };
@@ -148,7 +146,6 @@
 				9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */,
 				9337CD0421D582CE009A1FA3 /* UIColor+Components.swift */,
 				9337CD0821D63C15009A1FA3 /* Require.swift */,
-				93075A0021E55BE90070A545 /* ThreadSafeHelper.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -293,7 +290,6 @@
 				9337CD0521D582CE009A1FA3 /* UIColor+Components.swift in Sources */,
 				9392845121D030D800F6C55B /* LoginViewController.swift in Sources */,
 				9337CD0721D63867009A1FA3 /* ChatMessage.swift in Sources */,
-				93075A0121E55BE90070A545 /* ThreadSafeHelper.swift in Sources */,
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				937F429F21DD5B1E003F3E31 /* Event.swift in Sources */,
