@@ -50,6 +50,8 @@ class ChatViewController: MessagesViewController {
     private var networkManager: NetworkManager!
     private var networkMessages: NetworkMessages!
     
+    private let refreshControl = UIRefreshControl()
+    
     var messages: [ChatMessage] = []
     var user: User!
     
@@ -67,6 +69,9 @@ class ChatViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        messagesCollectionView.refreshControl = self.refreshControl
+        refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
+        
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messageInputBar.delegate = self
@@ -74,7 +79,6 @@ class ChatViewController: MessagesViewController {
         self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
         self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
         
-        scrollsToBottomOnKeyboardBeginsEditing = true // default false
         maintainPositionOnKeyboardFrameChanged = true // default false
         
         self.networkMessages.send(message: GetRecentChatMessages())
@@ -85,20 +89,60 @@ class ChatViewController: MessagesViewController {
         self.networkMessages.chatMessagesResponse.removeTarget(self)
     }
     
+    @IBAction func loadMoreMessages() {
+        let firstIndex = messages.first.require().id
+        guard firstIndex > 0 else {
+            preconditionFailure("UIRefreshControl expected be hidden or disabled when we already received all messages")
+        }
+        
+        let count = firstIndex >= 10 ? 10 : firstIndex
+        let fromId = firstIndex - count
+        
+        self.networkMessages.send(message: GetChatMessages(fromId: fromId, count: count))
+    }
+    
     private func onChatMessage(message: ChatMessage) {
         DispatchQueue.main.async { [weak self] in
-            self?.addMessage(message: message)
-            self?.messagesCollectionView.reloadData()
+            guard let self = self else { return }
+            
+            let isLastSectionVisible = self.isLastSectionVisible()
+            
+            self.addMessage(message: message)
+            self.messagesCollectionView.reloadData()
+            
+            if message.user.userName == self.user.userName || isLastSectionVisible {
+                self.messagesCollectionView.scrollToBottom(animated: true)
+            }
+            else {
+                // show arrow button to scroll down
+                // or badge
+            }
         }
     }
     
     private func onChatMessagesResponse(response: ChatMessagesResponse) {
         DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
             guard let chatHistory = response.chatHistory else { return }
+            
+            let messagesWereEmpty = (self.messages.count == 0)
+            
             for message in chatHistory {
-                self?.addMessage(message: message)
+                self.addMessage(message: message)
             }
-            self?.messagesCollectionView.reloadDataAndKeepOffset()
+            
+            if messagesWereEmpty {
+                self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.scrollToBottom(animated: false)
+            }
+            else {
+                self.refreshControl.endRefreshing()
+                self.messagesCollectionView.reloadDataAndKeepOffset()
+            }
+            
+            if self.messages.count == 0 || self.messages.first?.id == 0 {
+                self.messagesCollectionView.refreshControl = nil
+            }
         }
     }
     
@@ -111,6 +155,12 @@ class ChatViewController: MessagesViewController {
         else {
             messages.append(message)
         }
+    }
+    
+    private func isLastSectionVisible() -> Bool {
+        guard messages.isEmpty == false else { return false }
+        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
+        return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
 }
 
@@ -169,7 +219,6 @@ extension ChatViewController: MessageInputBarDelegate {
                     self?.alert("Failed to send message")
                 case .value:
                     inputBar.inputTextView.text = ""
-                    self?.messagesCollectionView.scrollToBottom(animated: true)
                 }
             }
         }
