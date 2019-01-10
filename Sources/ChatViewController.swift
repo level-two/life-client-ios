@@ -45,11 +45,14 @@ extension ChatMessage {
 }
 
 class ChatViewController: MessagesViewController {
+    private let autologinUserNameKey = "autologinUserNameKey"
+    
     private var navigator: LoginNavigator!
     private var sessionManager: SessionManager!
     private var networkManager: NetworkManager!
     private var networkMessages: NetworkMessages!
     
+    @IBOutlet weak var activityIndicatorView: UIView!
     private let refreshControl = UIRefreshControl()
     
     var messages: [ChatMessage] = []
@@ -69,8 +72,13 @@ class ChatViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        activityIndicatorView.isHidden = true
+        
         messagesCollectionView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
+        
+        maintainPositionOnKeyboardFrameChanged = true // default false
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -78,8 +86,6 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
         self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
         self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
-        
-        maintainPositionOnKeyboardFrameChanged = true // default false
         
         self.networkMessages.send(message: GetRecentChatMessages())
     }
@@ -220,6 +226,27 @@ extension ChatViewController: MessageInputBarDelegate {
                 case .value:
                     inputBar.inputTextView.text = ""
                 }
+            }
+        }
+    }
+}
+
+extension ChatViewController {
+    @IBAction func onLogout() {
+        activityIndicatorView.isHidden = false
+        sessionManager.logout(userName: user.userName).observe { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.activityIndicatorView.isHidden = true
+            }
+            
+            switch result {
+            case .value:
+                UserDefaults.standard.set(nil, forKey: self.autologinUserNameKey)
+                self.navigator.navigate(to: .login)
+            case .error(let error):
+                self.alert(error.localizedDescription)
             }
         }
     }

@@ -22,6 +22,7 @@ class SessionManager {
     // Types
     enum SessionManagerError: Error {
         case loginError
+        case logoutError
         case createUserError
     }
     
@@ -34,6 +35,7 @@ class SessionManager {
     private let networkManager: NetworkManager
     private let networkMessages: NetworkMessages
     private var loginPromise: Promise<User>?
+    private var logoutPromise: Promise<User>?
     private var createUserPromise: Promise<User>?
     private var sessionDown = false
     private var isLoggedIn = false
@@ -44,7 +46,7 @@ class SessionManager {
         self.networkManager = networkManager
         self.networkMessages = networkMessages
         self.networkMessages.loginResponse.addHandler(target: self, handler: SessionManager.onLoginResponse)
-        //self.networkEvents.logoutResponse.addHandler(target: self, handler: SessionManager.onLogoutResponse)
+        self.networkMessages.logoutResponse.addHandler(target: self, handler: SessionManager.onLogoutResponse)
         self.networkMessages.createUserResponse.addHandler(target: self, handler: SessionManager.onCreateResponse)
         
         networkManager.connectionStateHandler = { [weak self] state in
@@ -60,7 +62,7 @@ class SessionManager {
     
     deinit {
         self.networkMessages.loginResponse.removeTarget(self)
-        //self.networkEvents.logoutResponse.removeTarget(self)
+        self.networkMessages.logoutResponse.removeTarget(self)
         self.networkMessages.createUserResponse.removeTarget(self)
     }
     
@@ -92,7 +94,20 @@ class SessionManager {
                 guard let self = self else { throw SessionManagerError.loginError }
                 self.loginPromise = Promise<User>()
                 return self.loginPromise!
+        }
+    }
+    
+    func logout(userName: String) -> Future<User> {
+        return Promise<String>(value: userName)
+            .chained { [weak self] in
+                guard let self = self else { throw SessionManagerError.loginError }
+                return self.networkMessages.send(message: Logout(userName: $0))
             }
+            .chained { [weak self] in
+                guard let self = self else { throw SessionManagerError.logoutError }
+                self.logoutPromise = Promise<User>()
+                return self.logoutPromise!
+        }
     }
     
     func onCreateResponse(response: CreateUserResponse) {
@@ -129,5 +144,22 @@ class SessionManager {
         self.user = user
         isLoggedIn = true
         loginPromise?.resolve(with: user)
+    }
+    
+    func onLogoutResponse(response: LogoutResponse) {
+        if let error = response.error {
+            print("Logout failed: \(error)")
+            logoutPromise?.reject(with: SessionManagerError.logoutError)
+            return
+        }
+        
+        guard let user = response.user else {
+            print("Logout: Invalid response")
+            logoutPromise?.reject(with: SessionManagerError.logoutError)
+            return
+        }
+        
+        isLoggedIn = false
+        logoutPromise?.resolve(with: user)
     }
 }

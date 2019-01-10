@@ -10,29 +10,53 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--No connection View Controller-->
+        <!--ChatViewController-->
         <scene sceneID="7DL-Qz-ikq">
             <objects>
-                <viewController storyboardIdentifier="NoConnectionViewController" title="No connection View Controller" id="Zpu-Lk-gHf" customClass="NoConnectionViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatViewController" title="No connection View Controller" id="Zpu-Lk-gHf" userLabel="ChatViewController" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dFp-xz-rgQ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="No connection to host.." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X3I-wj-eh6">
-                                <rect key="frame" x="151" y="150" width="179" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MRo-B2-WqU">
+                                <rect key="frame" x="16" y="20" width="48" height="30"/>
+                                <state key="normal" title="Logout"/>
+                                <connections>
+                                    <action selector="onLogout" destination="Zpu-Lk-gHf" eventType="touchUpInside" id="aJf-VX-0Ob"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0Od-2V-doY">
+                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="bGW-NE-LPl">
+                                        <rect key="frame" x="150" y="220" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="bGW-NE-LPl" firstAttribute="centerX" secondItem="0Od-2V-doY" secondAttribute="centerX" id="QqE-Q2-2wT"/>
+                                    <constraint firstItem="bGW-NE-LPl" firstAttribute="centerY" secondItem="0Od-2V-doY" secondAttribute="centerY" id="aSt-AX-t5D"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="0Od-2V-doY" firstAttribute="height" secondItem="G5I-fd-BbX" secondAttribute="height" id="Axw-id-Qjt"/>
+                            <constraint firstItem="MRo-B2-WqU" firstAttribute="top" secondItem="G5I-fd-BbX" secondAttribute="top" id="OHO-Ta-pWz"/>
+                            <constraint firstItem="0Od-2V-doY" firstAttribute="centerX" secondItem="G5I-fd-BbX" secondAttribute="centerX" id="PbJ-6G-YUy"/>
+                            <constraint firstItem="MRo-B2-WqU" firstAttribute="leading" secondItem="G5I-fd-BbX" secondAttribute="leading" constant="16" id="bZU-uI-1iw"/>
+                            <constraint firstItem="0Od-2V-doY" firstAttribute="centerY" secondItem="G5I-fd-BbX" secondAttribute="centerY" id="ld0-6y-ziV"/>
+                            <constraint firstItem="0Od-2V-doY" firstAttribute="width" secondItem="G5I-fd-BbX" secondAttribute="width" id="z7h-ut-oOd"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="G5I-fd-BbX"/>
                     </view>
+                    <connections>
+                        <outlet property="activityIndicatorView" destination="0Od-2V-doY" id="AJD-pI-8xF"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYp-Nj-aIk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="106" y="390"/>
+            <point key="canvasLocation" x="1667" y="390"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="hXX-UK-KBv">
@@ -71,19 +95,37 @@
                                     <action selector="onNewPlayerButton" destination="K5h-4e-VxS" eventType="touchUpInside" id="uPO-zS-pZ6"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ntd-u1-0K5">
+                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="aw2-4l-NAl">
+                                        <rect key="frame" x="150" y="220" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="aw2-4l-NAl" firstAttribute="centerY" secondItem="ntd-u1-0K5" secondAttribute="centerY" id="IDP-qc-68a"/>
+                                    <constraint firstItem="aw2-4l-NAl" firstAttribute="centerX" secondItem="ntd-u1-0K5" secondAttribute="centerX" id="Omm-IG-kPd"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="beT-qB-JJl" firstAttribute="centerX" secondItem="uhB-OV-HPf" secondAttribute="centerX" id="1Gu-Aq-tv2"/>
+                            <constraint firstItem="ntd-u1-0K5" firstAttribute="width" secondItem="uhB-OV-HPf" secondAttribute="width" id="3EK-Qp-Trx"/>
+                            <constraint firstItem="ntd-u1-0K5" firstAttribute="height" secondItem="uhB-OV-HPf" secondAttribute="height" id="Agf-AK-xgI"/>
                             <constraint firstItem="beT-qB-JJl" firstAttribute="top" secondItem="1Rb-ym-PQC" secondAttribute="bottom" constant="8" id="H8r-eJ-35d"/>
                             <constraint firstItem="beT-qB-JJl" firstAttribute="centerY" secondItem="uhB-OV-HPf" secondAttribute="centerY" id="Xd4-Vv-vLM"/>
+                            <constraint firstItem="ntd-u1-0K5" firstAttribute="centerY" secondItem="uhB-OV-HPf" secondAttribute="centerY" id="ZCU-3x-xil"/>
                             <constraint firstItem="qA7-tj-scZ" firstAttribute="centerX" secondItem="uhB-OV-HPf" secondAttribute="centerX" id="pc7-wA-ZuD"/>
                             <constraint firstItem="qA7-tj-scZ" firstAttribute="top" secondItem="beT-qB-JJl" secondAttribute="bottom" constant="8" id="rp9-OJ-HcD"/>
                             <constraint firstItem="1Rb-ym-PQC" firstAttribute="centerX" secondItem="uhB-OV-HPf" secondAttribute="centerX" id="xCd-cW-ZJu"/>
+                            <constraint firstItem="ntd-u1-0K5" firstAttribute="centerX" secondItem="uhB-OV-HPf" secondAttribute="centerX" id="zBj-2X-jN0"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="uhB-OV-HPf"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicatorView" destination="ntd-u1-0K5" id="SvL-cW-leI"/>
                         <outlet property="playerNameTextField" destination="1Rb-ym-PQC" id="Ys5-PB-3F5"/>
                     </connections>
                 </viewController>
@@ -183,14 +225,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bVu-8b-ig8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="900" y="-510"/>
-        </scene>
-        <!--Chat View Controller-->
-        <scene sceneID="Rqs-Zz-gok">
-            <objects>
-                <tableViewController storyboardIdentifier="ChatViewController" title="Chat View Controller" id="Ny8-zR-28f" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QEW-ru-kTV" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1709" y="390"/>
         </scene>
     </scenes>
 </document>

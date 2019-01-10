@@ -19,10 +19,12 @@ import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var playerNameTextField: UITextField!
-    // TODO Busy notification view
+    
+    private let autologinUserNameKey = "autologinUserNameKey"
     
     private var navigator: LoginNavigator!
     private var sessionManager: SessionManager!
+    @IBOutlet weak var activityIndicatorView: UIView!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -31,6 +33,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         playerNameTextField.delegate = self
+        activityIndicatorView.isHidden = true
+        if let autologinUserName = UserDefaults.standard.string(forKey: autologinUserNameKey) {
+            login(userName: autologinUserName)
+        }
     }
     
     func setupDependencies(navigator: LoginNavigator, sessionManager: SessionManager) {
@@ -53,14 +59,21 @@ extension LoginViewController {
             alert("Please enter player name to login")
             return
         }
-        
-        let future = sessionManager.login(userName: userName)
-        
-        future.observe { [weak self] result in
+        login(userName: userName)
+    }
+    
+    func login(userName: String) {
+        activityIndicatorView.isHidden = false
+        sessionManager.login(userName: userName).observe { [weak self] result in
             guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.activityIndicatorView.isHidden = true
+            }
             
             switch result {
             case .value:
+                UserDefaults.standard.set(userName, forKey: self.autologinUserNameKey)
                 self.navigator.navigate(to: .loginCompleted)
             case .error(let error):
                 self.alert(error.localizedDescription)
