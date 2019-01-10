@@ -75,6 +75,8 @@ class ChatViewController: MessagesViewController {
         
         activityIndicatorView.isHidden = true
         
+        view.sendSubviewToBack(messagesCollectionView)
+        
         messagesCollectionView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
         

@@ -126,6 +126,8 @@ class NetworkManager {
         channelFuture.whenFailure { [weak self] error in
             print("Connection failed: \(error)")
             self?.isConnected = false
+            sleep(1)
+            self?.connectToServer()
         }
         
         channelFuture.whenSuccess { [weak self] channel in
