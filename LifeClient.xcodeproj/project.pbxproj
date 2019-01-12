@@ -27,7 +27,7 @@
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
-		93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F87221C8636F00A2354E /* AppDelegate.swift */; };
+		93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F87221C8636F00A2354E /* ApplicationMain.swift */; };
 		93C9826021D183EE00738709 /* LoginNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* LoginNavigator.swift */; };
 		93C9826221D18AC700738709 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826121D18AC700738709 /* SessionManager.swift */; };
 		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
@@ -56,7 +56,7 @@
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		93B4F87121C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		93B4F87221C8636F00A2354E /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		93B4F87221C8636F00A2354E /* ApplicationMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMain.swift; sourceTree = "<group>"; };
 		93B4F87321C8636F00A2354E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93C9825F21D183EE00738709 /* LoginNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginNavigator.swift; sourceTree = "<group>"; };
 		93C9826121D18AC700738709 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
@@ -126,6 +126,7 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				93B4F87221C8636F00A2354E /* ApplicationMain.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				930759FE21E2B4210070A545 /* NetworkMessages.swift */,
 				93C9826121D18AC700738709 /* SessionManager.swift */,
@@ -139,7 +140,6 @@
 				9337CD0621D63867009A1FA3 /* ChatMessage.swift */,
 				93C9826321D18B5400738709 /* User.swift */,
 				9392845821D0311800F6C55B /* NoConnectionViewController.swift */,
-				93B4F87221C8636F00A2354E /* AppDelegate.swift */,
 				9392844E21CE3A9200F6C55B /* ColorPickSlider.swift */,
 				9337CD0021D41E48009A1FA3 /* Promises.swift */,
 				9337CD0821D63C15009A1FA3 /* Require.swift */,
@@ -298,7 +298,7 @@
 				93C9826421D18B5400738709 /* User.swift in Sources */,
 				930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */,
 				9337CD0921D63C15009A1FA3 /* Require.swift in Sources */,
-				93B4F87821C8636F00A2354E /* AppDelegate.swift in Sources */,
+				93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */,
 				93C9826221D18AC700738709 /* SessionManager.swift in Sources */,
 				9392845921D0311800F6C55B /* NoConnectionViewController.swift in Sources */,
 				93C9826021D183EE00738709 /* LoginNavigator.swift in Sources */,

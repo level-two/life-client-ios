@@ -34,16 +34,16 @@ class DependencyContainer {
     private lazy var networkMessages = NetworkMessages(networkManager: networkManager)
     private lazy var sessionManager = SessionManager(networkManager: networkManager, networkMessages: networkMessages)
     private lazy var loginNavigator = LoginNavigator(viewControllerFactory: self, navigationController: navigationController)
-    
     private weak var navigationController: UINavigationController?
+    private weak var appDelegateEvents: AppDelegateEvents?
     
-    init(navigationController: UINavigationController?) {
+    init(appDelegateEvents: AppDelegate, navigationController: UINavigationController) {
+        self.appDelegateEvents = appDelegateEvents
         self.navigationController = navigationController
     }
 }
 
 extension DependencyContainer: NavigatorFactory {
-    
     func makeLoginNavigator() -> LoginNavigator {
         return LoginNavigator(viewControllerFactory: self, navigationController: navigationController)
     }

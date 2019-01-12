@@ -49,6 +49,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 extension LoginViewController {
     @IBAction func onNewPlayerButton() {
         navigator.navigate(to: .createUser)
+        playerNameTextField.resignFirstResponder()
     }
     
     @IBAction func onLoginButton() {
@@ -64,6 +65,8 @@ extension LoginViewController {
     
     func login(userName: String) {
         activityIndicatorView.isHidden = false
+        playerNameTextField.resignFirstResponder()
+        
         sessionManager.login(userName: userName).observe { [weak self] result in
             guard let self = self else { return }
             

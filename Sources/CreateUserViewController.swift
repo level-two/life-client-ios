@@ -24,6 +24,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var colorPickSlider: ColorPickSlider!
     @IBOutlet weak var colorPreviewLabel: UILabel!
+    @IBOutlet weak var activityIndicatorView: UIView!
     
     
     required init?(coder: NSCoder) {
@@ -39,10 +40,12 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         self.userNameTextField.delegate = self
         self.colorPreviewLabel.backgroundColor = self.colorPickSlider.pickedColor
+        self.activityIndicatorView.isHidden = true
     }
     
     @IBAction func onCancelButton() {
         self.navigator.navigate(to: .login)
+        userNameTextField.resignFirstResponder()
     }
     
     @IBAction func onCreateButton() {
@@ -54,11 +57,16 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
             return
         }
         
-        let color = self.colorPickSlider.pickedColor.rgbComponents()!
-        let future = sessionManager.createUserAndLogin(userName: userName, color: color)
+        activityIndicatorView.isHidden = false
+        userNameTextField.resignFirstResponder()
         
-        future.observe { [weak self] result in
+        let color = self.colorPickSlider.pickedColor.rgbComponents()!
+        sessionManager.createUserAndLogin(userName: userName, color: color).observe { [weak self] result in
             guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.activityIndicatorView.isHidden = true
+            }
             
             switch result {
             case .value:

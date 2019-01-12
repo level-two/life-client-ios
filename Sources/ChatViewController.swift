@@ -53,6 +53,7 @@ class ChatViewController: MessagesViewController {
     private var networkMessages: NetworkMessages!
     
     @IBOutlet weak var activityIndicatorView: UIView!
+    @IBOutlet weak var logoutButton: UIButton!
     private let refreshControl = UIRefreshControl()
     
     var messages: [ChatMessage] = []
@@ -75,8 +76,6 @@ class ChatViewController: MessagesViewController {
         
         activityIndicatorView.isHidden = true
         
-        view.sendSubviewToBack(messagesCollectionView)
-        
         messagesCollectionView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
         
@@ -90,6 +89,11 @@ class ChatViewController: MessagesViewController {
         self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
         
         self.networkMessages.send(message: GetRecentChatMessages())
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        view.bringSubviewToFront(activityIndicatorView)
+        view.bringSubviewToFront(logoutButton)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -236,6 +240,8 @@ extension ChatViewController: MessageInputBarDelegate {
 extension ChatViewController {
     @IBAction func onLogout() {
         activityIndicatorView.isHidden = false
+        self.messageInputBar.inputTextView.resignFirstResponder()
+        
         sessionManager.logout(userName: user.userName).observe { [weak self] result in
             guard let self = self else { return }
             
