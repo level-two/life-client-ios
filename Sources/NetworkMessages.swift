@@ -78,12 +78,12 @@ class NetworkMessages {
     }
     
     let networkManager: NetworkManager
-    let createUserResponse   = Event<CreateUserResponse>()
-    let loginResponse        = Event<LoginResponse>()
-    let logoutResponse       = Event<LogoutResponse>()
-    let chatMessage          = Event<ChatMessage>()
-    let chatError            = Event<ChatError>()
-    let chatMessagesResponse = Event<ChatMessagesResponse>()
+    let createUserResponse   = Event1<CreateUserResponse>()
+    let loginResponse        = Event1<LoginResponse>()
+    let logoutResponse       = Event1<LogoutResponse>()
+    let chatMessage          = Event1<ChatMessage>()
+    let chatError            = Event1<ChatError>()
+    let chatMessagesResponse = Event1<ChatMessagesResponse>()
     
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager

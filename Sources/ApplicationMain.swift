@@ -18,11 +18,11 @@
 import UIKit
 
 protocol AppDelegateEvents: class {
-    var onApplicationWillResignActive: Event<Void> { get }
-    var onApplicationDidEnterBackground: Event<Void> { get }
-    var onApplicationWillEnterForeground: Event<Void> { get }
-    var onApplicationDidBecomeActive: Event<Void> { get }
-    var onApplicationWillTerminate: Event<Void> { get }
+    var onApplicationWillResignActive: Event0 { get }
+    var onApplicationDidEnterBackground: Event0 { get }
+    var onApplicationWillEnterForeground: Event0 { get }
+    var onApplicationDidBecomeActive: Event0 { get }
+    var onApplicationWillTerminate: Event0 { get }
 }
 
 @UIApplicationMain
@@ -30,11 +30,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppDelegateEvents {
     var window: UIWindow?
     var dependencyContainer: DependencyContainer!
     
-    let onApplicationWillResignActive = Event<Void>()
-    let onApplicationDidEnterBackground = Event<Void>()
-    let onApplicationWillEnterForeground = Event<Void>()
-    let onApplicationDidBecomeActive = Event<Void>()
-    let onApplicationWillTerminate = Event<Void>()
+    let onApplicationWillResignActive    = Event0()
+    let onApplicationDidEnterBackground  = Event0()
+    let onApplicationWillEnterForeground = Event0()
+    let onApplicationDidBecomeActive     = Event0()
+    let onApplicationWillTerminate       = Event0()
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let navigationController = UINavigationController()
@@ -52,28 +52,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppDelegateEvents {
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-        onApplicationWillResignActive.raise(with: ())
+        onApplicationWillResignActive.raise()
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-        onApplicationDidEnterBackground.raise(with: ())
+        onApplicationDidEnterBackground.raise()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-        onApplicationWillEnterForeground.raise(with: ())
+        onApplicationWillEnterForeground.raise()
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-        onApplicationDidBecomeActive.raise(with: ())
+        onApplicationDidBecomeActive.raise()
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        onApplicationWillTerminate.raise(with: ())
+        onApplicationWillTerminate.raise()
     }
 }
 

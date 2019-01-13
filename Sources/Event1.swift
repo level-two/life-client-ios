@@ -21,9 +21,9 @@
 
 import Foundation
 
-public class Event<U> {
+public class Event1<U> {
     public typealias EventHandler = (U) -> ()
-    fileprivate var eventHandlers = [Invocable & TargetComparable]()
+    fileprivate var eventHandlers = [Invocable1 & TargetComparable1]()
     
     public func raise(with data: U) {
         for handler in self.eventHandlers {
@@ -40,15 +40,15 @@ public class Event<U> {
     }
 }
 
-private protocol Invocable: AnyObject {
+private protocol Invocable1: AnyObject {
     func invoke(data: Any)
 }
 
-private protocol TargetComparable: AnyObject {
+private protocol TargetComparable1: AnyObject {
     func compareTarget(_: AnyObject) -> Bool
 }
 
-private class EventHandlerWrapper<T: AnyObject, U> : Invocable & TargetComparable {
+private class EventHandlerWrapper<T: AnyObject, U> : Invocable1 & TargetComparable1 {
     weak var target: T?
     let handler: (T) -> (U) -> ()
     

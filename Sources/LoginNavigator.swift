@@ -31,11 +31,11 @@ class LoginNavigator: Navigator {
     // In most cases it's totally safe to make this a strong
     // reference, but in some situations it could end up
     // causing a retain cycle, so better be safe than sorry :)
-    private weak var navigationController: UINavigationController?
+    private weak var navigationController: UINavigationController!
     private var factory: ViewControllerFactory
     
     // MARK: - Initializer
-    init(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController?) {
+    init(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController) {
         self.factory = factory
         self.navigationController = navigationController
     }

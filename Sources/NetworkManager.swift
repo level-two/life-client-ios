@@ -78,6 +78,7 @@ class NetworkManager {
         }
     }
     var channel: Channel? = nil
+    var shouldReconnect: Bool = true
     var connectionStateHandler: ConnectionStateHandler?
     var isConnected = false {
         didSet {
@@ -85,10 +86,13 @@ class NetworkManager {
         }
     }
     var messageHandler: MessageHandler?
-    
+    var appDelegateEvents: AppDelegateEvents!
     
     // MARK: - Methods
-    init() {
+    init(appDelegateEvents: AppDelegateEvents) {
+        self.appDelegateEvents = appDelegateEvents
+        appDelegateEvents.onApplicationDidEnterBackground.addHandler(target: self, handler: NetworkManager.onApplicationDidEnterBackground)
+        appDelegateEvents.onApplicationWillEnterForeground.addHandler(target: self, handler: NetworkManager.onApplicationWillEnterForeground)
         connectToServer()
     }
     
@@ -121,39 +125,32 @@ class NetworkManager {
     
     private func connectToServer() {
         print("Connecting to \(host):\(port)...")
-        let channelFuture = self.bootstrap.connect(host: self.host, port: self.port)
-        
-        channelFuture.whenFailure { [weak self] error in
-            print("Connection failed: \(error)")
-            self?.isConnected = false
-            sleep(1)
-            self?.connectToServer()
-        }
-        
-        channelFuture.whenSuccess { [weak self] channel in
-            print("Connected")
-            self?.channel = channel
-            self?.isConnected = true
-            
-            self?.channel?.closeFuture.whenSuccess { [weak self] in
-                print("Connection closed")
-                self?.isConnected = false
-                self?.channel = nil
-                sleep(1)
-                self?.connectToServer()
+        self.bootstrap
+            .connect(host: self.host, port: self.port)
+            .then { [weak self] channel -> EventLoopFuture<Void> in
+                print("Connected")
+                self?.isConnected = true
+                self?.channel = channel
+                return channel.closeFuture
+            }.whenComplete { [weak self] in
+                guard let self = self else { return }
+                print("Not connected")
+                self.isConnected = false
+                self.channel = nil
+                if self.shouldReconnect {
+                    sleep(1)
+                    self.connectToServer()
+                }
             }
-            
-            self?.channel?.closeFuture.whenFailure { [weak self] error in
-                print("Disconnected with error: \(error)")
-                self?.isConnected = false
-                self?.channel = nil
-                sleep(1)
-                self?.connectToServer()
-            }
-        }
     }
     
-    private func closeConnection() {
+    func onApplicationDidEnterBackground() {
+        shouldReconnect = false
         _ = self.channel?.close()
+    }
+    
+    func onApplicationWillEnterForeground() {
+        shouldReconnect = true
+        connectToServer()
     }
 }

@@ -30,11 +30,11 @@ protocol NavigatorFactory {
 
 class DependencyContainer {
     private lazy var storyboard = UIStoryboard(name: "Main", bundle: nil)
-    private lazy var networkManager = NetworkManager()
+    private lazy var networkManager = NetworkManager(appDelegateEvents: appDelegateEvents!)
     private lazy var networkMessages = NetworkMessages(networkManager: networkManager)
     private lazy var sessionManager = SessionManager(networkManager: networkManager, networkMessages: networkMessages)
     private lazy var loginNavigator = LoginNavigator(viewControllerFactory: self, navigationController: navigationController)
-    private weak var navigationController: UINavigationController?
+    private weak var navigationController: UINavigationController!
     private weak var appDelegateEvents: AppDelegateEvents?
     
     init(appDelegateEvents: AppDelegate, navigationController: UINavigationController) {
