@@ -129,14 +129,14 @@ class NetworkManager {
             .connect(host: self.host, port: self.port)
             .then { [weak self] channel -> EventLoopFuture<Void> in
                 print("Connected")
-                self?.isConnected = true
                 self?.channel = channel
+                self?.isConnected = true
                 return channel.closeFuture
             }.whenComplete { [weak self] in
                 guard let self = self else { return }
                 print("Not connected")
-                self.isConnected = false
                 self.channel = nil
+                self.isConnected = false
                 if self.shouldReconnect {
                     sleep(1)
                     self.connectToServer()
