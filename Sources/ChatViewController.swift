@@ -87,7 +87,7 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
         self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
         self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
-        
+        self.sessionManager.loginStateEvent.addHandler(target: self, handler: ChatViewController.onLoginStateChanged)
         self.networkMessages.send(message: GetRecentChatMessages())
     }
     
@@ -99,6 +99,17 @@ class ChatViewController: MessagesViewController {
     override func viewWillDisappear(_ animated: Bool) {
         self.networkMessages.chatMessage.removeTarget(self)
         self.networkMessages.chatMessagesResponse.removeTarget(self)
+        self.sessionManager.loginStateEvent.removeTarget(self)
+    }
+    
+    func onLoginStateChanged(isLogged: Bool) {
+        DispatchQueue.main.async { [weak self] in
+            self?.activityIndicatorView.isHidden = isLogged
+        }
+        
+        if isLogged {
+            self.networkMessages.send(message: GetRecentChatMessages(fromId: messages.last?.id))
+        }
     }
     
     @IBAction func loadMoreMessages() {

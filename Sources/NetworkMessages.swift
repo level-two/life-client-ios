@@ -59,6 +59,11 @@ struct ChatError: Decodable {
 }
 
 struct GetRecentChatMessages: Encodable {
+    let fromId: Int?
+    
+    init(fromId: Int? = nil) {
+        self.fromId = fromId
+    }
 }
 
 struct GetChatMessages: Encodable {
