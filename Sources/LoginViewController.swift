@@ -35,6 +35,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         playerNameTextField.delegate = self
         activityIndicatorView.isHidden = true
         if let autologinUserName = UserDefaults.standard.string(forKey: autologinUserNameKey) {
+            playerNameTextField.text = autologinUserName
             login(userName: autologinUserName)
         }
     }
