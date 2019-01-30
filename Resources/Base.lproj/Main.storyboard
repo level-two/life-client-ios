@@ -13,7 +13,7 @@
         <!--ChatViewController-->
         <scene sceneID="7DL-Qz-ikq">
             <objects>
-                <viewController storyboardIdentifier="ChatViewController" title="No connection View Controller" id="Zpu-Lk-gHf" userLabel="ChatViewController" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChatViewController" title="Chat View Controller" id="Zpu-Lk-gHf" userLabel="ChatViewController" customClass="ChatViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dFp-xz-rgQ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -61,7 +61,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYp-Nj-aIk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1667" y="390"/>
+            <point key="canvasLocation" x="2449" y="-510"/>
         </scene>
         <!--Login View Controller-->
         <scene sceneID="hXX-UK-KBv">
@@ -141,21 +141,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="U7N-0k-HWF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="105" y="-510"/>
-        </scene>
-        <!--Game-->
-        <scene sceneID="5YO-u9-HRD">
-            <objects>
-                <viewController storyboardIdentifier="GameViewController" title="Game" id="evA-YL-1Rd" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="bsG-b6-yQO">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="RTD-0D-DGV"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="CgS-Rs-fcH" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="901" y="390"/>
         </scene>
         <!--New Player-->
         <scene sceneID="Alu-tt-dX9">
@@ -256,6 +241,61 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bVu-8b-ig8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="900" y="-510"/>
+        </scene>
+        <!--Gameplay View Controller-->
+        <scene sceneID="yef-EL-7Wn">
+            <objects>
+                <viewController id="FT7-HE-0y9" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fPS-Ow-Udh">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" maximumZoomScale="5" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yyi-Ar-x5a">
+                                <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rJF-gc-tak">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="460"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
+                                </subviews>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstItem="rJF-gc-tak" firstAttribute="top" secondItem="Yyi-Ar-x5a" secondAttribute="top" id="HQt-Qr-OtR"/>
+                                    <constraint firstItem="rJF-gc-tak" firstAttribute="height" secondItem="Yyi-Ar-x5a" secondAttribute="height" id="MJv-u8-K2y"/>
+                                    <constraint firstItem="rJF-gc-tak" firstAttribute="width" secondItem="Yyi-Ar-x5a" secondAttribute="width" id="Q4Z-yH-sH0"/>
+                                    <constraint firstAttribute="trailing" secondItem="rJF-gc-tak" secondAttribute="trailing" id="Stw-z9-A4Y"/>
+                                    <constraint firstAttribute="bottom" secondItem="rJF-gc-tak" secondAttribute="bottom" id="gdK-sK-3au"/>
+                                    <constraint firstItem="rJF-gc-tak" firstAttribute="leading" secondItem="Yyi-Ar-x5a" secondAttribute="leading" id="vG1-oW-rMj"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="FT7-HE-0y9" id="59f-Q9-FA5"/>
+                                    <outletCollection property="gestureRecognizers" destination="Y4B-0Z-y7K" appends="YES" id="wnx-jd-4RY"/>
+                                </connections>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="Yyi-Ar-x5a" firstAttribute="centerX" secondItem="Dp2-UD-hFR" secondAttribute="centerX" id="08o-ci-Ngb"/>
+                            <constraint firstItem="Yyi-Ar-x5a" firstAttribute="height" secondItem="Dp2-UD-hFR" secondAttribute="height" id="BXp-VP-RG4"/>
+                            <constraint firstItem="Yyi-Ar-x5a" firstAttribute="width" secondItem="Dp2-UD-hFR" secondAttribute="width" id="VJx-oS-rHh"/>
+                            <constraint firstItem="Yyi-Ar-x5a" firstAttribute="centerY" secondItem="Dp2-UD-hFR" secondAttribute="centerY" id="XIP-rT-6sj"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Dp2-UD-hFR"/>
+                    </view>
+                    <connections>
+                        <outlet property="gameFieldView" destination="rJF-gc-tak" id="hn1-w3-uDj"/>
+                        <outlet property="scrollView" destination="Yyi-Ar-x5a" id="3yP-gl-a9N"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ESs-3e-fsz" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="Y4B-0Z-y7K">
+                    <connections>
+                        <action selector="handleDoubleTapScrollViewWithRecognizer:" destination="FT7-HE-0y9" id="kxH-Vk-wJ7"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1684" y="-510"/>
         </scene>
     </scenes>
 </document>
