@@ -55,7 +55,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         activityIndicatorView.isHidden = false
         userNameTextField.resignFirstResponder()
         
-        let color = self.colorPickSlider.pickedColor.rgbComponents()!
+        let color = self.colorPickSlider.pickedColor
         sessionManager.createUserAndLogin(userName: userName, color: color).observe { [weak self] result in
             guard let self = self else { return }
             

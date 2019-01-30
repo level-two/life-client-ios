@@ -40,7 +40,7 @@ extension ChatMessage: MessageType {
 
 extension ChatMessage {
     static var dummy: ChatMessage {
-        return ChatMessage(user: User(userName:"", userId:0, color:[0.0, 0.0, 0.0, 0.0]), message:"", id:0)
+        return ChatMessage(user: User(userName:"", userId:0, color:.black), message:"", id:0)
     }
 }
 
@@ -224,8 +224,7 @@ extension ChatViewController: MessagesDisplayDelegate {
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
         let message = messages[indexPath.section]
-        let color = message.user.color
-        avatarView.backgroundColor = UIColor(withRgbComponents: color)
+        avatarView.backgroundColor = message.user.color
     }
 }
 

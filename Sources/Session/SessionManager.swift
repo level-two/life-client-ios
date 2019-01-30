@@ -70,7 +70,7 @@ class SessionManager {
         self.networkMessages.createUserResponse.removeTarget(self)
     }
     
-    func createUserAndLogin(userName: String, color: [Double]) -> Future<User> {
+    func createUserAndLogin(userName: String, color: UIColor) -> Future<User> {
         return createUser(userName:userName, color: color)
             .chained { [weak self] user in
                 guard let self = self else { throw SessionManagerError.createUserError }
@@ -78,7 +78,7 @@ class SessionManager {
         }
     }
     
-    func createUser(userName: String, color: [Double]) -> Future<User> {
+    func createUser(userName: String, color: UIColor) -> Future<User> {
         let user = User(userName: userName, userId: nil, color: color)
         self.createUserPromise = Promise<User>()
         networkMessages.send(message: CreateUser(user: user)).observe { [weak self] result in
