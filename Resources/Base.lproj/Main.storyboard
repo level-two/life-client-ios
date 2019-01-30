@@ -142,10 +142,10 @@
             </objects>
             <point key="canvasLocation" x="105" y="-510"/>
         </scene>
-        <!--New Player-->
+        <!--Create User View Controller-->
         <scene sceneID="Alu-tt-dX9">
             <objects>
-                <viewController storyboardIdentifier="CreateUserViewController" title="New Player" id="32s-3G-4Iy" customClass="CreateUserViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CreateUserViewController" title="Create User View Controller" id="32s-3G-4Iy" customClass="CreateUserViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2gb-ym-Twv">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -245,7 +245,7 @@
         <!--Gameplay View Controller-->
         <scene sceneID="yef-EL-7Wn">
             <objects>
-                <viewController id="FT7-HE-0y9" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="GameplayViewController" id="FT7-HE-0y9" customClass="GameplayViewController" customModule="LifeClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fPS-Ow-Udh">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
