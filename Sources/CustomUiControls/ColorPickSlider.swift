@@ -158,7 +158,7 @@ class ColorPickSlider: UIControl {
         for i in 0..<4 {
             c[i] = c1[i]+(c2[i]-c1[i])*rem
         }
-        return UIColor(red: c[0], green: c[1], blue: c[2], alpha: c[3]-0.01)
+        return UIColor(red: c[0], green: c[1], blue: c[2], alpha: c[3])
     }
 }
 
