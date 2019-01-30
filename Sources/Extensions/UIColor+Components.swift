@@ -16,8 +16,23 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
+import UIKit
 
-protocol Navigator {
-    associatedtype Destination
-    func navigate(to destination: Destination)
+extension UIColor {
+    convenience init?(withRgbComponents components: [Double]) {
+        guard components.count == 4 else { return nil }
+        let cgComponents = components.map { CGFloat($0) }
+        self.init(displayP3Red: cgComponents[0], green: cgComponents[1], blue: cgComponents[2], alpha: cgComponents[3])
+    }
+    
+    func rgbComponents() -> [Double]? {
+        var (red, green, blue, alpha) = (CGFloat(0.0), CGFloat(0.0), CGFloat(0.0), CGFloat(0.0))
+        if self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        {
+            return [red, green, blue, alpha].map { Double($0) }
+        }
+        else {
+            return nil
+        }
+    }
 }

@@ -15,11 +15,15 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------------
 
+import Foundation
 import UIKit
 
-class NoConnectionViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
+extension UIViewController {
+    func alert(_ description: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Alert", message: description, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
     }
-    
 }
