@@ -21,11 +21,8 @@ import UIKit
 protocol ViewControllerFactory {
     func makeLoginViewController() -> LoginViewController
     func makeCreateUserViewController() -> CreateUserViewController
+    func makeGameplayViewController() -> GameplayViewController
     func makeChatViewController() -> ChatViewController
-}
-
-protocol NavigatorFactory {
-    func makeLoginNavigator() -> SceneNavigator
 }
 
 class DependencyContainer {
@@ -35,7 +32,7 @@ class DependencyContainer {
     private lazy var networkManager      = NetworkManager(appDelegateEvents: appDelegateEvents!)
     private lazy var networkMessages     = NetworkMessages(networkManager: networkManager)
     private lazy var sessionManager      = SessionManager(networkManager: networkManager, networkMessages: networkMessages)
-    private lazy var loginNavigator      = SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
+    private lazy var sceneNavigator      = SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
     
     init(appDelegateEvents: AppDelegate, navigationController: UINavigationController) {
         self.appDelegateEvents = appDelegateEvents
@@ -43,28 +40,28 @@ class DependencyContainer {
     }
 }
 
-extension DependencyContainer: NavigatorFactory {
-    func makeLoginNavigator() -> SceneNavigator {
-        return SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
-    }
-}
-
 extension DependencyContainer: ViewControllerFactory {
     func makeLoginViewController() -> LoginViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        vc.setupDependencies(navigator: loginNavigator, sessionManager: sessionManager)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager)
         return vc
     }
     
     func makeCreateUserViewController() -> CreateUserViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "CreateUserViewController") as! CreateUserViewController
-        vc.setupDependencies(navigator: loginNavigator, sessionManager: sessionManager)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager)
         return vc
     }
     
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
-        vc.setupDependencies(navigator: loginNavigator, sessionManager: sessionManager, networkManager: networkManager, networkMessages: networkMessages)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager, networkMessages: networkMessages)
+        return vc
+    }
+    
+    func makeGameplayViewController() -> GameplayViewController {
+        let vc = storyboard.instantiateViewController(withIdentifier: "GameplayViewController") as! GameplayViewController
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager, networkMessages: networkMessages)
         return vc
     }
 }

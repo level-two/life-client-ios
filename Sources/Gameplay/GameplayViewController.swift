@@ -35,6 +35,21 @@ class GameplayViewController: UIViewController {
     var numCellsY: CGFloat = 0
     var players  : [PlayerCells] = []
     
+    
+    var navigator: SceneNavigator!
+    var sessionManager: SessionManager!
+    var networkManager: NetworkManager!
+    var networkMessages: NetworkMessages!
+    var user: User!
+    
+    func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkMessages: NetworkMessages) {
+        self.navigator = navigator
+        self.sessionManager = sessionManager
+        self.networkManager = networkManager
+        self.networkMessages = networkMessages
+        self.user = sessionManager.user.require()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         //self.gameFieldView.frame = self.scrollView.bounds
         print(self.view.frame)

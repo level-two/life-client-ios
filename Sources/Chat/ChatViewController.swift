@@ -59,10 +59,6 @@ class ChatViewController: MessagesViewController {
     var messages: [ChatMessage] = []
     var user: User!
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkMessages: NetworkMessages) {
         self.navigator = navigator
         self.sessionManager = sessionManager

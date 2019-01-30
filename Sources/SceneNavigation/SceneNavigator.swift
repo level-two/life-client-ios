@@ -29,8 +29,9 @@ class SceneNavigator: Navigator {
     // for passing arguments from one screen to another.
     enum Destination {
         case login
-        case loginCompleted
         case createUser
+        case gameplay
+        case chat
     }
     
     // In most cases it's totally safe to make this a strong
@@ -59,10 +60,12 @@ class SceneNavigator: Navigator {
         switch destination {
         case .login:
             return factory.makeLoginViewController()
-        case .loginCompleted:
-            return factory.makeChatViewController()
         case .createUser:
             return factory.makeCreateUserViewController()
+        case .gameplay:
+            return factory.makeGameplayViewController()
+        case .chat:
+            return factory.makeChatViewController()
         }
     }
 }

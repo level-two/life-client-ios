@@ -26,11 +26,6 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var colorPreviewLabel: UILabel!
     @IBOutlet weak var activityIndicatorView: UIView!
     
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
@@ -70,7 +65,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
             
             switch result {
             case .value:
-                self.navigator.navigate(to: .loginCompleted)
+                self.navigator.navigate(to: .gameplay)
             case .error(let error):
                 self.alert(error.localizedDescription)
             }

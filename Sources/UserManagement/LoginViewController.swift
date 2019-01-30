@@ -26,10 +26,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     private var sessionManager: SessionManager!
     @IBOutlet weak var activityIndicatorView: UIView!
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         playerNameTextField.delegate = self
@@ -78,7 +74,7 @@ extension LoginViewController {
             switch result {
             case .value:
                 UserDefaults.standard.set(userName, forKey: self.autologinUserNameKey)
-                self.navigator.navigate(to: .loginCompleted)
+                self.navigator.navigate(to: .gameplay)
             case .error(let error):
                 self.alert(error.localizedDescription)
             }
