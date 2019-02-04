@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
-		930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930759FE21E2B4210070A545 /* NetworkMessages.swift */; };
 		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
 		9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0021D41E48009A1FA3 /* Promises.swift */; };
 		9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */; };
@@ -30,13 +29,19 @@
 		93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* SceneNavigator.swift */; };
 		93C9826221D18AC700738709 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826121D18AC700738709 /* SessionManager.swift */; };
 		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
+		93DA241922082D15007CBA4D /* MessageChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241822082D15007CBA4D /* MessageChannelHandler.swift */; };
+		93DA241B22082D56007CBA4D /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241A22082D56007CBA4D /* Message.swift */; };
+		93DA241F22084BD7007CBA4D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241E22084BD7007CBA4D /* Color.swift */; };
+		93DA242122085910007CBA4D /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA242022085910007CBA4D /* ChatMessage.swift */; };
+		93DA2423220874A3007CBA4D /* FrameChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */; };
+		93DA2425220874CA007CBA4D /* EventLoopFuture+cascade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA2424220874CA007CBA4D /* EventLoopFuture+cascade.swift */; };
+		93DA24272208786E007CBA4D /* BridgeChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */; };
 		93F3D31A21EBF7D0004FDF2B /* Event0.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F3D31921EBF7D0004FDF2B /* Event0.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		930759FE21E2B4210070A545 /* NetworkMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMessages.swift; sourceTree = "<group>"; };
 		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		9337CD0021D41E48009A1FA3 /* Promises.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Promises.swift; sourceTree = "<group>"; };
 		9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
@@ -60,6 +65,13 @@
 		93C9825F21D183EE00738709 /* SceneNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigator.swift; sourceTree = "<group>"; };
 		93C9826121D18AC700738709 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		93C9826321D18B5400738709 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		93DA241822082D15007CBA4D /* MessageChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageChannelHandler.swift; sourceTree = "<group>"; };
+		93DA241A22082D56007CBA4D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		93DA241E22084BD7007CBA4D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		93DA242022085910007CBA4D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameChannelHandler.swift; sourceTree = "<group>"; };
+		93DA2424220874CA007CBA4D /* EventLoopFuture+cascade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventLoopFuture+cascade.swift"; sourceTree = "<group>"; };
+		93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeChannelHandler.swift; sourceTree = "<group>"; };
 		93F3D31921EBF7D0004FDF2B /* Event0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event0.swift; sourceTree = "<group>"; };
 		B1D04ECAD47EA6B965018B9E /* Pods-LifeClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,7 +153,6 @@
 		936E8ECE22018F0000FB7689 /* UserManagement */ = {
 			isa = PBXGroup;
 			children = (
-				93C9826321D18B5400738709 /* User.swift */,
 				9392845021D030D800F6C55B /* LoginViewController.swift */,
 				9392845221D030EC00F6C55B /* CreateUserViewController.swift */,
 			);
@@ -160,8 +171,12 @@
 		936E8ED122018F4600FB7689 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				93DA241A22082D56007CBA4D /* Message.swift */,
+				93DA241822082D15007CBA4D /* MessageChannelHandler.swift */,
+				93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */,
+				93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
-				930759FE21E2B4210070A545 /* NetworkMessages.swift */,
+				93DA2424220874CA007CBA4D /* EventLoopFuture+cascade.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -216,6 +231,7 @@
 		93B4F86B21C8636F00A2354E /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				93DA24282208887B007CBA4D /* DataStructures */,
 				936E8ED122018F4600FB7689 /* Network */,
 				936E8ED222018F5300FB7689 /* Session */,
 				936E8ED022018F1D00FB7689 /* SceneNavigation */,
@@ -228,6 +244,16 @@
 				936E8ED422019B4700FB7689 /* Etc */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		93DA24282208887B007CBA4D /* DataStructures */ = {
+			isa = PBXGroup;
+			children = (
+				93C9826321D18B5400738709 /* User.swift */,
+				93DA241E22084BD7007CBA4D /* Color.swift */,
+				93DA242022085910007CBA4D /* ChatMessage.swift */,
+			);
+			path = DataStructures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,23 +394,29 @@
 			files = (
 				9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */,
 				936E8EDA2201C2B000FB7689 /* String+Error.swift in Sources */,
+				93DA241F22084BD7007CBA4D /* Color.swift in Sources */,
 				9392845121D030D800F6C55B /* LoginViewController.swift in Sources */,
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
+				93DA24272208786E007CBA4D /* BridgeChannelHandler.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				937F429F21DD5B1E003F3E31 /* Event1.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
 				936E8ED822019F8B00FB7689 /* CGFloat+Random.swift in Sources */,
+				93DA242122085910007CBA4D /* ChatMessage.swift in Sources */,
 				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
 				93C9826421D18B5400738709 /* User.swift in Sources */,
 				936E8ED722019F8B00FB7689 /* UIColor+Random.swift in Sources */,
-				930759FF21E2B4210070A545 /* NetworkMessages.swift in Sources */,
+				93DA2425220874CA007CBA4D /* EventLoopFuture+cascade.swift in Sources */,
 				9337CD0921D63C15009A1FA3 /* Optional+Require.swift in Sources */,
 				93F3D31A21EBF7D0004FDF2B /* Event0.swift in Sources */,
+				93DA2423220874A3007CBA4D /* FrameChannelHandler.swift in Sources */,
 				93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */,
 				93C9826221D18AC700738709 /* SessionManager.swift in Sources */,
 				93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */,
+				93DA241B22082D56007CBA4D /* Message.swift in Sources */,
 				9337CD0121D41E48009A1FA3 /* Promises.swift in Sources */,
 				9338015221C8FF680056C349 /* NetworkManager.swift in Sources */,
+				93DA241922082D15007CBA4D /* MessageChannelHandler.swift in Sources */,
 				9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

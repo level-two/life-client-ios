@@ -19,35 +19,6 @@ import Foundation
 import NIO
 import NIOFoundationCompat
 
-final class ChannelInboundBridge: ChannelInboundHandler {
-    public typealias InboundIn = ByteBuffer
-    public typealias MessageHandler = (String) -> Void
-
-    private let messageHandler: MessageHandler
-    private var receivedMessage = ""
-    
-    init(messageHandler: @escaping MessageHandler) {
-        self.messageHandler = messageHandler
-    }
-    
-    public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
-        let byteBuf = self.unwrapInboundIn(data)
-        guard let string = byteBuf.getString(at:byteBuf.readerIndex, length:byteBuf.readableBytes) else { return }
-        
-        receivedMessage += string
-        while let range = receivedMessage.rangeOfCharacter(from: .newlines) {
-            let message = receivedMessage[..<range.lowerBound]
-            self.messageHandler(String(message))
-            receivedMessage.removeSubrange(..<range.upperBound)
-        }
-    }
-    
-    public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
-        print("JsonDesChannelInboundHandler error: ", error)
-        ctx.close(promise: nil)
-    }
-}
-
 
 class NetworkManager {
     // MARK: - Types
@@ -68,15 +39,17 @@ class NetworkManager {
     let port = 1337
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     var bootstrap: ClientBootstrap {
-        let inboundBridge = ChannelInboundBridge { [weak self] string in
-            self?.messageHandler?(string)
-        }
-        
         return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .channelInitializer { channel in channel.pipeline.add(handler: inboundBridge)
-        }
+            .channelInitializer { channel in
+                channel.pipeline.addHandlers([
+                    FrameChannelHandler(),
+                    MessageChannelHandler(),
+                    BridgeChannelHandler(messageHandler: { _ in  } )
+                    ], first: true)
+            }
     }
+    
     var channel: Channel? = nil
     var shouldReconnect: Bool = true
     var connectionStateHandler: ConnectionStateHandler?
