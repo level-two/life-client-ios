@@ -21,20 +21,13 @@ import NIOFoundationCompat
 
 
 class NetworkManager {
-    // MARK: - Types
     enum ConnectionState {
         case none
         case connected
     }
     
-    enum NetworkManagerError: Error {
-        case error(String)
-    }
-    
     typealias ConnectionStateHandler = (ConnectionState)->()
-    typealias MessageHandler = (String)->()
     
-    // MARK: - Variables
     let host = "192.168.100.64"
     let port = 1337
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
@@ -58,8 +51,8 @@ class NetworkManager {
             connectionStateHandler?(isConnected ? .connected : .none)
         }
     }
-    var messageHandler: MessageHandler?
     var appDelegateEvents: AppDelegateEvents!
+    var observations = [UUID: (Message)->Void]()
     
     // MARK: - Methods
     init(appDelegateEvents: AppDelegateEvents) {
@@ -70,29 +63,19 @@ class NetworkManager {
     }
     
     @discardableResult
-    func send(string: String) -> Future<Void> {
+    func send(message: Message) -> Future<Void> {
+        print("Sending: \(message)")
         let promise = Promise<Void>()
-        
-        print("Sending: \(string)")
-        
-        guard let ch = self.channel else {
-            promise.reject(with: NetworkManagerError.error("No Connection"))
+        guard let writeFuture = channel?.writeAndFlush(NIOAny(message)) else {
+            promise.reject(with: "No commection")
             return promise
         }
-        
-        var buffer = ch.allocator.buffer(capacity: string.count)
-        buffer.write(string: string)
-        
-        let writePromise = ch.writeAndFlush(buffer)
-        writePromise.whenSuccess {
-            print("Message sent")
+        writeFuture.whenSuccess {
             promise.resolve(with: ())
         }
-        writePromise.whenFailure { error in
-            print("Failed to send message: \(error)")
+        writeFuture.whenFailure { error in
             promise.reject(with: error)
         }
-        
         return promise
     }
     
@@ -125,5 +108,39 @@ class NetworkManager {
     func onApplicationWillEnterForeground() {
         shouldReconnect = true
         connectToServer()
+    }
+}
+
+extension NetworkManager {
+    class ObservationToken {
+        private let cancellationClosure: ()->Void
+        
+        init(cancellationClosure: @escaping ()->Void) {
+            self.cancellationClosure = cancellationClosure
+        }
+        
+        func cancel() {
+            cancellationClosure()
+        }
+    }
+    
+    @discardableResult
+    func addObserver<T:AnyObject>(_ observer: T, closure: @escaping (Message)->Void) -> ObservationToken {
+        let id = UUID()
+        observations[id] = { [weak self, weak observer] message in
+            guard let _ = observer else {
+                self?.observations.removeValue(forKey: id)
+                return
+            }
+            closure(message)
+        }
+        
+        return ObservationToken { [weak self] in
+            self?.observations.removeValue(forKey: id)
+        }
+    }
+    
+    private func notifyObservers(message: Message) {
+        observations.values.forEach { $0(message) }
     }
 }

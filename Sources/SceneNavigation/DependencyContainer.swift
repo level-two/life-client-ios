@@ -30,8 +30,7 @@ class DependencyContainer {
     private weak var appDelegateEvents   : AppDelegateEvents?
     private lazy var storyboard          = UIStoryboard(name: "Main", bundle: nil)
     private lazy var networkManager      = NetworkManager(appDelegateEvents: appDelegateEvents!)
-    private lazy var networkMessages     = NetworkMessages(networkManager: networkManager)
-    private lazy var sessionManager      = SessionManager(networkManager: networkManager, networkMessages: networkMessages)
+    private lazy var sessionManager      = SessionManager(networkManager: networkManager)
     private lazy var sceneNavigator      = SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
     
     init(appDelegateEvents: AppDelegate, navigationController: UINavigationController) {
@@ -55,13 +54,13 @@ extension DependencyContainer: ViewControllerFactory {
     
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager, networkMessages: networkMessages)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
         return vc
     }
     
     func makeGameplayViewController() -> GameplayViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "GameplayViewController") as! GameplayViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager, networkMessages: networkMessages)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
         return vc
     }
 }

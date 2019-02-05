@@ -26,9 +26,10 @@ enum Message: Codable {
     case loginResponse(user: User?, error: String?)
     case logoutResponse(user: User?, error: String?)
     
+    case sendChatMessage(message: String)
+    case getChatMessages(fromId: Int?, count: Int?)
     case chatMessage(message: ChatMessage)
     case chatMessages(messages: [ChatMessage]?, error: String?)
-    case getChatMessages(fromId: Int?, count: Int?)
 }
 
 extension Message {
@@ -41,9 +42,10 @@ extension Message {
         case loginResponse
         case logoutResponse
         
+        case sendChatMessage
+        case getChatMessages
         case chatMessage
         case chatMessages
-        case getChatMessages
     }
     
     private enum AuxCodingKeys: String, CodingKey {
@@ -70,6 +72,7 @@ extension Message {
         case .loginResponse:      self = try .loginResponse(user: dec(.user), error: dec(.error))
         case .logoutResponse:     self = try .logoutResponse(user: dec(.user), error: dec(.error))
             
+        case .sendChatMessage:    self = try .sendChatMessage(message: dec())
         case .chatMessage:        self = try .chatMessage(message: dec())
         case .chatMessages:       self = try .chatMessages(messages: dec(.messages), error: dec(.error))
         case .getChatMessages:    self = try .getChatMessages(fromId: dec(.fromId), count: dec(.count))
@@ -98,6 +101,8 @@ extension Message {
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .logoutResponse)
             try nestedContainter.encode(user, forKey:.user)
             try nestedContainter.encode(error, forKey:.error)
+        case .sendChatMessage(let message):
+            try container.encode(message, forKey:.sendChatMessage)
         case .chatMessage(let message):
             try container.encode(message, forKey:.chatMessage)
         case .chatMessages(let messages, let error):

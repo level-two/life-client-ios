@@ -40,7 +40,7 @@ extension ChatMessage: MessageType {
 
 extension ChatMessage {
     static var dummy: ChatMessage {
-        return ChatMessage(user: User(userName:"", userId:0, color:.black), message:"", id:0)
+        return ChatMessage(user: User(userName:"", userId:0, color:UIColor.black.color), message:"", id:0)
     }
 }
 
@@ -50,7 +50,6 @@ class ChatViewController: MessagesViewController {
     private var navigator: SceneNavigator!
     private var sessionManager: SessionManager!
     private var networkManager: NetworkManager!
-    private var networkMessages: NetworkMessages!
     
     @IBOutlet weak var activityIndicatorView: UIView!
     @IBOutlet weak var logoutButton: UIButton!
@@ -59,11 +58,10 @@ class ChatViewController: MessagesViewController {
     var messages: [ChatMessage] = []
     var user: User!
     
-    func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager, networkManager: NetworkManager, networkMessages: NetworkMessages) {
+    func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager, networkManager: NetworkManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.networkManager = networkManager
-        self.networkMessages = networkMessages
         self.user = sessionManager.user.require()
     }
     
@@ -81,10 +79,18 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesLayoutDelegate = self
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
-        self.networkMessages.chatMessage.addHandler(target: self, handler: ChatViewController.onChatMessage)
-        self.networkMessages.chatMessagesResponse.addHandler(target: self, handler: ChatViewController.onChatMessagesResponse)
+        
+        self.networkManager.addObserver(self) { [weak self] message in
+            guard let self = self else { return }
+            switch message {
+            case .chatMessage(let message): self.onChatMessage(message)
+            case .chatMessages(let messages, let error): self.onChatMessagesResponse(messages, error)
+            default: ()
+            }
+        }
+        
         self.sessionManager.loginStateEvent.addHandler(target: self, handler: ChatViewController.onLoginStateChanged)
-        self.networkMessages.send(message: GetRecentChatMessages())
+        self.networkManager.send(message: .getChatMessages(fromId: nil, count: 10))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -93,8 +99,6 @@ class ChatViewController: MessagesViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.networkMessages.chatMessage.removeTarget(self)
-        self.networkMessages.chatMessagesResponse.removeTarget(self)
         self.sessionManager.loginStateEvent.removeTarget(self)
     }
     
@@ -104,7 +108,7 @@ class ChatViewController: MessagesViewController {
         }
         
         if isLogged {
-            self.networkMessages.send(message: GetRecentChatMessages(fromId: messages.last?.id))
+            self.networkManager.send(message: .getChatMessages(fromId: messages.last?.id, count:nil))
         }
     }
     
@@ -117,10 +121,10 @@ class ChatViewController: MessagesViewController {
         let count = firstIndex >= 10 ? 10 : firstIndex
         let fromId = firstIndex - count
         
-        self.networkMessages.send(message: GetChatMessages(fromId: fromId, count: count))
+        self.networkManager.send(message: .getChatMessages(fromId: fromId, count: count))
     }
     
-    private func onChatMessage(message: ChatMessage) {
+    private func onChatMessage(_ message: ChatMessage) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
@@ -139,16 +143,12 @@ class ChatViewController: MessagesViewController {
         }
     }
     
-    private func onChatMessagesResponse(response: ChatMessagesResponse) {
+    private func onChatMessagesResponse(_ chatMessages: [ChatMessage]?, _ error: Error?) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            guard let chatHistory = response.chatHistory else { return }
             
             let messagesWereEmpty = (self.messages.count == 0)
-            
-            for message in chatHistory {
-                self.addMessage(message: message)
-            }
+            chatMessages?.forEach(self.addMessage)
             
             if messagesWereEmpty {
                 self.messagesCollectionView.reloadData()
@@ -224,19 +224,17 @@ extension ChatViewController: MessagesDisplayDelegate {
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
         let message = messages[indexPath.section]
-        avatarView.backgroundColor = message.user.color
+        avatarView.backgroundColor = message.user.color.uiColor
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        self.networkMessages.send(message: SendChatMessage(message: text)).observe { [weak self] result in
+        self.networkManager.send(message: .sendChatMessage(message: text)).observe { [weak self] result in
             DispatchQueue.main.async { [weak self] in
                 switch result {
-                case .error:
-                    self?.alert("Failed to send message")
-                case .value:
-                    inputBar.inputTextView.text = ""
+                case .error: self?.alert("Failed to send message")
+                case .value: inputBar.inputTextView.text = ""
                 }
             }
         }
