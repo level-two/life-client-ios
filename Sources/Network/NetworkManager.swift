@@ -34,11 +34,11 @@ class NetworkManager {
     var bootstrap: ClientBootstrap {
         return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .channelInitializer { channel in
+            .channelInitializer { [weak self] channel in
                 channel.pipeline.addHandlers([
                     FrameChannelHandler(),
                     MessageChannelHandler(),
-                    BridgeChannelHandler(messageHandler: { _ in  } )
+                    BridgeChannelHandler { [weak self] message in self?.observable.notifyObservers(message) }
                     ], first: true)
             }
     }
@@ -52,7 +52,8 @@ class NetworkManager {
         }
     }
     var appDelegateEvents: AppDelegateEvents!
-    var observations = [UUID: (Message)->Void]()
+    
+    public var observable = Observable<Message>()
     
     // MARK: - Methods
     init(appDelegateEvents: AppDelegateEvents) {
@@ -108,39 +109,5 @@ class NetworkManager {
     func onApplicationWillEnterForeground() {
         shouldReconnect = true
         connectToServer()
-    }
-}
-
-extension NetworkManager {
-    class ObservationToken {
-        private let cancellationClosure: ()->Void
-        
-        init(cancellationClosure: @escaping ()->Void) {
-            self.cancellationClosure = cancellationClosure
-        }
-        
-        func cancel() {
-            cancellationClosure()
-        }
-    }
-    
-    @discardableResult
-    func addObserver<T:AnyObject>(_ observer: T, closure: @escaping (Message)->Void) -> ObservationToken {
-        let id = UUID()
-        observations[id] = { [weak self, weak observer] message in
-            guard let _ = observer else {
-                self?.observations.removeValue(forKey: id)
-                return
-            }
-            closure(message)
-        }
-        
-        return ObservationToken { [weak self] in
-            self?.observations.removeValue(forKey: id)
-        }
-    }
-    
-    private func notifyObservers(message: Message) {
-        observations.values.forEach { $0(message) }
     }
 }

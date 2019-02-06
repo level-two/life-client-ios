@@ -36,13 +36,9 @@ class SessionManager {
     private var loginPromise: Promise<User>?
     private var logoutPromise: Promise<User>?
     private var createUserPromise: Promise<User>?
-    private var isLoggedIn = false {
-        didSet {
-            loginStateEvent.raise(with: isLoggedIn)
-        }
-    }
     private var sessionId: Int?
-    let loginStateEvent = Event1<Bool>()
+    private var isLoggedIn = false { didSet { loginStateObservable.notifyObservers(self.isLoggedIn) } }
+    let loginStateObservable = Observable<Bool>()
     
     // Methods
     init(networkManager: NetworkManager) {
@@ -57,7 +53,7 @@ class SessionManager {
             }
         }
         
-        networkManager.addObserver(self) { [weak self] message in
+        networkManager.observable.addObserver(self) { [weak self] message in
             guard let self = self else { return }
             switch message {
             case .loginResponse(let user, let error):      self.onLoginResponse (user: user, error: error)

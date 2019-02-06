@@ -27,9 +27,9 @@ protocol ViewControllerFactory {
 
 class DependencyContainer {
     private weak var navigationController: UINavigationController!
-    private weak var appDelegateEvents   : AppDelegateEvents?
+    private      var appDelegateEvents   : AppDelegateEvents
     private lazy var storyboard          = UIStoryboard(name: "Main", bundle: nil)
-    private lazy var networkManager      = NetworkManager(appDelegateEvents: appDelegateEvents!)
+    private lazy var networkManager      = NetworkManager(appDelegateEvents: appDelegateEvents)
     private lazy var sessionManager      = SessionManager(networkManager: networkManager)
     private lazy var sceneNavigator      = SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
     

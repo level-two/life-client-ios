@@ -80,7 +80,7 @@ class ChatViewController: MessagesViewController {
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         
-        self.networkManager.addObserver(self) { [weak self] message in
+        self.networkManager.observable.addObserver(self) { [weak self] message in
             guard let self = self else { return }
             switch message {
             case .chatMessage(let message): self.onChatMessage(message)
