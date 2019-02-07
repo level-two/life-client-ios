@@ -19,15 +19,15 @@ import Foundation
 import NIO
 
 final class MessageChannelHandler: ChannelInboundHandler, ChannelOutboundHandler {
-    public typealias InboundIn = Data
+    public typealias InboundIn = String
     public typealias InboundOut = Message
     public typealias OutboundIn = Message
     public typealias OutboundOut = Data
     
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         do {
-            let jsonData = self.unwrapInboundIn(data)
-            let message = try JSONDecoder().decode(Message.self, from: jsonData)
+            let jsonString = self.unwrapInboundIn(data)
+            let message = try JSONDecoder().decode(Message.self, from: Data(jsonString.utf8))
             ctx.fireChannelRead(self.wrapInboundOut(message))
         }
         catch {

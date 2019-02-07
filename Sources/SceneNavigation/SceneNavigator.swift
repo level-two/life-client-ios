@@ -18,35 +18,32 @@
 import Foundation
 import UIKit
 
-protocol Navigator {
-    associatedtype Destination
+// Here we define a set of supported destinations using an
+// enum, and we can also use associated values to add support
+// for passing arguments from one screen to another.
+enum Destination {
+    case login
+    case createUser
+    case gameplay
+    case chat
+}
+
+protocol SceneNavigatorProtocol {
     func navigate(to destination: Destination)
 }
 
-class SceneNavigator: Navigator {
-    // Here we define a set of supported destinations using an
-    // enum, and we can also use associated values to add support
-    // for passing arguments from one screen to another.
-    enum Destination {
-        case login
-        case createUser
-        case gameplay
-        case chat
-    }
-    
+class SceneNavigator: SceneNavigatorProtocol {
     // In most cases it's totally safe to make this a strong
     // reference, but in some situations it could end up
     // causing a retain cycle, so better be safe than sorry :)
     private weak var navigationController: UINavigationController!
-    private var factory: ViewControllerFactory
+    private      var factory: ViewControllerFactory!
     
-    // MARK: - Initializer
-    init(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController) {
+    func setupDependencies(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController) {
         self.factory = factory
         self.navigationController = navigationController
     }
     
-    // MARK: - Navigator
     func navigate(to destination: Destination) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -55,7 +52,6 @@ class SceneNavigator: Navigator {
         }
     }
     
-    // MARK: - Private
     private func makeViewController(for destination: Destination) -> UIViewController {
         switch destination {
         case .login:

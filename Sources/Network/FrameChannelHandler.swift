@@ -20,22 +20,22 @@ import NIO
 
 final class FrameChannelHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
-    public typealias InboundOut = Data
+    public typealias InboundOut = String
     
-    var collectedData = Data()
+    var collected = ""
     
     public func channelRead(ctx: ChannelHandlerContext, byteBufWrapped: NIOAny) {
         let byteBuf = self.unwrapInboundIn(byteBufWrapped)
-        guard let dataChunk = byteBuf.getData(at: byteBuf.readerIndex, length: byteBuf.readableBytes) else {
+        guard let chunk = byteBuf.getString(at: byteBuf.readerIndex, length: byteBuf.readableBytes) else {
             ctx.fireErrorCaught("Failed to get data from byte buffer")
             return
         }
-        collectedData += dataChunk
+        collected += chunk
         
-        while let delimiterIndex = collectedData.range(of: "\n".data(using:.utf8)!) {
-            let messageData = collectedData[..<delimiterIndex.lowerBound]
-            ctx.fireChannelRead(self.wrapInboundOut(messageData))
-            collectedData.removeSubrange(..<delimiterIndex.upperBound)
+        while let newlineRange = collected.rangeOfCharacter(from: .newlines) {
+            let message = collected[..<newlineRange.lowerBound]
+            ctx.fireChannelRead(self.wrapInboundOut(String(message)))
+            collected.removeSubrange(..<newlineRange.upperBound)
         }
     }
     

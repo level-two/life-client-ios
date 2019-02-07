@@ -19,23 +19,24 @@ import Foundation
 import UIKit
 
 protocol ViewControllerFactory {
-    func makeLoginViewController() -> LoginViewController
+    func makeLoginViewController()      -> LoginViewController
     func makeCreateUserViewController() -> CreateUserViewController
-    func makeGameplayViewController() -> GameplayViewController
-    func makeChatViewController() -> ChatViewController
+    func makeGameplayViewController()   -> GameplayViewController
+    func makeChatViewController()       -> ChatViewController
 }
 
 class DependencyContainer {
-    private weak var navigationController: UINavigationController!
-    private      var appDelegateEvents   : AppDelegateEvents
-    private lazy var storyboard          = UIStoryboard(name: "Main", bundle: nil)
-    private lazy var networkManager      = NetworkManager(appDelegateEvents: appDelegateEvents)
-    private lazy var sessionManager      = SessionManager(networkManager: networkManager)
-    private lazy var sceneNavigator      = SceneNavigator(viewControllerFactory: self, navigationController: navigationController)
+    private var storyboard    : UIStoryboard!
+    private var networkManager: NetworkManagerProtocol!
+    private var sessionManager: SessionProtocol!
+    private var sceneNavigator: SceneNavigatorProtocol!
     
-    init(appDelegateEvents: AppDelegate, navigationController: UINavigationController) {
-        self.appDelegateEvents = appDelegateEvents
-        self.navigationController = navigationController
+    func setupDependencies(storyboard: UIStoryboard, networkManager: NetworkManagerProtocol,
+                           sessionManager: SessionProtocol, sceneNavigator: SceneNavigatorProtocol) {
+        self.storyboard     = storyboard
+        self.networkManager = networkManager
+        self.sessionManager = sessionManager
+        self.sceneNavigator = sceneNavigator
     }
 }
 

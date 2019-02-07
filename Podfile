@@ -7,7 +7,5 @@ target 'LifeClient' do
 
   # Pods for LifeClient
   pod 'SwiftNIO'
-  # pod 'SwiftNIOFoundationCompat'
   pod 'MessageKit'
-  pod 'RxSwift'
 end

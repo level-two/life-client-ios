@@ -18,7 +18,17 @@
 import Foundation
 import UIKit
 
-class SessionManager {
+protocol SessionProtocol {
+    var loginStateObservable: Observable<Bool> { get }
+    var user: User? { get }
+    
+    @discardableResult func createUserAndLogin(userName: String, uicolor: UIColor) -> Future<User>
+    @discardableResult func createUser(userName: String, uicolor: UIColor) -> Future<User>
+    @discardableResult func login(userName: String) -> Future<User>
+    @discardableResult func logout(userName: String) -> Future<User>
+}
+
+class SessionManager: SessionProtocol {
     // Types
     enum SessionManagerError: Error {
         case loginError
@@ -26,34 +36,30 @@ class SessionManager {
         case createUserError
     }
     
-    typealias MessageHandler = (Any) -> ()
-    
     // Variables
+    var loginStateObservable = Observable<Bool>()
     var user: User?
-    var messageHandler: MessageHandler?
     
-    private let networkManager: NetworkManager
+    private var networkManager: NetworkManagerProtocol!
     private var loginPromise: Promise<User>?
     private var logoutPromise: Promise<User>?
     private var createUserPromise: Promise<User>?
     private var sessionId: Int?
     private var isLoggedIn = false { didSet { loginStateObservable.notifyObservers(self.isLoggedIn) } }
-    let loginStateObservable = Observable<Bool>()
     
-    // Methods
-    init(networkManager: NetworkManager) {
+    func setupDependencies(networkManager: NetworkManagerProtocol) {
         self.networkManager = networkManager
-        networkManager.connectionStateHandler = { [weak self] state in
+        networkManager.onConnectedToServer.addObserver(self) { [weak self] isConnected in
             guard let self = self else { return }
-            if self.user != nil && state == .connected {
-                _ = self.login(userName: self.user!.userName)
+            if self.user != nil && isConnected {
+                self.login(userName: self.user!.userName)
             }
             else {
                 self.isLoggedIn = false
             }
         }
         
-        networkManager.observable.addObserver(self) { [weak self] message in
+        networkManager.onMessage.addObserver(self) { [weak self] message in
             guard let self = self else { return }
             switch message {
             case .loginResponse(let user, let error):      self.onLoginResponse (user: user, error: error)
@@ -65,6 +71,7 @@ class SessionManager {
         }
     }
     
+    @discardableResult
     func createUserAndLogin(userName: String, uicolor: UIColor) -> Future<User> {
         return createUser(userName:userName, uicolor: uicolor)
             .chained { [weak self] user in
@@ -73,6 +80,7 @@ class SessionManager {
         }
     }
     
+    @discardableResult
     func createUser(userName: String, uicolor: UIColor) -> Future<User> {
         let user = User(userName: userName, userId: nil, color: uicolor.color)
         self.createUserPromise = Promise<User>()
@@ -85,6 +93,7 @@ class SessionManager {
         return self.createUserPromise!
     }
     
+    @discardableResult
     func login(userName: String) -> Future<User> {
         self.loginPromise = Promise<User>()
         networkManager.send(message: .login(userName: userName)).observe { [weak self] result in
@@ -96,6 +105,7 @@ class SessionManager {
         return self.loginPromise!
     }
     
+    @discardableResult
     func logout(userName: String) -> Future<User> {
         self.logoutPromise = Promise<User>()
         networkManager.send(message: .logout(userName: userName)).observe { [weak self] result in

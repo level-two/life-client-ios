@@ -36,12 +36,12 @@ class GameplayViewController: UIViewController {
     var players  : [PlayerCells] = []
     
     
-    var navigator: SceneNavigator!
-    var sessionManager: SessionManager!
-    var networkManager: NetworkManager!
+    var navigator: SceneNavigatorProtocol!
+    var sessionManager: SessionProtocol!
+    var networkManager: NetworkManagerProtocol!
     var user: User!
     
-    func setupDependencies(navigator: SceneNavigator, sessionManager: SessionManager, networkManager: NetworkManager) {
+    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol, networkManager: NetworkManagerProtocol) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.networkManager = networkManager

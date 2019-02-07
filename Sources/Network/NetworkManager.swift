@@ -17,16 +17,17 @@
 
 import Foundation
 import NIO
-import NIOFoundationCompat
 
-
-class NetworkManager {
-    enum ConnectionState {
-        case none
-        case connected
-    }
+protocol NetworkManagerProtocol {
+    var onMessage           : Observable<Message> { get }
+    var onConnectedToServer : Observable<Bool>    { get }
     
-    typealias ConnectionStateHandler = (ConnectionState)->()
+    @discardableResult func send(message: Message) -> Future<Void>
+}
+
+class NetworkManager: NetworkManagerProtocol {
+    let onMessage           = Observable<Message>()
+    let onConnectedToServer = Observable<Bool>()
     
     let host = "192.168.100.64"
     let port = 1337
@@ -38,49 +39,43 @@ class NetworkManager {
                 channel.pipeline.addHandlers([
                     FrameChannelHandler(),
                     MessageChannelHandler(),
-                    BridgeChannelHandler { [weak self] message in self?.observable.notifyObservers(message) }
+                    BridgeChannelHandler { [weak self] message in self?.onMessage.notifyObservers(message) }
                     ], first: true)
             }
     }
     
     var channel: Channel? = nil
     var shouldReconnect: Bool = true
-    var connectionStateHandler: ConnectionStateHandler?
-    var isConnected = false {
-        didSet {
-            connectionStateHandler?(isConnected ? .connected : .none)
+    var isConnected = false { didSet { onConnectedToServer.notifyObservers(self.isConnected) } }
+    
+    func setupDependencies(appState: ApplicationStateObservable) {
+        appState.appStateObservable.addObserver(self) { [weak self] state in
+            guard let self = self else { return }
+            switch state {
+            case .didEnterBackground:
+                self.shouldReconnect = false
+                _ = self.channel?.close()
+            case .willEnterForeground:
+                self.shouldReconnect = true
+                self.run()
+            default: ()
+            }
         }
-    }
-    var appDelegateEvents: AppDelegateEvents!
-    
-    public var observable = Observable<Message>()
-    
-    // MARK: - Methods
-    init(appDelegateEvents: AppDelegateEvents) {
-        self.appDelegateEvents = appDelegateEvents
-        appDelegateEvents.onApplicationDidEnterBackground.addHandler(target: self, handler: NetworkManager.onApplicationDidEnterBackground)
-        appDelegateEvents.onApplicationWillEnterForeground.addHandler(target: self, handler: NetworkManager.onApplicationWillEnterForeground)
-        connectToServer()
     }
     
     @discardableResult
     func send(message: Message) -> Future<Void> {
-        print("Sending: \(message)")
-        let promise = Promise<Void>()
         guard let writeFuture = channel?.writeAndFlush(NIOAny(message)) else {
-            promise.reject(with: "No commection")
-            return promise
+            return Promise<Void>(error: "No connection")
         }
-        writeFuture.whenSuccess {
-            promise.resolve(with: ())
-        }
-        writeFuture.whenFailure { error in
-            promise.reject(with: error)
-        }
+        
+        let promise = Promise<Void>()
+        writeFuture.whenSuccess { promise.resolve(with: ()) }
+        writeFuture.whenFailure { error in promise.reject(with: error) }
         return promise
     }
     
-    private func connectToServer() {
+    func run() {
         print("Connecting to \(host):\(port)...")
         self.bootstrap
             .connect(host: self.host, port: self.port)
@@ -96,18 +91,8 @@ class NetworkManager {
                 self.isConnected = false
                 if self.shouldReconnect {
                     sleep(1)
-                    self.connectToServer()
+                    self.run()
                 }
             }
-    }
-    
-    func onApplicationDidEnterBackground() {
-        shouldReconnect = false
-        _ = self.channel?.close()
-    }
-    
-    func onApplicationWillEnterForeground() {
-        shouldReconnect = true
-        connectToServer()
     }
 }
