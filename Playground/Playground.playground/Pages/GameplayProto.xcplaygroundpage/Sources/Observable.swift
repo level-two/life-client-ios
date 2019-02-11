@@ -17,28 +17,38 @@
 
 import Foundation
 
-class Network {
-    private var freeConnectionId = 0
-    private var connections = [Connection]()
+class Observable<T> {
+    var observations = [UUID: (T)->Void]()
     
-    public func establishConnection() -> (Connection, Connection) {
-        let aliceId = freeConnectionId
-        let bobId   = freeConnectionId + 1
-        freeConnectionId += 2
+    class ObservationToken {
+        private let cancellationClosure: ()->Void
         
-        let alice = Connection(network: self, connectionId: aliceId, peerId: bobId)
-        let bob   = Connection(network: self, connectionId: bobId, peerId: aliceId)
+        init(cancellationClosure: @escaping ()->Void) {
+            self.cancellationClosure = cancellationClosure
+        }
         
-        connections += [alice, bob]
-        
-        return (alice, bob)
+        func cancel() {
+            cancellationClosure()
+        }
     }
     
-    public func transmit(_ message: Message, to peerId: Int) {
-        // TODO introduce short constant delay
-        // TODO introduce delay jitter
-        // TODO introduce long delays
-        // TODO introduce packet loss
-        connections.first { $0.connectionId == peerId }?.receive(message)
+    @discardableResult
+    func addObserver<U:AnyObject>(_ observer: U, closure: @escaping (T)->Void) -> ObservationToken {
+        let id = UUID()
+        observations[id] = { [weak self, weak observer] message in
+            guard let _ = observer else {
+                self?.observations.removeValue(forKey: id)
+                return
+            }
+            closure(message)
+        }
+        
+        return ObservationToken { [weak self] in
+            self?.observations.removeValue(forKey: id)
+        }
+    }
+    
+    func notifyObservers(_ message: T) {
+        observations.values.forEach { $0(message) }
     }
 }
