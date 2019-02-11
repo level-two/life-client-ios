@@ -1,16 +1,16 @@
 import Foundation
 
-class GameField {
+public class GameField {
     let width  = 16
     let height = 16
     
-    var gameField: [Cell?]
-    var placedCells: [Cell]
+    public var gameField: [Cell?]
+    public var placedCells: [Cell]
     
     var prevGameField: [Cell?]
     var prevPlacedCells: [Cell]
     
-    init() {
+    public init() {
         placedCells     = []
         prevPlacedCells = []
         gameField       = .init(repeating: nil, count: width*height)
@@ -27,39 +27,39 @@ class GameField {
     }
     */
     
-    func updateForNewCycle() {
+    public func updateForNewCycle() {
         prevPlacedCells = placedCells
         placedCells     = []
         prevGameField   = gameField
         calcCurrentGameField()
     }
     
-    func canPlaceCell(_ cell: Cell) -> Bool {
+    public func canPlaceCell(_ cell: Cell) -> Bool {
         let (x, y) = cell.pos
         return gameField[y*width+x] == nil
     }
     
-    func placeCell(_ cell: Cell) {
+    public func placeCell(_ cell: Cell) {
         placedCells.append(cell)
     }
     
-    func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
+    public func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
         let (x, y) = cell.pos
         return prevGameField[y*width+x] == nil
     }
     
-    func placeCellInPrevCycle(_ cell: Cell) {
+    public func placeCellInPrevCycle(_ cell: Cell) {
         prevPlacedCells.append(cell)
         calcCurrentGameField()
         removeCurrentlyPlacedCellsIfConflicts()
     }
     
-    func updateGameFieldForNewCycle() {
+    public func updateGameFieldForNewCycle() {
         prevGameField = gameField
         calcCurrentGameField()
     }
     
-    func calcCurrentGameField() {
+    public func calcCurrentGameField() {
         // TODO: Add life
         gameField = prevGameField
         prevPlacedCells.forEach { [unowned self] cell in
@@ -68,7 +68,7 @@ class GameField {
         }
     }
     
-    func removeCurrentlyPlacedCellsIfConflicts() {
+    public func removeCurrentlyPlacedCellsIfConflicts() {
         placedCells = placedCells.filter(canPlaceCell)
     }
 }

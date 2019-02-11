@@ -17,23 +17,23 @@
 
 import Foundation
 
-class Observable<T> {
+public class Observable<T> {
     var observations = [UUID: (T)->Void]()
     
-    class ObservationToken {
+    public class ObservationToken {
         private let cancellationClosure: ()->Void
         
-        init(cancellationClosure: @escaping ()->Void) {
+        public init(cancellationClosure: @escaping ()->Void) {
             self.cancellationClosure = cancellationClosure
         }
         
-        func cancel() {
+        public func cancel() {
             cancellationClosure()
         }
     }
     
     @discardableResult
-    func addObserver<U:AnyObject>(_ observer: U, closure: @escaping (T)->Void) -> ObservationToken {
+    public func addObserver<U:AnyObject>(_ observer: U, closure: @escaping (T)->Void) -> ObservationToken {
         let id = UUID()
         observations[id] = { [weak self, weak observer] message in
             guard let _ = observer else {
@@ -48,7 +48,7 @@ class Observable<T> {
         }
     }
     
-    func notifyObservers(_ message: T) {
+    public func notifyObservers(_ message: T) {
         observations.values.forEach { $0(message) }
     }
 }

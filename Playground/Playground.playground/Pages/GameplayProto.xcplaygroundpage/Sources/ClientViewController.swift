@@ -18,42 +18,24 @@
 import Foundation
 import UIKit
 
-class ClientViewController: UIViewController {
-    struct PlayerCells {
-        var color: UIColor
-        var cells: [Cell]
-    }
-    
+public class ClientViewController: UIViewController {
     var cellSize : CGFloat = 10.0
-    var numCellsX = 16
-    var numCellsY = 16
-    var players  : [PlayerCells] = []
     
-    override func loadView() {
+    override public func loadView() {
         self.view = UIView()
         self.view.backgroundColor = .white
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        let numPlayers = 4
-        for userId in 0..<numPlayers {
-            var cells = [Cell]()
-            let cellsNum = arc4random() % 200
-            for _ in 0..<cellsNum {
-                let x = Int.random(in:0..<numCellsX)
-                let y = Int.random(in:0..<numCellsY)
-                cells.append(Cell(pos: (x: x, y: y), userId: userId))
-            }
-            players.append(PlayerCells(color: .random, cells: cells))
-        }
+    public func draw(with gameField: GameField) {
+        self.view.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         
-        players.forEach { [weak self] player in
-            guard let self = self else { return }
-            
-            let cellSize = self.cellSize
+        let cells   = gameField.gameField.compactMap{ $0 }
+        let userIds = cells.map{ $0.userId }.orderedSet
+        
+        userIds.forEach { userId in
+            let cellsPerUserId = cells.filter{ $0.userId == userId }
             let cellsPath = CGMutablePath()
-            
-            player.cells.forEach { cell in
+            cellsPerUserId.forEach { cell in
                 cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
                                          y: CGFloat(cell.pos.y) * cellSize,
                                          width: cellSize,
@@ -61,17 +43,18 @@ class ClientViewController: UIViewController {
             }
             let layer = CAShapeLayer()
             layer.path = cellsPath
-            layer.fillColor = player.color.cgColor
-            
+            layer.fillColor = cellsPerUserId.first!.color.cgColor
             self.view.layer.addSublayer(layer)
         }
         
         let grid = CGMutablePath()
-        for x in 0...Int(numCellsX) {
+        let numCellsX = gameField.width
+        let numCellsY = gameField.height
+        for x in 0...numCellsX {
             grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
             grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*CGFloat(numCellsY)))
         }
-        for y in 0...Int(numCellsY) {
+        for y in 0...numCellsY {
             grid.move(to: CGPoint(x: 0, y: CGFloat(y)*cellSize))
             grid.addLine(to: CGPoint(x: cellSize*CGFloat(numCellsX), y: CGFloat(y)*cellSize))
         }
@@ -82,18 +65,15 @@ class ClientViewController: UIViewController {
     }
 }
 
-class GameFieldView: UIView {
-    
-    func redraw(with gameField: GameField) {
-        
+extension UIColor {
+    static var random: UIColor {
+        return UIColor(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1.0)
     }
 }
 
-extension UIColor {
-    static var random: UIColor {
-        return UIColor(red:   .random(in: 0...1),
-                       green: .random(in: 0...1),
-                       blue:  .random(in: 0...1),
-                       alpha: 1.0)
+extension Array where Element:Hashable {
+    var orderedSet: Array {
+        var unique = Set<Element>()
+        return self.filter { unique.insert($0).inserted }
     }
 }

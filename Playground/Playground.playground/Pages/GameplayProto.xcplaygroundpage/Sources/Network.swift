@@ -17,9 +17,12 @@
 
 import Foundation
 
-class Network {
+public class Network {
     private var freeConnectionId = 0
     private var connections = [Connection]()
+    
+    public init() {
+    }
     
     public func establishConnection() -> (Connection, Connection) {
         let aliceId = freeConnectionId

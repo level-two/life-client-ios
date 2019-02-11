@@ -17,8 +17,8 @@
 
 import Foundation
 
-class Connection {
-    typealias ReceiveCallback = (Message, Int) -> Void
+public class Connection {
+    public typealias ReceiveCallback = (Message, Int) -> Void
     
     // Public
     public var connectionId: Int {
@@ -33,7 +33,7 @@ class Connection {
     let peerId: Int
     var receiveCallback: ReceiveCallback?
     
-    init(network: Network, connectionId: Int, peerId: Int) {
+    public init(network: Network, connectionId: Int, peerId: Int) {
         self.network = network
         self.connectionIdVal = connectionId
         self.peerId = peerId

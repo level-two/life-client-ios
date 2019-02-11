@@ -17,9 +17,12 @@
 
 import Foundation
 
-class Server {
+public class Server {
     var connections = [Connection]()
     let onMessage = Observable<Message>()
+    
+    public init() {
+    }
     
     public func established(connection: Connection) {
         connections.append(connection)

@@ -17,7 +17,7 @@
 
 import Foundation
 
-class ServerGameplayModel {
+public class ServerGameplayModel {
     
     // TODO:
     // - Add update timer. On update:
@@ -44,7 +44,7 @@ class ServerGameplayModel {
     var updateTimer: Timer?
     var cycle = 0
     
-    init(server: Server) {
+    public init(server: Server) {
         self.server = server
         server.onMessage.addObserver(self) { [weak self] message in self?.onMessage(message) }
         updateTimer = Timer(timeInterval: updatePeriod, repeats: true) { [weak self] _ in self?.update() }

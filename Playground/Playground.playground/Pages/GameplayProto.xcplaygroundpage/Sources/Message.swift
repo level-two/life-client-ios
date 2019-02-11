@@ -17,7 +17,7 @@
 
 import Foundation
 
-enum Message {
+public enum Message {
     case placeCell(gameCycle: Int, cell: Cell)
     case new(gameCycle: Int)
 }

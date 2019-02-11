@@ -17,9 +17,12 @@
 
 import Foundation
 
-class Client {
+public class Client {
     var connection: Connection!
     let onMessage = Observable<Message>()
+    
+    public init() {
+    }
     
     public func established(connection: Connection) {
         self.connection = connection

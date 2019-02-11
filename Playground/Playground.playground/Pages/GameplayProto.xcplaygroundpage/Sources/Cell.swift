@@ -18,7 +18,8 @@
 import Foundation
 import UIKit
 
-struct Cell {
+public struct Cell {
     var pos: (x: Int, y: Int)
     var userId: Int
+    var color: UIColor
 }
