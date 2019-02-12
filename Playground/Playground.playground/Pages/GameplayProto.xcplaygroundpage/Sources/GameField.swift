@@ -36,7 +36,7 @@ public class GameField {
     
     public func canPlaceCell(_ cell: Cell) -> Bool {
         let (x, y) = cell.pos
-        return gameField[y*width+x] == nil
+        return gameField[y*width+x] == nil && placedCells.allSatisfy{$0.pos != cell.pos}
     }
     
     public func placeCell(_ cell: Cell) {
@@ -45,7 +45,7 @@ public class GameField {
     
     public func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
         let (x, y) = cell.pos
-        return prevGameField[y*width+x] == nil
+        return prevGameField[y*width+x] == nil && prevPlacedCells.allSatisfy{$0.pos != cell.pos}
     }
     
     public func placeCellInPrevCycle(_ cell: Cell) {

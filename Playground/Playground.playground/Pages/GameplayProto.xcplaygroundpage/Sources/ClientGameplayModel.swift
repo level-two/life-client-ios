@@ -16,18 +16,30 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
+import UIKit
 
 public class ClientGameplayModel {
-    weak var client: Client?
-    weak var clientViewController: ClientViewController?
+    weak var client: Client!
+    weak var clientViewController: ClientViewController!
     
+    let userId: Int
+    let color: UIColor
     let gameField = GameField()
     var cycle = 0
     
     public init(client: Client, clientViewController: ClientViewController) {
-        self.client = client
+        self.client               = client
+        self.userId               = client.connection.connectionId
+        self.color                = .random
         self.clientViewController = clientViewController
-        client.onMessage.addObserver(self) { [weak self] message in self?.onMessage(message) }
+        
+        client.onMessage.addObserver(self) { [weak self] message in
+            self?.onMessage(message)
+        }
+        
+        clientViewController.onCellTapped.addObserver(self) { [weak self] cellPos in
+            self?.onCellTapped(cellPos)
+        }
     }
     
     func onMessage(_ message: Message) {
@@ -48,6 +60,21 @@ public class ClientGameplayModel {
         }
         
         // redraw UI
-        clientViewController?.draw(with: gameField)
+        clientViewController.draw(with: gameField)
+    }
+    
+    func onCellTapped(_ cellPos: (x:Int, y:Int)) {
+        let cell = Cell(pos: cellPos, userId: userId, color: color)
+        if gameField.canPlaceCell(cell) {
+            gameField.placeCell(cell)
+            clientViewController.draw(with: gameField)
+            client.send(message: .placeCell(gameCycle: cycle, cell: cell))
+        }
+    }
+}
+
+extension UIColor {
+    static var random: UIColor {
+        return UIColor(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1.0)
     }
 }

@@ -19,61 +19,25 @@ import Foundation
 import UIKit
 
 public class ClientViewController: UIViewController {
-    var cellSize : CGFloat = 10.0
+    public let gameFieldView = ClientView()
+    public let onCellTapped = Observable<(x: Int, y: Int)>()
     
     override public func loadView() {
-        self.view = UIView()
-        self.view.backgroundColor = .white
+        self.view = gameFieldView
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTapGesture(_:)))
+        gameFieldView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     public func draw(with gameField: GameField) {
-        self.view.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-        
-        let cells   = gameField.gameField.compactMap{ $0 }
-        let userIds = cells.map{ $0.userId }.orderedSet
-        
-        userIds.forEach { userId in
-            let cellsPerUserId = cells.filter{ $0.userId == userId }
-            let cellsPath = CGMutablePath()
-            cellsPerUserId.forEach { cell in
-                cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
-                                         y: CGFloat(cell.pos.y) * cellSize,
-                                         width: cellSize,
-                                         height: cellSize))
-            }
-            let layer = CAShapeLayer()
-            layer.path = cellsPath
-            layer.fillColor = cellsPerUserId.first!.color.cgColor
-            self.view.layer.addSublayer(layer)
-        }
-        
-        let grid = CGMutablePath()
-        let numCellsX = gameField.width
-        let numCellsY = gameField.height
-        for x in 0...numCellsX {
-            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
-            grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*CGFloat(numCellsY)))
-        }
-        for y in 0...numCellsY {
-            grid.move(to: CGPoint(x: 0, y: CGFloat(y)*cellSize))
-            grid.addLine(to: CGPoint(x: cellSize*CGFloat(numCellsX), y: CGFloat(y)*cellSize))
-        }
-        let gridLayer = CAShapeLayer()
-        gridLayer.path = grid
-        gridLayer.strokeColor = UIColor.black.cgColor
-        self.view.layer.addSublayer(gridLayer)
+        gameFieldView.draw(with: gameField)
     }
-}
-
-extension UIColor {
-    static var random: UIColor {
-        return UIColor(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1.0)
-    }
-}
-
-extension Array where Element:Hashable {
-    var orderedSet: Array {
-        var unique = Set<Element>()
-        return self.filter { unique.insert($0).inserted }
+    
+    @objc
+    func onTapGesture(_ sender: UIGestureRecognizer) {
+        let touchLocation = sender.location(in: gameFieldView)
+        let cellPos = (x: Int(touchLocation.x/gameFieldView.cellSize),
+                       y: Int(touchLocation.y/gameFieldView.cellSize))
+        onCellTapped.notifyObservers(cellPos)
     }
 }
