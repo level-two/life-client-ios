@@ -53,7 +53,7 @@ public class ClientView: UIView {
         self.layer.addSublayer(gridLayer)
         
         // Draw cells
-        let cells   = gameField.gameField.compactMap{ $0 } + gameField.placedCells
+        let cells   = gameField.gameField.compactMap{ $0 } + gameField.acceptedCells + gameField.unacceptedCells
         let userIds = cells.map{ $0.userId }.orderedSet
         
         userIds.forEach { userId in

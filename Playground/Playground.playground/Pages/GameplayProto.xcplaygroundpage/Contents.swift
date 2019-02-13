@@ -27,7 +27,7 @@ var clients      = [Client]()
 var clientModels = [ClientGameplayModel]()
 let clientViews  = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 400))
 
-for i in 0...2 {
+for i in 0...3 {
     let client = Client()
     
     let (conn1, conn2) = network.establishConnection()

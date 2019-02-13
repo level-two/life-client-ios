@@ -42,6 +42,12 @@ public class Network {
         // TODO introduce delay jitter
         // TODO introduce long delays
         // TODO introduce packet loss
+        DispatchQueue.main.asyncAfter(deadline: .now() + TimeInterval.random(in: 1...1.5), execute: {
+            self.transmitDelayed(message, to: peerId)
+        })
+    }
+    
+    func transmitDelayed(_ message: Message, to peerId: Int) {
         print("Network message to \(peerId): \(message)")
         connections.first { $0.connectionId == peerId }?.receive(message)
     }

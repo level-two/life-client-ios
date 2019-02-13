@@ -54,7 +54,7 @@ public class ClientGameplayModel {
         
         if case .placeCell(let gameCycle, let cell) = message {
             if gameCycle == cycle {
-                gameField.placeCell(cell)
+                gameField.placeAcceptedCell(cell)
             }
             else if gameCycle == cycle-1 {
                 gameField.placeCellInPrevCycle(cell)
@@ -76,7 +76,7 @@ public class ClientGameplayModel {
         
         let cell = Cell(pos: cellPos, userId: userId, color: color)
         if gameField.canPlaceCell(cell) {
-            gameField.placeCell(cell)
+            gameField.placeUnacceptedCell(cell)
             clientViewController.draw(with: gameField)
             client.send(message: .placeCell(gameCycle: cycle, cell: cell))
         }

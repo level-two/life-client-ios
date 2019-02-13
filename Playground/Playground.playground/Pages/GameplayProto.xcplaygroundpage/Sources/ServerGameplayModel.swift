@@ -80,7 +80,7 @@ public class ServerGameplayModel {
     func onMessage(_ message: Message) {
         guard case .placeCell(let gameCycle, let cell) = message else { return }
         if gameCycle == cycle && gameField.canPlaceCell(cell) == true {
-            gameField.placeCell(cell)
+            gameField.placeAcceptedCell(cell)
             server?.sendBroadcast(message: .placeCell(gameCycle: cycle, cell: cell))
         }
         else if gameCycle == cycle-1 && gameField.canPlaceCellInPrevCycle(cell) {
