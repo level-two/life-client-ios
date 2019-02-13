@@ -46,8 +46,14 @@ public class ServerGameplayModel {
     
     public init(server: Server) {
         self.server = server
-        server.onMessage.addObserver(self) { [weak self] message in self?.onMessage(message) }
-        updateTimer = Timer(timeInterval: updatePeriod, repeats: true) { [weak self] _ in self?.update() }
+        
+        server.onMessage.addObserver(self) { [weak self] message in
+            self?.onMessage(message)
+        }
+        
+        updateTimer = .scheduledTimer(withTimeInterval: updatePeriod, repeats: true) { [weak self] _ in
+            self?.update()
+        }
     }
     
     /// On update:

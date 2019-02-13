@@ -40,6 +40,8 @@ public class ClientGameplayModel {
         clientViewController.onCellTapped.addObserver(self) { [weak self] cellPos in
             self?.onCellTapped(cellPos)
         }
+        
+        clientViewController.draw(with: gameField)
     }
     
     func onMessage(_ message: Message) {
@@ -64,6 +66,14 @@ public class ClientGameplayModel {
     }
     
     func onCellTapped(_ cellPos: (x:Int, y:Int)) {
+        guard cellPos.x >= 0,
+              cellPos.x < gameField.width,
+              cellPos.y >= 0,
+              cellPos.y < gameField.height
+        else {
+            return
+        }
+        
         let cell = Cell(pos: cellPos, userId: userId, color: color)
         if gameField.canPlaceCell(cell) {
             gameField.placeCell(cell)
@@ -73,8 +83,8 @@ public class ClientGameplayModel {
     }
 }
 
-extension UIColor {
-    static var random: UIColor {
+public extension UIColor {
+    public static var random: UIColor {
         return UIColor(red: .random(in: 0...1), green: .random(in: 0...1), blue: .random(in: 0...1), alpha: 1.0)
     }
 }

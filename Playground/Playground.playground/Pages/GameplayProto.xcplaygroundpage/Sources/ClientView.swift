@@ -34,7 +34,26 @@ public class ClientView: UIView {
     public func draw(with gameField: GameField) {
         self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
         
-        let cells   = gameField.gameField.compactMap{ $0 }
+        // Draw grid
+        let grid = CGMutablePath()
+        let numCellsX = gameField.width
+        let numCellsY = gameField.height
+        for x in 0...numCellsX {
+            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
+            grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*CGFloat(numCellsY)))
+        }
+        for y in 0...numCellsY {
+            grid.move(to: CGPoint(x: 0, y: CGFloat(y)*cellSize))
+            grid.addLine(to: CGPoint(x: cellSize*CGFloat(numCellsX), y: CGFloat(y)*cellSize))
+        }
+        let gridLayer = CAShapeLayer()
+        gridLayer.path = grid
+        gridLayer.strokeColor = UIColor.black.cgColor
+        gridLayer.backgroundColor = UIColor.white.cgColor
+        self.layer.addSublayer(gridLayer)
+        
+        // Draw cells
+        let cells   = gameField.gameField.compactMap{ $0 } + gameField.placedCells
         let userIds = cells.map{ $0.userId }.orderedSet
         
         userIds.forEach { userId in
@@ -51,22 +70,6 @@ public class ClientView: UIView {
             layer.fillColor = cellsPerUserId.first!.color.cgColor
             self.layer.addSublayer(layer)
         }
-        
-        let grid = CGMutablePath()
-        let numCellsX = gameField.width
-        let numCellsY = gameField.height
-        for x in 0...numCellsX {
-            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
-            grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*CGFloat(numCellsY)))
-        }
-        for y in 0...numCellsY {
-            grid.move(to: CGPoint(x: 0, y: CGFloat(y)*cellSize))
-            grid.addLine(to: CGPoint(x: cellSize*CGFloat(numCellsX), y: CGFloat(y)*cellSize))
-        }
-        let gridLayer = CAShapeLayer()
-        gridLayer.path = grid
-        gridLayer.strokeColor = UIColor.black.cgColor
-        self.layer.addSublayer(gridLayer)
     }
 }
 

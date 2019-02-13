@@ -16,18 +16,33 @@
 // -----------------------------------------------------------------------------
 
 import PlaygroundSupport
+import UIKit
 
-let server = Server()
-let serverGameplayModel = ServerGameplayModel(server: server)
+let network     = Network()
 
-let client = Client()
-let clientViewController = ClientViewController()
-let clientGameplayModel = ClientGameplayModel(client: client, clientViewController: clientViewController)
+let server      = Server()
+let serverModel = ServerGameplayModel(server: server)
 
-let network = Network()
+var clients      = [Client]()
+var clientModels = [ClientGameplayModel]()
+let clientViews  = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 400))
 
-let (conn1, conn2) = network.establishConnection()
-client.established(connection: conn1)
-server.established(connection: conn2)
+for i in 0...2 {
+    let client = Client()
+    
+    let (conn1, conn2) = network.establishConnection()
+    client.established(connection: conn1)
+    server.established(connection: conn2)
+    
+    let clientViewController = ClientViewController()
+    clientViewController.view.frame = CGRect(x: 200 * (i % 2), y: 200*(i/2), width: 180, height: 180)
+    
+    let clientModel = ClientGameplayModel(client: client, clientViewController: clientViewController)
+    
+    clients.append(client)
+    clientModels.append(clientModel)
+    clientViews.addSubview(clientViewController.view)
+}
 
-PlaygroundPage.current.liveView = clientViewController
+PlaygroundPage.current.liveView = clientViews
+PlaygroundPage.current.needsIndefiniteExecution = true

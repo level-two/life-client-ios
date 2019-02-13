@@ -24,7 +24,6 @@ public class ClientViewController: UIViewController {
     
     override public func loadView() {
         self.view = gameFieldView
-        
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTapGesture(_:)))
         gameFieldView.addGestureRecognizer(tapGestureRecognizer)
     }

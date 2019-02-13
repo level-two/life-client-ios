@@ -42,6 +42,7 @@ public class Network {
         // TODO introduce delay jitter
         // TODO introduce long delays
         // TODO introduce packet loss
+        print("Network message to \(peerId): \(message)")
         connections.first { $0.connectionId == peerId }?.receive(message)
     }
 }

@@ -22,4 +22,10 @@ public struct Cell {
     var pos: (x: Int, y: Int)
     var userId: Int
     var color: UIColor
+    
+    public init(pos: (x: Int, y: Int), userId: Int, color: UIColor) {
+        self.pos = pos
+        self.userId = userId
+        self.color = color
+    }
 }
