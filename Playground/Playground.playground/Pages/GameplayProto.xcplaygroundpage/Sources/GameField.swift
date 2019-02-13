@@ -37,13 +37,13 @@ public class GameField {
         calcCurrentGameField()
         removeCurrentlyPlacedCellsIfConflicts()
         
-        // Move current unaccepted cells to previous
-        prevUnacceptedCells = unacceptedCells
-        
         // Bake accepted cells to the game field
         acceptedCells.forEach { [unowned self] cell in
             self.gameField[cell.pos.y*width+cell.pos.x] = cell
         }
+        
+        // Move current unaccepted cells to previous
+        prevUnacceptedCells = unacceptedCells
         
         // Move current game filed to the previous
         prevGameField = gameField
@@ -57,14 +57,21 @@ public class GameField {
     }
     
     public func canPlaceCell(_ cell: Cell) -> Bool {
-        let (x, y) = cell.pos
-        return gameField[y*width+x] == nil
+        return gameField[cell.pos.y*width+cell.pos.x] == nil
             && acceptedCells.allSatisfy{$0.pos != cell.pos}
             && unacceptedCells.allSatisfy{$0.pos != cell.pos}
     }
     
     public func placeAcceptedCell(_ cell: Cell) {
         acceptedCells.append(cell)
+        unacceptedCells.removeAll{$0.pos == cell.pos}
+        prevUnacceptedCells.removeAll{$0.pos == cell.pos}
+        
+        // recalc game field
+        calcCurrentGameField()
+        
+        // remove current unaccepded and accepted cells in case of conflict
+        removeCurrentlyPlacedCellsIfConflicts()
     }
     
     public func placeUnacceptedCell(_ cell: Cell) {
@@ -72,8 +79,7 @@ public class GameField {
     }
     
     public func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
-        let (x, y) = cell.pos
-        return prevGameField[y*width+x] == nil
+        return prevGameField[cell.pos.y*width+cell.pos.x] == nil
             && prevUnacceptedCells.allSatisfy{$0.pos != cell.pos}
     }
     
@@ -91,11 +97,6 @@ public class GameField {
         removeCurrentlyPlacedCellsIfConflicts()
     }
     
-    public func updateGameFieldForNewCycle() {
-        prevGameField = gameField
-        calcCurrentGameField()
-    }
-    
     public func calcCurrentGameField() {
         // TODO: Add life
         gameField = prevGameField
@@ -105,7 +106,7 @@ public class GameField {
     }
     
     public func removeCurrentlyPlacedCellsIfConflicts() {
-        acceptedCells = acceptedCells.filter { self.gameField[$0.pos.y*width+$0.pos.x] == nil }
-        unacceptedCells = unacceptedCells.filter { self.gameField[$0.pos.y*width+$0.pos.x] == nil }
+        acceptedCells.removeAll { self.gameField[$0.pos.y*width+$0.pos.x] != nil }
+        unacceptedCells.removeAll { self.gameField[$0.pos.y*width+$0.pos.x] != nil }
     }
 }
