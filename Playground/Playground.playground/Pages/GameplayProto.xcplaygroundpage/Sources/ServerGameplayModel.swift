@@ -40,12 +40,13 @@ public class ServerGameplayModel {
     let updatePeriod: TimeInterval = 5.0
     
     weak var server: Server?
-    let gameField = GameField()
+    let gameField: GameField
     var updateTimer: Timer?
     var cycle = 0
     
-    public init(server: Server) {
+    public init(server: Server, width: Int, height: Int) {
         self.server = server
+        self.gameField = GameField(width, height)
         
         server.onMessage.addObserver(self) { [weak self] message in
             self?.onMessage(message)

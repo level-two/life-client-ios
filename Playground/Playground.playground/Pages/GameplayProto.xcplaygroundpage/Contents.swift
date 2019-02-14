@@ -18,16 +18,19 @@
 import PlaygroundSupport
 import UIKit
 
+let width = 16
+let height = 20
+
 let network     = Network()
 
 let server      = Server()
-let serverModel = ServerGameplayModel(server: server)
+let serverModel = ServerGameplayModel(server: server, width: width, height: height)
 
 var clients      = [Client]()
 var clientModels = [ClientGameplayModel]()
 let clientViews  = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 400))
 
-for i in 0...3 {
+for i in 0...1 {
     let client = Client()
     
     let (conn1, conn2) = network.establishConnection()
@@ -35,9 +38,9 @@ for i in 0...3 {
     server.established(connection: conn2)
     
     let clientViewController = ClientViewController()
-    clientViewController.view.frame = CGRect(x: 200 * (i % 2), y: 200*(i/2), width: 180, height: 180)
+    clientViewController.view.frame = CGRect(x: 200 * (i % 2), y: 280*(i/2), width: 180, height: 250)
     
-    let clientModel = ClientGameplayModel(client: client, clientViewController: clientViewController)
+    let clientModel = ClientGameplayModel(client: client, clientViewController: clientViewController, width: width, height: height)
     
     clients.append(client)
     clientModels.append(clientModel)

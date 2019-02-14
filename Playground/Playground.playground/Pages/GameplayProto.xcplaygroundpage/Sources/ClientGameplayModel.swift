@@ -24,14 +24,15 @@ public class ClientGameplayModel {
     
     let userId: Int
     let color: UIColor
-    let gameField = GameField()
+    let gameField: GameField
     var cycle = 0
     
-    public init(client: Client, clientViewController: ClientViewController) {
+    public init(client: Client, clientViewController: ClientViewController, width: Int, height: Int) {
         self.client               = client
         self.userId               = client.connection.connectionId
         self.color                = .random
         self.clientViewController = clientViewController
+        self.gameField            = GameField(width, height)
         
         client.onMessage.addObserver(self) { [weak self] message in
             self?.onMessage(message)

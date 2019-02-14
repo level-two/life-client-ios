@@ -53,11 +53,11 @@ public class ClientView: UIView {
         self.layer.addSublayer(gridLayer)
         
         // Draw cells
-        let cells   = gameField.gameField.compactMap{ $0 } + gameField.acceptedCells + gameField.unacceptedCells
-        let userIds = cells.map{ $0.userId }.orderedSet
+        let cells   = gameField.gameField.allCells() + gameField.acceptedCells + gameField.unacceptedCells
+        let userIds = cells.map{$0.userId}.orderedSet
         
         userIds.forEach { userId in
-            let cellsPerUserId = cells.filter{ $0.userId == userId }
+            let cellsPerUserId = cells.filter{$0.userId == userId}
             let cellsPath = CGMutablePath()
             cellsPerUserId.forEach { cell in
                 cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
