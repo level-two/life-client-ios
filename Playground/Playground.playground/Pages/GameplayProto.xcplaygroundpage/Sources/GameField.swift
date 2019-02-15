@@ -11,6 +11,13 @@ public class GameFieldArray {
         gameField = .init(repeating: .init(repeating: nil, count: height), count: width)
     }
     
+    public init(with gameFieldArray: GameFieldArray) {
+        self.width = gameFieldArray.width
+        self.height = gameFieldArray.height
+        gameField = .init(repeating: .init(repeating: nil, count: height), count: width)
+        gameFieldArray.allCells().forEach(self.put)
+    }
+    
     subscript(x: Int, y: Int) -> Cell? {
         get { let (ix, iy) = indicesFromCyclic(x, y); return gameField[ix][iy] }
         set { let (ix, iy) = indicesFromCyclic(x, y); gameField[ix][iy] = newValue }
@@ -96,6 +103,8 @@ public class GameField {
         
         // Bake accepted cells to the game field
         acceptedCells.forEach(gameField.put)
+        print(acceptedCells)
+        print(gameField.allCells())
         
         // Move current unaccepted cells to previous
         prevUnacceptedCells = unacceptedCells
@@ -153,8 +162,7 @@ public class GameField {
     }
     
     public func calcCurrentGameField() {
-        gameField = GameFieldArray(width, height)
-        prevGameField.allCells().forEach(gameField.put)
+        gameField = GameFieldArray(with: prevGameField)
         prevUnacceptedCells.forEach(gameField.put)
         
         // TODO: Add life
@@ -171,33 +179,36 @@ public class GameField {
                 ].compactMap{$0}
         }
         
+        var cellsToPut = [Cell]()
+        var cellsToRemove = [Cell]()
+        
         for x in 0..<gameField.width {
             for y in 0..<gameField.height {
                 let neighbors = getNeighbors(x, y)
-                let cell = gameField[x, y]
+                let cell = gameField[x,y]
                 
+                // give birth if there are min two cells of the same user
                 if cell == nil && neighbors.count == 3 {
-                    // give birth if there are min two cells of the same user
                     let midCell = neighbors.sorted{$0.userId < $1.userId}[1]
                     if (neighbors.filter{$0.userId == midCell.userId}).count >= 2 {
                         let newCell = Cell(pos: (x:x, y:y), userId: midCell.userId, color: midCell.color)
-                        gameField.put(newCell)
+                        cellsToPut.append(newCell)
                     }
                 }
-                else if cell == nil {
-                    () // do nothing
-                }
-                else if neighbors.count < 2 || neighbors.count > 3 {
-                    // death
-                    gameField[x, y] = nil
-                }
                 
+                // death
+                if cell != nil && (neighbors.count < 2 || neighbors.count > 3) {
+                    cellsToRemove.append(cell!)
+                }
             }
         }
+        
+        cellsToPut.forEach(gameField.put)
+        cellsToRemove.forEach{gameField[$0.pos] = nil}
     }
     
     public func removeCurrentlyPlacedCellsIfConflicts() {
-        acceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) }
-        unacceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) }
+        acceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) == false }
+        unacceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) == false }
     }
 }
