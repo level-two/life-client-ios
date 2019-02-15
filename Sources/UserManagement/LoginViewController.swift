@@ -20,8 +20,6 @@ import UIKit
 class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var playerNameTextField: UITextField!
     
-    private let autologinUserNameKey = "autologinUserNameKey"
-    
     private var navigator: SceneNavigatorProtocol!
     private var sessionManager: SessionProtocol!
     @IBOutlet weak var activityIndicatorView: UIView!
@@ -30,7 +28,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         playerNameTextField.delegate = self
         activityIndicatorView.isHidden = true
-        if let autologinUserName = UserDefaults.standard.string(forKey: autologinUserNameKey) {
+        if ApplicationSettings.get(for: .autologinEnabled) {
+            let autologinUserName = ApplicationSettings.get(for: .autologinUserName)!
             playerNameTextField.text = autologinUserName
             login(userName: autologinUserName)
         }
@@ -73,7 +72,8 @@ extension LoginViewController {
             
             switch result {
             case .value:
-                UserDefaults.standard.set(userName, forKey: self.autologinUserNameKey)
+                ApplicationSettings.set(true, for: .autologinEnabled)
+                ApplicationSettings.set(userName, for: .autologinUserName)
                 self.navigator.navigate(to: .gameplay)
             case .error(let error):
                 self.alert(error.localizedDescription)

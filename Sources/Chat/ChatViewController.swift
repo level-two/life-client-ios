@@ -45,8 +45,6 @@ extension ChatMessage {
 }
 
 class ChatViewController: MessagesViewController {
-    private let autologinUserNameKey = "autologinUserNameKey"
-    
     private var navigator: SceneNavigatorProtocol!
     private var sessionManager: SessionProtocol!
     private var networkManager: NetworkManagerProtocol!
@@ -250,7 +248,7 @@ extension ChatViewController {
             
             switch result {
             case .value:
-                UserDefaults.standard.set(nil, forKey: self.autologinUserNameKey)
+                ApplicationSettings.set(false, for: .autologinEnabled)
                 self.navigator.navigate(to: .login)
             case .error(let error):
                 self.alert(error.localizedDescription)

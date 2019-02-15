@@ -103,8 +103,6 @@ public class GameField {
         
         // Bake accepted cells to the game field
         acceptedCells.forEach(gameField.put)
-        print(acceptedCells)
-        print(gameField.allCells())
         
         // Move current unaccepted cells to previous
         prevUnacceptedCells = unacceptedCells
