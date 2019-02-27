@@ -3,5 +3,6 @@
     <pages>
         <page name='GameplayProto'/>
         <page name='MessageCoding'/>
+        <page name='DynamicGameplayProto'/>
     </pages>
 </playground>
