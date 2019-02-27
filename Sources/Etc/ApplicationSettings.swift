@@ -9,30 +9,24 @@
 import Foundation
 
 class ApplicationSettings {
-    enum SettingsKeysForBool: String {
+    enum SettingsKeys: String {
         case autologinEnabled
-    }
-    
-    enum SettingsKeysForString: String {
         case autologinUserName
     }
-    // TODO: Add subscription
-    // TODO: Default values
-    // TODO: Code with single enum?
     
-    static func get(for key: SettingsKeysForBool) -> Bool {
+    static func getBool(for key: SettingsKeys) -> Bool {
         return UserDefaults.standard.bool(forKey: key.rawValue)
     }
     
-    static func get(for key: SettingsKeysForString) -> String? {
+    static func getString(for key: SettingsKeys) -> String? {
         return UserDefaults.standard.string(forKey: key.rawValue)
     }
     
-    static func set(_ value: Bool, for key: SettingsKeysForBool) {
+    static func setBool(_ value: Bool, for key: SettingsKeys) {
         UserDefaults.standard.set(value, forKey: key.rawValue)
     }
     
-    static func set(_ value: String, for key: SettingsKeysForString) {
+    static func setString(_ value: String, for key: SettingsKeys) {
         UserDefaults.standard.set(value, forKey: key.rawValue)
     }
 }

@@ -28,8 +28,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         playerNameTextField.delegate = self
         activityIndicatorView.isHidden = true
-        if ApplicationSettings.get(for: .autologinEnabled) {
-            let autologinUserName = ApplicationSettings.get(for: .autologinUserName)!
+        if ApplicationSettings.getBool(for: .autologinEnabled) {
+            let autologinUserName = ApplicationSettings.getString(for: .autologinUserName).require()
             playerNameTextField.text = autologinUserName
             login(userName: autologinUserName)
         }
@@ -72,8 +72,8 @@ extension LoginViewController {
             
             switch result {
             case .value:
-                ApplicationSettings.set(true, for: .autologinEnabled)
-                ApplicationSettings.set(userName, for: .autologinUserName)
+                ApplicationSettings.setBool(true, for: .autologinEnabled)
+                ApplicationSettings.setString(userName, for: .autologinUserName)
                 self.navigator.navigate(to: .gameplay)
             case .error(let error):
                 self.alert(error.localizedDescription)

@@ -248,7 +248,7 @@ extension ChatViewController {
             
             switch result {
             case .value:
-                ApplicationSettings.set(false, for: .autologinEnabled)
+                ApplicationSettings.setBool(false, for: .autologinEnabled)
                 self.navigator.navigate(to: .login)
             case .error(let error):
                 self.alert(error.localizedDescription)
