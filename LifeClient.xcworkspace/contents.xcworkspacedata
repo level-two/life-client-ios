@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Playground/Playground.playground">
+      location = "group:LifeClient.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:LifeClient.xcodeproj">
+      location = "group:Playground/Playground.playground">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
