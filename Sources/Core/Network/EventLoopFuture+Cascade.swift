@@ -1,5 +1,5 @@
 // -----------------------------------------------------------------------------
-//    Copyright (C) 2018 Yauheni Lychkouski.
+//    Copyright (C) 2019 Yauheni Lychkouski.
 //
 //    This program is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ extension EventLoopFuture {
     ///     - promise: The `EventLoopPromise` to fulfill with the results of this future.
     ///                Cascaded when provided promise is non-nil
     public func cascade(promise: EventLoopPromise<T>?) {
-        guard let p = promise else { return }
-        self.cascade(promise: p)
+        guard promise != nil else { return }
+        self.cascade(promise: promise)
     }
 }

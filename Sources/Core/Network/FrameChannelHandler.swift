@@ -18,29 +18,40 @@
 import Foundation
 import NIO
 
-final class FrameChannelHandler: ChannelInboundHandler {
+class FrameChannelHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
-    public typealias InboundOut = String
+    public typealias InboundOut = Data
+
+    public enum FrameError: Error {
+        case unableGetDataChunk
+        case messageToDataFailed
+    }
     
-    var collected = ""
-    
-    public func channelRead(ctx: ChannelHandlerContext, byteBufWrapped: NIOAny) {
-        let byteBuf = self.unwrapInboundIn(byteBufWrapped)
+    public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+        let byteBuf = self.unwrapInboundIn(data)
         guard let chunk = byteBuf.getString(at: byteBuf.readerIndex, length: byteBuf.readableBytes) else {
-            ctx.fireErrorCaught("Failed to get data from byte buffer")
+            ctx.fireErrorCaught(FrameError.unableGetDataChunk)
             return
         }
         collected += chunk
-        
+
         while let newlineRange = collected.rangeOfCharacter(from: .newlines) {
             let message = collected[..<newlineRange.lowerBound]
-            ctx.fireChannelRead(self.wrapInboundOut(String(message)))
+
+            if let messageData = message.data(using: .utf8) {
+                ctx.fireChannelRead(self.wrapInboundOut(messageData))
+            } else {
+                ctx.fireErrorCaught(FrameError.messageToDataFailed)
+            }
+
             collected.removeSubrange(..<newlineRange.upperBound)
         }
     }
-    
+
     public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
         print("CollectingInboundHandler caught error: ", error)
         ctx.close(promise: nil)
     }
+    
+    fileprivate var collected = ""
 }

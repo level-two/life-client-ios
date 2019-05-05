@@ -25,9 +25,8 @@
 		93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */; };
 		93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */; };
 		93A5DBE3227EF5C60015D602 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC2227EF5C60015D602 /* Server.swift */; };
-		93A5DBE4227EF5C60015D602 /* ServerDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC3227EF5C60015D602 /* ServerDataTypes.swift */; };
+		93A5DBE4227EF5C60015D602 /* NetworkDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */; };
 		93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */; };
-		93A5DBE6227EF5C60015D602 /* ServerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC5227EF5C60015D602 /* ServerInteractions.swift */; };
 		93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */; };
 		93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */; };
 		93A5DBE9227EF5C60015D602 /* UsersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC9227EF5C60015D602 /* UsersManager.swift */; };
@@ -44,6 +43,7 @@
 		93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */; };
 		93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD7227EF5C60015D602 /* SessionManager.swift */; };
 		93A5DBF9227EF5C60015D602 /* CoreInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */; };
+		93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
@@ -51,13 +51,8 @@
 		93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* SceneNavigator.swift */; };
 		93C9826221D18AC700738709 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826121D18AC700738709 /* SessionManager.swift */; };
 		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
-		93DA241922082D15007CBA4D /* MessageChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241822082D15007CBA4D /* MessageChannelHandler.swift */; };
-		93DA241B22082D56007CBA4D /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241A22082D56007CBA4D /* Message.swift */; };
 		93DA241F22084BD7007CBA4D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241E22084BD7007CBA4D /* Color.swift */; };
 		93DA242122085910007CBA4D /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA242022085910007CBA4D /* ChatMessage.swift */; };
-		93DA2423220874A3007CBA4D /* FrameChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */; };
-		93DA2425220874CA007CBA4D /* EventLoopFuture+Cascade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA2424220874CA007CBA4D /* EventLoopFuture+Cascade.swift */; };
-		93DA24272208786E007CBA4D /* BridgeChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,9 +75,8 @@
 		93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataTypes.swift; sourceTree = "<group>"; };
 		93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BridgeChannelHandler.swift; sourceTree = "<group>"; };
 		93A5DBC2227EF5C60015D602 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
-		93A5DBC3227EF5C60015D602 /* ServerDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDataTypes.swift; sourceTree = "<group>"; };
+		93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDataTypes.swift; sourceTree = "<group>"; };
 		93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameChannelHandler.swift; sourceTree = "<group>"; };
-		93A5DBC5227EF5C60015D602 /* ServerInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerInteractions.swift; sourceTree = "<group>"; };
 		93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventLoopFuture+Cascade.swift"; sourceTree = "<group>"; };
 		93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBC9227EF5C60015D602 /* UsersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManager.swift; sourceTree = "<group>"; };
@@ -99,6 +93,7 @@
 		93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBD7227EF5C60015D602 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreInteractions.swift; sourceTree = "<group>"; };
+		93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerInteractions.swift; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -108,13 +103,8 @@
 		93C9825F21D183EE00738709 /* SceneNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigator.swift; sourceTree = "<group>"; };
 		93C9826121D18AC700738709 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		93C9826321D18B5400738709 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		93DA241822082D15007CBA4D /* MessageChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageChannelHandler.swift; sourceTree = "<group>"; };
-		93DA241A22082D56007CBA4D /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		93DA241E22084BD7007CBA4D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		93DA242022085910007CBA4D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
-		93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameChannelHandler.swift; sourceTree = "<group>"; };
-		93DA2424220874CA007CBA4D /* EventLoopFuture+Cascade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventLoopFuture+Cascade.swift"; sourceTree = "<group>"; };
-		93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BridgeChannelHandler.swift; sourceTree = "<group>"; };
 		B1D04ECAD47EA6B965018B9E /* Pods-LifeClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -194,12 +184,12 @@
 			isa = PBXGroup;
 			children = (
 				93A5DBC0227EF5C60015D602 /* Server */,
-				93DA241A22082D56007CBA4D /* Message.swift */,
-				93DA241822082D15007CBA4D /* MessageChannelHandler.swift */,
-				93DA2422220874A3007CBA4D /* FrameChannelHandler.swift */,
-				93DA24262208786E007CBA4D /* BridgeChannelHandler.swift */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
-				93DA2424220874CA007CBA4D /* EventLoopFuture+Cascade.swift */,
+				93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */,
+				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
+				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
+				93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */,
+				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -286,12 +276,7 @@
 		93A5DBC0227EF5C60015D602 /* Server */ = {
 			isa = PBXGroup;
 			children = (
-				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
 				93A5DBC2227EF5C60015D602 /* Server.swift */,
-				93A5DBC3227EF5C60015D602 /* ServerDataTypes.swift */,
-				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
-				93A5DBC5227EF5C60015D602 /* ServerInteractions.swift */,
-				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
 			);
 			path = Server;
 			sourceTree = "<group>";
@@ -550,7 +535,6 @@
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
 				93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */,
 				93A5DBDF227EF5C60015D602 /* ChatInteractions.swift in Sources */,
-				93DA24272208786E007CBA4D /* BridgeChannelHandler.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
@@ -560,6 +544,7 @@
 				93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */,
 				93A5DBE3227EF5C60015D602 /* Server.swift in Sources */,
 				93A5DBF3227EF5C60015D602 /* SessionManagerInteractions.swift in Sources */,
+				93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */,
 				93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */,
 				936E8ED822019F8B00FB7689 /* CGFloat+Random.swift in Sources */,
 				93DA242122085910007CBA4D /* ChatMessage.swift in Sources */,
@@ -576,19 +561,14 @@
 				936E8ED722019F8B00FB7689 /* UIColor+Random.swift in Sources */,
 				93A5DBED227EF5C60015D602 /* Gameplay.swift in Sources */,
 				93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */,
-				93DA2425220874CA007CBA4D /* EventLoopFuture+Cascade.swift in Sources */,
-				93DA2423220874A3007CBA4D /* FrameChannelHandler.swift in Sources */,
 				93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */,
 				93C9826221D18AC700738709 /* SessionManager.swift in Sources */,
 				93A5DBEC227EF5C60015D602 /* Core.swift in Sources */,
 				93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */,
-				93DA241B22082D56007CBA4D /* Message.swift in Sources */,
 				93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */,
 				93A5DBF1227EF5C60015D602 /* GameplayInteractions.swift in Sources */,
 				9338015221C8FF680056C349 /* NetworkManager.swift in Sources */,
-				93DA241922082D15007CBA4D /* MessageChannelHandler.swift in Sources */,
-				93A5DBE6227EF5C60015D602 /* ServerInteractions.swift in Sources */,
-				93A5DBE4227EF5C60015D602 /* ServerDataTypes.swift in Sources */,
+				93A5DBE4227EF5C60015D602 /* NetworkDataTypes.swift in Sources */,
 				9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
