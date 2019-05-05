@@ -9,32 +9,27 @@
 import Foundation
 
 class ApplicationSettings {
-    enum SettingsKeys: String {
-        case autologinEnabled
-        case autologinUserName
+    static public var autologinEnabled: Bool {
+        get { return UserDefaults.standard.bool(forKey: #function) }
+        set { UserDefaults.standard.set(newValue, forKey: #function) }
     }
     
-    static func getBool(for key: SettingsKeys) -> Bool {
-        return UserDefaults.standard.bool(forKey: key.rawValue)
+    static public var autologinUserName: String {
+        get { return UserDefaults.standard.string(forKey: #function) }
+        set { UserDefaults.standard.set(newValue, forKey: #function) }
     }
     
-    static func getString(for key: SettingsKeys) -> String? {
-        return UserDefaults.standard.string(forKey: key.rawValue)
+    static public var host: String {
+        if let host = ProcessInfo.processInfo.environment["host"] as? String {
+            return host
+        }
+        return "gameoflife.ddns.net"
     }
     
-    static func setBool(_ value: Bool, for key: SettingsKeys) {
-        UserDefaults.standard.set(value, forKey: key.rawValue)
-    }
-    
-    static func setString(_ value: String, for key: SettingsKeys) {
-        UserDefaults.standard.set(value, forKey: key.rawValue)
-    }
-}
-
-// TODO: This is better way to work with user defaults
-extension UserDefaults {
-    var onboardingCompleted: Bool {
-        get { return bool(forKey: #function) }
-        set { set(newValue, forKey: #function) }
+    static public var port: Int {
+        if let port = ProcessInfo.processInfo.environment["port"] as? Int {
+            return port
+        }
+        return 1337
     }
 }
