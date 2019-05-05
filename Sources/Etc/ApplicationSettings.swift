@@ -30,3 +30,11 @@ class ApplicationSettings {
         UserDefaults.standard.set(value, forKey: key.rawValue)
     }
 }
+
+// TODO: This is better way to work with user defaults
+extension UserDefaults {
+    var onboardingCompleted: Bool {
+        get { return bool(forKey: #function) }
+        set { set(newValue, forKey: #function) }
+    }
+}
