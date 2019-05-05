@@ -29,7 +29,7 @@ class NetworkManager: NetworkManagerProtocol {
     let onMessage           = Observable<Message>()
     let onConnectedToServer = Observable<Bool>()
     
-    let host = "192.168.100.64"
+    let host = "127.0.0.1"
     let port = 1337
     let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     var bootstrap: ClientBootstrap {

@@ -8,4 +8,7 @@ target 'LifeClient' do
   # Pods for LifeClient
   pod 'SwiftNIO'
   pod 'MessageKit'
+  pod 'RxSwift'
+  pod 'PromiseKit'
+  pod 'SwiftLint'
 end

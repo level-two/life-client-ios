@@ -108,7 +108,7 @@ public class GameplayModel {
     let numCellsX: Int = 20
     let numCellsY: Int = 30
     let lifeTime: Double = 5
-    let timeStep: Double = 0.1
+    let timeStep: Double = 0.25
     var gameField: GameFieldArray
     var updateTimer: Timer?
     let gameFieldViewController: GameFieldViewController
@@ -141,7 +141,7 @@ public class GameplayModel {
             gameField[x+1, y-1],
             gameField[x+1, y  ],
             gameField[x+1, y+1]
-            ].filter { $0 > 0 }.count
+            ].filter { $0 != 0 }.count
     }
     
     @objc func update() {
@@ -150,8 +150,8 @@ public class GameplayModel {
             for y in 0..<numCellsY {
                 if gameField[x,y] > 0 {
                     gameField[x,y] -= timeStep
-                    
                     if gameField[x,y] <= 0 {
+                        gameField[x,y] = -100500
                         expiredCells.append((x: x, y: y))
                     }
                 }
@@ -163,6 +163,7 @@ public class GameplayModel {
         
         expiredCells.forEach { x, y in
             let neighborsCount = getNeighborsCount(x, y)
+            print("1 \(neighborsCount)")
             
             // give birth if there are min two cells of the same user
             if neighborsCount == 3 {
@@ -182,9 +183,10 @@ public class GameplayModel {
              (x+1, y-1),
              (x+1, y  ),
              (x+1, y+1)]
-            .forEach { x, y in
-                if gameField[x,y] <= 0 && getNeighborsCount(x, y) == 3 {
-                    cellsToPut.append((x,y))
+            .forEach { xx, yy in
+                if gameField[xx,yy] <= 0 && getNeighborsCount(xx, yy) == 3 {
+                    cellsToPut.append((xx,yy))
+                    print("2 \(xx), \(yy)")
                 }
             }
         }
