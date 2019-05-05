@@ -18,53 +18,88 @@
 import Foundation
 import NIO
 import RxSwift
-
-/*
-protocol NetworkManagerInterface {
-    var onConnectionEstablished: PublishSubject<ConnectionId> { get }
-    var onConnectionClosed: PublishSubject<ConnectionId> { get }
-    var onMessage: PublishSubject<(ConnectionId, Data)> { get }
-    
-    @discardableResult func send(message: Message) -> Future<Void>
-}
-*/
+import PromiseKit
 
 class NetworkManager {
+    enum NetworkManagerError: Error {
+        case noConnection
+        case dataToStringFailed
+    }
+    
     public let onConnectionEstablished = PublishSubject<ConnectionId>()
     public let onConnectionClosed = PublishSubject<ConnectionId>()
     public let onMessage = PublishSubject<(ConnectionId, Data)>()
     
-    
     @discardableResult
-    public func send(message: Message) -> Future<Void> {
-        guard let writeFuture = channel?.writeAndFlush(NIOAny(message)) else {
-            return Promise<Void>(error: "No connection")
+    public func send(data: Data) -> Future<Void> {
+        return .init() { [weak self] promise in
+            guard let channel = self?.channel else { throw NetworkManagerError.noConnection }
+            guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
+            
+            var buffer = channel.allocator.buffer(capacity: str.count)
+            buffer.write(string: str)
+            
+            let writeFuture = channel.writeAndFlush(buffer, promise: nil)
+            writeFuture.whenSuccess { promise.resolve() }
+            writeFuture.whenFailure { promise.reject($0) }
         }
-        
-        let promise = Promise<Void>()
-        writeFuture.whenSuccess { promise.resolve(with: ()) }
-        writeFuture.whenFailure { error in promise.reject(with: error) }
-        return promise
     }
     
-    fileprivate let host = ""
-    
-    fileprivate let port = 1337
+    deinit {
+        do {
+            try self.group.syncShutdownGracefully()
+        } catch {
+            print("Failed to gracefully shut down: \(error)")
+        }
+    }
     
     fileprivate let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     
     fileprivate var channel: Channel? = nil
     
     fileprivate var shouldReconnect: Bool = true
-//    fileprivate var isConnected = false { didSet { onConnectedToServer.notifyObservers(self.isConnected) } }
+    fileprivate var isConnected = false {
+        didSet { onConnectedToServer.notifyObservers(self.isConnected)
+        }
+    }
 }
 
 
 extension NetworkManager {
-    func makeBootstrap(with channelInitializer: @escaping (Channel)->EventLoopFuture<Void>) -> ClientBootstrap {
-        return ClientBootstrap(group: self.group)
+    var bootstrap: ClientBootstrap {
+        return .init(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
-            .channelInitializer(channelInitializer)
+            .channelInitializer { [weak self] channel in
+                guard let self = self else { return nil }
+                
+                let bridge = BridgeChannelHandler()
+                bridge.onMessage
+                    .bind(to: self.onMessage)
+                    .disposed(by: bridge.disposeBag)
+                
+                return channel.pipeline.addHandlers(FrameChannelHandler(), bridge, first: true)
+            }
     }
     
+    func run() {
+        print("Connecting to \(ApplicationSettings.host):\(ApplicationSettings.port)...")
+        
+        bootstrap.connect(host: ApplicationSettings.host, port: ApplicationSettings.port)
+            .then { [weak self] channel -> EventLoopFuture<Void> in
+                print("Connected")
+                self?.onConnectionEstablished.onNext(())
+                self?.channel = channel
+                return channel.closeFuture
+            }.whenComplete { [weak self] in
+                guard let self = self else { return }
+
+                print("Disconnected")
+                self.onConnectionClosed.onNext(())
+                self.channel = nil
+                if self.shouldReconnect {
+                    sleep(1)
+                    self.run()
+                }
+            }
+    }
 }
