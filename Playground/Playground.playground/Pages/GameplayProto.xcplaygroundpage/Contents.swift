@@ -32,16 +32,16 @@ let clientViews  = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 600))
 
 for i in 0...3 {
     let client = Client()
-    
+
     let (conn1, conn2) = network.establishConnection()
     client.established(connection: conn1)
     server.established(connection: conn2)
-    
+
     let clientViewController = ClientViewController()
     clientViewController.view.frame = CGRect(x: 200 * (i % 2), y: 280*(i/2), width: 180, height: 250)
-    
+
     let clientModel = ClientGameplayModel(client: client, clientViewController: clientViewController, width: width, height: height)
-    
+
     clients.append(client)
     clientModels.append(clientModel)
     clientViews.addSubview(clientViewController.view)

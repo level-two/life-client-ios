@@ -19,21 +19,21 @@ import Foundation
 
 public class Observable<T> {
     var observations = [UUID: (T)->Void]()
-    
+
     public class ObservationToken {
-        private let cancellationClosure: ()->Void
-        
-        public init(cancellationClosure: @escaping ()->Void) {
+        private let cancellationClosure: () -> Void
+
+        public init(cancellationClosure: @escaping () -> Void) {
             self.cancellationClosure = cancellationClosure
         }
-        
+
         public func cancel() {
             cancellationClosure()
         }
     }
-    
+
     @discardableResult
-    public func addObserver<U:AnyObject>(_ observer: U, closure: @escaping (T)->Void) -> ObservationToken {
+    public func addObserver<U: AnyObject>(_ observer: U, closure: @escaping (T) -> Void) -> ObservationToken {
         let id = UUID()
         observations[id] = { [weak self, weak observer] message in
             guard let _ = observer else {
@@ -42,12 +42,12 @@ public class Observable<T> {
             }
             closure(message)
         }
-        
+
         return ObservationToken { [weak self] in
             self?.observations.removeValue(forKey: id)
         }
     }
-    
+
     public func notifyObservers(_ message: T) {
         observations.values.forEach { $0(message) }
     }

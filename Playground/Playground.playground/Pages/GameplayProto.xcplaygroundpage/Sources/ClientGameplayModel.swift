@@ -21,30 +21,30 @@ import UIKit
 public class ClientGameplayModel {
     weak var client: Client!
     weak var clientViewController: ClientViewController!
-    
+
     let userId: Int
     let color: UIColor
     let gameField: GameField
     var cycle = 0
-    
+
     public init(client: Client, clientViewController: ClientViewController, width: Int, height: Int) {
         self.client               = client
         self.userId               = client.connection.connectionId
         self.color                = .random
         self.clientViewController = clientViewController
         self.gameField            = GameField(width, height)
-        
+
         client.onMessage.addObserver(self) { [weak self] message in
             self?.onMessage(message)
         }
-        
+
         clientViewController.onCellTapped.addObserver(self) { [weak self] cellPos in
             self?.onCellTapped(cellPos)
         }
-        
+
         clientViewController.draw(with: gameField)
     }
-    
+
     func onMessage(_ message: Message) {
         if case .new(let gameCycle) = message {
             // TODO: Handle connection loss - when several updates had been missed
@@ -52,21 +52,20 @@ public class ClientGameplayModel {
             cycle = gameCycle
             gameField.updateForNewCycle()
         }
-        
+
         if case .placeCell(let gameCycle, let cell) = message {
             if gameCycle == cycle {
                 gameField.placeAcceptedCell(cell)
-            }
-            else if gameCycle == cycle-1 {
+            } else if gameCycle == cycle-1 {
                 gameField.placeCellInPrevCycle(cell)
             }
         }
-        
+
         // redraw UI
         clientViewController.draw(with: gameField)
     }
-    
-    func onCellTapped(_ cellPos: (x:Int, y:Int)) {
+
+    func onCellTapped(_ cellPos: (x: Int, y: Int)) {
         guard cellPos.x >= 0,
               cellPos.x < gameField.width,
               cellPos.y >= 0,
@@ -74,7 +73,7 @@ public class ClientGameplayModel {
         else {
             return
         }
-        
+
         let cell = Cell(pos: cellPos, userId: userId, color: color)
         if gameField.canPlaceCell(cell) {
             gameField.placeUnacceptedCell(cell)

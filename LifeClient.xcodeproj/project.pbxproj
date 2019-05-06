@@ -182,8 +182,8 @@
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */,
 				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
-				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
 				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
+				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";

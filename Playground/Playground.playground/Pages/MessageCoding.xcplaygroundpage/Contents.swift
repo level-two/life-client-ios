@@ -3,7 +3,6 @@
 import Foundation
 import UIKit
 
-
 extension String: Error {}
 
 struct Color: Codable {
@@ -60,11 +59,11 @@ enum Message: Codable {
     case createUser(user: User)
     case login(userName: String)
     case logout(userName: String)
-    
+
     case createUserResponse(user: User?, error: String?)
     case loginResponse(user: User?, error: String?)
     case logoutResponse(user: User?, error: String?)
-    
+
     case chatMessage(message: ChatMessage)
     case chatMessages(messages: [ChatMessage]?, error: String?)
     case getChatMessages(fromId: Int?, count: Int?)
@@ -75,16 +74,16 @@ extension Message {
         case createUser
         case login
         case logout
-        
+
         case createUserResponse
         case loginResponse
         case logoutResponse
-        
+
         case chatMessage
         case chatMessages
         case getChatMessages
     }
-    
+
     private enum AuxCodingKeys: String, CodingKey {
         case user
         case error
@@ -92,7 +91,7 @@ extension Message {
         case fromId
         case count
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         guard let key = container.allKeys.first else { throw "No valid keys in: \(container)" }
@@ -104,62 +103,62 @@ extension Message {
         case .login:              self = try .login(userName: dec())
         case .logout:             self = try .logout(userName: dec())
         case .createUser:         self = try .createUser(user: dec())
-            
+
         case .createUserResponse: self = try .createUserResponse(user: dec(.user), error: dec(.error))
         case .loginResponse:      self = try .loginResponse(user: dec(.user), error: dec(.error))
         case .logoutResponse:     self = try .logoutResponse(user: dec(.user), error: dec(.error))
-            
+
         case .chatMessage:        self = try .chatMessage(message: dec())
         case .chatMessages:       self = try .chatMessages(messages: dec(.messages), error: dec(.error))
         case .getChatMessages:    self = try .getChatMessages(fromId: dec(.fromId), count: dec(.count))
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case .login(let userName):
-            try container.encode(userName, forKey:.login)
+            try container.encode(userName, forKey: .login)
         case .logout(let userName):
-            try container.encode(userName, forKey:.logout)
+            try container.encode(userName, forKey: .logout)
         case .createUser(let user):
-            try container.encode(user, forKey:.createUser)
+            try container.encode(user, forKey: .createUser)
         case .createUserResponse(let user, let error):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .createUserResponse)
-            try nestedContainter.encode(user, forKey:.user)
-            try nestedContainter.encode(error, forKey:.error)
+            try nestedContainter.encode(user, forKey: .user)
+            try nestedContainter.encode(error, forKey: .error)
         case .loginResponse(let user, let error):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .loginResponse)
-            try nestedContainter.encode(user, forKey:.user)
-            try nestedContainter.encode(error, forKey:.error)
+            try nestedContainter.encode(user, forKey: .user)
+            try nestedContainter.encode(error, forKey: .error)
         case .logoutResponse(let user, let error):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .logoutResponse)
-            try nestedContainter.encode(user, forKey:.user)
-            try nestedContainter.encode(error, forKey:.error)
+            try nestedContainter.encode(user, forKey: .user)
+            try nestedContainter.encode(error, forKey: .error)
         case .chatMessage(let message):
-            try container.encode(message, forKey:.chatMessage)
+            try container.encode(message, forKey: .chatMessage)
         case .chatMessages(let messages, let error):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .chatMessages)
-            try nestedContainter.encode(messages, forKey:.messages)
-            try nestedContainter.encode(error, forKey:.error)
+            try nestedContainter.encode(messages, forKey: .messages)
+            try nestedContainter.encode(error, forKey: .error)
         case .getChatMessages(let fromId, let count):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .getChatMessages)
-            try nestedContainter.encode(fromId, forKey:.fromId)
-            try nestedContainter.encode(count, forKey:.count)
+            try nestedContainter.encode(fromId, forKey: .fromId)
+            try nestedContainter.encode(count, forKey: .count)
         }
     }
 }
 
 func test(_ message: Message) throws {
     let data = try JSONEncoder().encode(message)
-    print(String(data: data, encoding:.utf8)!)
+    print(String(data: data, encoding: .utf8)!)
     let decodedMessage = try JSONDecoder().decode(Message.self, from: data)
     print(decodedMessage)
     print()
 }
 
-let user = User(userName:"Boris", userId:nil, color:UIColor(red: 0.25, green: 0.1, blue:0.94404, alpha:1.0).color)
+let user = User(userName: "Boris", userId: nil, color: UIColor(red: 0.25, green: 0.1, blue: 0.94404, alpha: 1.0).color)
 let message = ChatMessage(user: user, message: "Chat message", id: 123)
 
 test(.createUser(user: user))

@@ -20,17 +20,17 @@ import Foundation
 public class Client {
     var connection: Connection!
     let onMessage = Observable<Message>()
-    
+
     public init() {
     }
-    
+
     public func established(connection: Connection) {
         self.connection = connection
-        self.connection?.onMessage { [weak self] message, connectionId in
+        self.connection?.onMessage { [weak self] message, _ in
             self?.onMessage.notifyObservers(message)
         }
     }
-    
+
     public func send(message: Message) {
         DispatchQueue.main.async { [weak self] in
             self?.connection?.transmit(message)

@@ -19,27 +19,27 @@ import Foundation
 import UIKit
 
 public class ClientView: UIView {
-    var cellSize : CGFloat = 10.0
-    
+    var cellSize: CGFloat = 10.0
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .white
     }
-    
+
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         self.backgroundColor = .white
     }
-    
+
     public func draw(with gameField: GameField) {
         self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-        
+
         // Draw grid
         let grid = CGMutablePath()
         let numCellsX = gameField.width
         let numCellsY = gameField.height
         for x in 0...numCellsX {
-            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
+            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y: 0))
             grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*CGFloat(numCellsY)))
         }
         for y in 0...numCellsY {
@@ -51,13 +51,13 @@ public class ClientView: UIView {
         gridLayer.strokeColor = UIColor.black.cgColor
         gridLayer.backgroundColor = UIColor.white.cgColor
         self.layer.addSublayer(gridLayer)
-        
+
         // Draw cells
         let cells   = gameField.gameField.allCells() + gameField.acceptedCells + gameField.unacceptedCells
-        let userIds = cells.map{$0.userId}.orderedSet
-        
+        let userIds = cells.map {$0.userId}.orderedSet
+
         userIds.forEach { userId in
-            let cellsPerUserId = cells.filter{$0.userId == userId}
+            let cellsPerUserId = cells.filter {$0.userId == userId}
             let cellsPath = CGMutablePath()
             cellsPerUserId.forEach { cell in
                 cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
@@ -73,7 +73,7 @@ public class ClientView: UIView {
     }
 }
 
-extension Array where Element:Hashable {
+extension Array where Element: Hashable {
     var orderedSet: Array {
         var unique = Set<Element>()
         return self.filter { unique.insert($0).inserted }

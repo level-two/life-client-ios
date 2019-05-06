@@ -21,17 +21,17 @@ import UIKit
 public class ClientViewController: UIViewController {
     public let gameFieldView = ClientView()
     public let onCellTapped = Observable<(x: Int, y: Int)>()
-    
+
     override public func loadView() {
         self.view = gameFieldView
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.onTapGesture(_:)))
         gameFieldView.addGestureRecognizer(tapGestureRecognizer)
     }
-    
+
     public func draw(with gameField: GameField) {
         gameFieldView.draw(with: gameField)
     }
-    
+
     @objc
     func onTapGesture(_ sender: UIGestureRecognizer) {
         let touchLocation = sender.location(in: gameFieldView)
