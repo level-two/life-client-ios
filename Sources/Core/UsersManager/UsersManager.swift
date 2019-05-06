@@ -30,17 +30,21 @@ protocol UserCreationManager {
 }
 
 class UsersManager {
+    public enum UsersManagerError: Error {
+        case operationTimeout
+    }
+    
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
-    
+
 //    public func userData(for userId: UserId) -> Promise<UserData> {
 //    }
 //
 //    public func userData(for userName: String) -> Promise<UserData> {
 //        return database.userData(with: userName)
 //    }
-    
+
 //    func requestUserData(for userId: UserId) -> Promise<Void> {
 //        return networkManager.send(message)
 //    }
@@ -50,42 +54,49 @@ class UsersManager {
 //
 //        }
 //    }
-    
+
     fileprivate weak var networkManager: NetworkManager?
 }
 
 extension UsersManager: UserCreationManager {
-    func createUser(with userName: String, color: Color) -> Promise<UserData> {
+    public func createUser(with userName: String, color: Color) -> Promise<UserData> {
         return firstly {
             sendCreateUserMessage(with: userName, color: color)
         }.then {
             waitCreateUserResponse()
         }
     }
-    
+
     func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
         return networkManager.send(.createUser(userName: userName, color: color))
     }
-    
+
     func waitCreateUserResponse() -> Promise<UserData> {
         return .init() { [weak self] promise in
-            let disposeBag = DisposeBag()
+            let compositeDisposable = CompositeDisposable()
+
+            networkManager.onMessage
+                .bind { message in
+                    guard case .createUserSuccess(let userData) = message else { return }
+                    promise.resolve(with: userData)
+                    compositeDisposable.dispose()
+                }.disposed(by: compositeDisposable)
+
+            networkManager.onMessage
+                .bind { message in
+                    guard case .createUserError(let error) = message else { return }
+                    promise.reject(error)
+                    compositeDisposable.dispose()
+                }.disposed(by: compositeDisposable)
             
-            networkManager.onMessage.bind { message in
-                guard case .createUserSuccess(let userData) = message else { return }
-                
-                promise.resolve(with: userData)
-                disposeBag.reset()
-            }.disposed(by: disposeBag)
+            let timeout = ApplicationSettings.operationTimeout
             
-            networkManager.onMessage.bind { message in
-                guard case .createUserError(let error) = message else { return }
-                
-                promise.reject(error)
-                disposeBag.reset()
-            }.disposed(by: disposeBag)
-            
-            // TODO: Add operation timeout check
+            Observable<Int>
+                .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
+                .bind {
+                    promise.reject(UsersManagerError.operationTimeout)
+                    compositeDisposable.dispose()
+                }.disposed(by: compositeDisposable)
         }
     }
 }
