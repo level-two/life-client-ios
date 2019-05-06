@@ -29,7 +29,7 @@ extension Cell {
         pos.y = try container.decode(Int.self)
         userId = try container.decode(UserId.self)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(Int(pos.x))

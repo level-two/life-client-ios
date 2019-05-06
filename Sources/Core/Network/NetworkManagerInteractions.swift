@@ -8,10 +8,9 @@
 
 import Foundation
 
-
 extension NetworkManager {
     public func assembleInteractions() {
-        
+
 //        case .didEnterBackground:
 //            self.shouldReconnect = false
 //            _ = self.channel?.close()
@@ -19,5 +18,5 @@ extension NetworkManager {
 //            self.shouldReconnect = true
 //            self.run()
     }
-    
+
 }

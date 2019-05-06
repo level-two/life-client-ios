@@ -28,15 +28,15 @@ extension Gameplay {
     public func assembleInteractions(disposeBag: DisposeBag) -> Gameplay.Interactor {
         let interactor = Gameplay.Interactor()
 
-        interactor.onMessage.bind { [weak self] connectionId, message in
+        interactor.onMessage.bind { [weak self] _, message in
             guard let self = self else { return }
             guard case .placeCell(let cell, let cycle) = message else { return }
-            
+
             if self.place(cell, for: cycle) {
                 interactor.broadcastMessage.onNext(.placeCell(cell: cell, gameCycle: cycle))
             }
         }.disposed(by: disposeBag)
-        
+
         onNewCycle
             .bind { interactor.broadcastMessage.onNext(.newGameCycle(gameCycle: $0)) }
             .disposed(by: disposeBag)

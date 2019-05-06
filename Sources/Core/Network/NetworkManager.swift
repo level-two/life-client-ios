@@ -25,26 +25,26 @@ class NetworkManager {
         case noConnection
         case dataToStringFailed
     }
-    
+
     public let onConnectionEstablished = PublishSubject<ConnectionId>()
     public let onConnectionClosed = PublishSubject<ConnectionId>()
     public let onMessage = PublishSubject<(ConnectionId, Data)>()
-    
+
     @discardableResult
     public func send(data: Data) -> Promise<Void> {
         return .init() { [weak self] promise in
             guard let channel = self?.channel else { throw NetworkManagerError.noConnection }
             guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
-            
+
             var buffer = channel.allocator.buffer(capacity: str.count)
             buffer.write(string: str)
-            
+
             let writeFuture = channel.writeAndFlush(buffer, promise: nil)
             writeFuture.whenSuccess { promise.resolve() }
             writeFuture.whenFailure { promise.reject($0) }
         }
     }
-    
+
     deinit {
         do {
             try self.group.syncShutdownGracefully()
@@ -58,11 +58,10 @@ class NetworkManager {
     fileprivate var isConnected: Bool {
         channel != nil
     }
-    
-    fileprivate let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    fileprivate var channel: Channel? = nil
-}
 
+    fileprivate let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    fileprivate var channel: Channel?
+}
 
 extension NetworkManager {
     var bootstrap: ClientBootstrap {
@@ -70,19 +69,19 @@ extension NetworkManager {
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
             .channelInitializer { [weak self] channel in
                 guard let self = self else { return nil }
-                
+
                 let bridge = BridgeChannelHandler()
                 bridge.onMessage
                     .bind(to: self.onMessage)
                     .disposed(by: bridge.disposeBag)
-                
+
                 return channel.pipeline.addHandlers(FrameChannelHandler(), bridge, first: true)
             }
     }
-    
+
     func run() {
         print("Connecting to \(ApplicationSettings.host):\(ApplicationSettings.port)...")
-        
+
         bootstrap.connect(host: ApplicationSettings.host, port: ApplicationSettings.port)
             .then { [weak self] channel -> EventLoopFuture<Void> in
                 print("Connected")

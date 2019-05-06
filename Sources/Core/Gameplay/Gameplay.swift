@@ -21,10 +21,10 @@ import RxCocoa
 
 class Gameplay {
     let onNewCycle = PublishSubject<Int>()
-    
+
     init(fieldWidth: Int, fieldHeight: Int, updatePeriod: TimeInterval) {
         self.gameField = GameField(fieldWidth, fieldHeight)
-        
+
         updateTimer = .scheduledTimer(withTimeInterval: updatePeriod, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.cycle += 1
@@ -32,11 +32,11 @@ class Gameplay {
             self.onNewCycle.onNext(self.cycle)
         }
     }
-    
+
     deinit {
         updateTimer?.invalidate()
     }
-    
+
     func place(_ cell: Cell, for gameCycle: Int) -> Bool {
         if gameCycle == cycle && gameField.canPlaceCell(cell) {
             gameField.placeAcceptedCell(cell)
@@ -47,7 +47,7 @@ class Gameplay {
         }
         return true
     }
-    
+
     fileprivate var updateTimer: Timer?
     fileprivate let gameField: GameField
     fileprivate var cycle = 0

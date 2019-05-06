@@ -26,7 +26,7 @@ class FrameChannelHandler: ChannelInboundHandler {
         case unableGetDataChunk
         case messageToDataFailed
     }
-    
+
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
         let byteBuf = self.unwrapInboundIn(data)
         guard let chunk = byteBuf.getString(at: byteBuf.readerIndex, length: byteBuf.readableBytes) else {
@@ -52,6 +52,6 @@ class FrameChannelHandler: ChannelInboundHandler {
         print("CollectingInboundHandler caught error: ", error)
         ctx.close(promise: nil)
     }
-    
+
     fileprivate var collected = ""
 }

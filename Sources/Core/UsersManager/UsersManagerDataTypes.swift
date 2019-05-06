@@ -36,7 +36,7 @@ extension Color {
         let g = try container.decode(Int.self)
         let b = try container.decode(Int.self)
         let a = try container.decode(Int.self)
-        
+
         red = Double(r)/255
         green = Double(g)/255
         blue = Double(b)/255

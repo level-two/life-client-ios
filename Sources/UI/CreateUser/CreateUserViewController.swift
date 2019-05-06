@@ -20,29 +20,29 @@ import UIKit
 class CreateUserViewController: UIViewController, UITextFieldDelegate {
     private var navigator: SceneNavigatorProtocol!
     private var sessionManager: SessionProtocol!
-    
+
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var colorPickSlider: ColorPickSlider!
     @IBOutlet weak var colorPreviewLabel: UILabel!
     @IBOutlet weak var activityIndicatorView: UIView!
-    
+
     func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol) {
         self.navigator = navigator
         self.sessionManager = sessionManager
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.userNameTextField.delegate = self
         self.colorPreviewLabel.backgroundColor = self.colorPickSlider.pickedColor
         self.activityIndicatorView.isHidden = true
     }
-    
+
     @IBAction func onCancelButton() {
         self.navigator.navigate(to: .login)
         userNameTextField.resignFirstResponder()
     }
-    
+
     @IBAction func onCreateButton() {
         guard
             let userName = userNameTextField.text,
@@ -51,18 +51,18 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
             alert("Please enter player name to login")
             return
         }
-        
+
         activityIndicatorView.isHidden = false
         userNameTextField.resignFirstResponder()
-        
+
         let uicolor = self.colorPickSlider.pickedColor
         sessionManager.createUserAndLogin(userName: userName, uicolor: uicolor).observe { [weak self] result in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
                 self.activityIndicatorView.isHidden = true
             }
-            
+
             switch result {
             case .value:
                 self.navigator.navigate(to: .gameplay)
@@ -71,7 +71,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
+
     @IBAction func onColorSliderValueChanged() {
         self.colorPreviewLabel.backgroundColor = self.colorPickSlider.pickedColor
     }
@@ -83,7 +83,7 @@ extension CreateUserViewController {
         textField.resignFirstResponder()
         return true
     }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }

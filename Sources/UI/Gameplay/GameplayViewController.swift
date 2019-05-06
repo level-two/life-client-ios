@@ -20,34 +20,33 @@ import UIKit
 class GameplayViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var gameFieldView: UIView!
-    
+
     struct Cell {
         var pos: CGPoint
     }
-    
+
     struct PlayerCells {
         var color: UIColor
         var cells: [Cell]
     }
-    
-    var cellSize : CGFloat = 0
+
+    var cellSize: CGFloat = 0
     var numCellsX: CGFloat = 0
     var numCellsY: CGFloat = 0
-    var players  : [PlayerCells] = []
-    
-    
+    var players: [PlayerCells] = []
+
     var navigator: SceneNavigatorProtocol!
     var sessionManager: SessionProtocol!
     var networkManager: NetworkManagerProtocol!
     var user: User!
-    
+
     func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol, networkManager: NetworkManagerProtocol) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.networkManager = networkManager
         self.user = sessionManager.user.require()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         //self.gameFieldView.frame = self.scrollView.bounds
         print(self.view.frame)
@@ -57,7 +56,7 @@ class GameplayViewController: UIViewController {
         cellSize = 10.0
         numCellsX = (self.gameFieldView.bounds.width  / cellSize).rounded(.down)
         numCellsY = (self.gameFieldView.bounds.height / cellSize).rounded(.down)
-        
+
         // Create random players and cells
         let numPlayers = 4
         for _ in 0..<numPlayers {
@@ -70,14 +69,14 @@ class GameplayViewController: UIViewController {
             }
             players.append(PlayerCells(color: .random, cells: cells))
         }
-        
+
         // Draw player cells
         players.forEach { [weak self] player in
             guard let self = self else { return }
-            
+
             let cellSize = self.cellSize
             let cellsPath = CGMutablePath()
-            
+
             player.cells.forEach { cell in
                 cellsPath.addRect(CGRect(x: cell.pos.x * cellSize,
                                          y: cell.pos.y * cellSize,
@@ -88,14 +87,14 @@ class GameplayViewController: UIViewController {
             layer.path = cellsPath
             layer.fillColor = player.color.cgColor
             layer.strokeColor = player.color.cgColor
-            
+
             self.gameFieldView.layer.addSublayer(layer)
         }
-        
+
         // Draw grid
         let grid = CGMutablePath()
         for x in 0...Int(numCellsX) {
-            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y:0))
+            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y: 0))
             grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*numCellsY))
         }
         for y in 0...Int(numCellsY) {
@@ -124,7 +123,7 @@ extension GameplayViewController {
             self.scrollView.setZoomScale(1, animated: true)
         }
     }
-    
+
     func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
         var zoomRect = CGRect.zero
         zoomRect.size.height = self.gameFieldView.frame.size.height / scale

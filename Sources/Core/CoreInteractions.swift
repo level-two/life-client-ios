@@ -33,7 +33,7 @@ extension LifeServerCore {
         serverInteractor.onMessage.bind { connectionId, data in
             // TODO: Think about json or incoming message validation before using it
             print("🔥 Got data: \(String(data: data, encoding: .utf8)!)")
-            
+
             if let sessionManagerMessage = try? JSONDecoder().decode(SessionManagerMessage.self, from: data) {
                 sessionManagerInteractor.onMessage.onNext((connectionId, sessionManagerMessage))
                 return
@@ -83,7 +83,7 @@ extension LifeServerCore {
             .map { ($0, try JSONEncoder().encode($1)) }
             .bind(onNext: server.send)
             .disposed(by: disposeBag)
-        
+
         chatInteractor.broadcastMessage
             .map { try JSONEncoder().encode($0) }
             .bind { [weak self] data in

@@ -38,12 +38,12 @@ class SceneNavigator: SceneNavigatorProtocol {
     // causing a retain cycle, so better be safe than sorry :)
     private weak var navigationController: UINavigationController!
     private      var factory: ViewControllerFactory!
-    
+
     func setupDependencies(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController) {
         self.factory = factory
         self.navigationController = navigationController
     }
-    
+
     func navigate(to destination: Destination) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -51,7 +51,7 @@ class SceneNavigator: SceneNavigatorProtocol {
             self.navigationController?.pushViewController(viewController, animated: true)
         }
     }
-    
+
     private func makeViewController(for destination: Destination) -> UIViewController {
         switch destination {
         case .login:

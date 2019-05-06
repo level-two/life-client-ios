@@ -50,7 +50,7 @@ extension SessionManager: SessionInfoProvider {
         }
         return result
     }
-    
+
     public func userId(for connectionId: ConnectionId) -> UserId? {
         var result: UserId?
         queue.sync { [weak self] in

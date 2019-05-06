@@ -19,11 +19,11 @@ import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var playerNameTextField: UITextField!
-    
+
     private var navigator: SceneNavigatorProtocol!
     private var sessionManager: SessionProtocol!
     @IBOutlet weak var activityIndicatorView: UIView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         playerNameTextField.delegate = self
@@ -34,7 +34,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             login(userName: autologinUserName)
         }
     }
-    
+
     func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol) {
         self.navigator = navigator
         self.sessionManager = sessionManager
@@ -47,7 +47,7 @@ extension LoginViewController {
         navigator.navigate(to: .createUser)
         playerNameTextField.resignFirstResponder()
     }
-    
+
     @IBAction func onLoginButton() {
         guard
             let userName = playerNameTextField.text,
@@ -58,18 +58,18 @@ extension LoginViewController {
         }
         login(userName: userName)
     }
-    
+
     func login(userName: String) {
         activityIndicatorView.isHidden = false
         playerNameTextField.resignFirstResponder()
-        
+
         sessionManager.login(userName: userName).observe { [weak self] result in
             guard let self = self else { return }
-            
+
             DispatchQueue.main.async {
                 self.activityIndicatorView.isHidden = true
             }
-            
+
             switch result {
             case .value:
                 ApplicationSettings.setBool(true, for: .autologinEnabled)
@@ -88,7 +88,7 @@ extension LoginViewController {
         textField.resignFirstResponder()
         return true
     }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }

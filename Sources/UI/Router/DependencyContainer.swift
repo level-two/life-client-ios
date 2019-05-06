@@ -19,18 +19,18 @@ import Foundation
 import UIKit
 
 protocol ViewControllerFactory {
-    func makeLoginViewController()      -> LoginViewController
+    func makeLoginViewController() -> LoginViewController
     func makeCreateUserViewController() -> CreateUserViewController
-    func makeGameplayViewController()   -> GameplayViewController
-    func makeChatViewController()       -> ChatViewController
+    func makeGameplayViewController() -> GameplayViewController
+    func makeChatViewController() -> ChatViewController
 }
 
 class DependencyContainer {
-    private var storyboard    : UIStoryboard!
+    private var storyboard: UIStoryboard!
     private var networkManager: NetworkManagerProtocol!
     private var sessionManager: SessionProtocol!
     private var sceneNavigator: SceneNavigatorProtocol!
-    
+
     func setupDependencies(storyboard: UIStoryboard, networkManager: NetworkManagerProtocol,
                            sessionManager: SessionProtocol, sceneNavigator: SceneNavigatorProtocol) {
         self.storyboard     = storyboard
@@ -46,19 +46,19 @@ extension DependencyContainer: ViewControllerFactory {
         vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager)
         return vc
     }
-    
+
     func makeCreateUserViewController() -> CreateUserViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "CreateUserViewController") as! CreateUserViewController
         vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager)
         return vc
     }
-    
+
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
         vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
         return vc
     }
-    
+
     func makeGameplayViewController() -> GameplayViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "GameplayViewController") as! GameplayViewController
         vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
