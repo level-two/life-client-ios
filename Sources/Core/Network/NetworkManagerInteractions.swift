@@ -12,20 +12,12 @@ import Foundation
 extension NetworkManager {
     public func assembleInteractions() {
         
+//        case .didEnterBackground:
+//            self.shouldReconnect = false
+//            _ = self.channel?.close()
+//        case .willEnterForeground:
+//            self.shouldReconnect = true
+//            self.run()
     }
     
-    public func setupDependencies(appState: ApplicationStateObservable) {
-        appState.appStateObservable.addObserver(self) { [weak self] state in
-            guard let self = self else { return }
-            switch state {
-            case .didEnterBackground:
-                self.shouldReconnect = false
-                _ = self.channel?.close()
-            case .willEnterForeground:
-                self.shouldReconnect = true
-                self.run()
-            default: ()
-            }
-        }
-    }
 }

@@ -18,29 +18,74 @@
 import Foundation
 import RxSwift
 import RxCocoa
-import SwiftKuery
-import SwiftKuerySQLite
 import PromiseKit
 
-protocol UserInfoProvider {
-    func userData(for userId: UserId) -> Promise<UserData>
-    func userData(for userName: String) -> Promise<UserData>
+//protocol UserInfoProvider {
+//    func userData(for userId: UserId) -> Promise<UserData>
+//    func userData(for userName: String) -> Promise<UserData>
+//}
+
+protocol UserCreationManager {
+    func createUser(with userName: String, color: Color) -> Promise<UserData>
 }
 
 class UsersManager {
-    init(database: UserDatabase) {
-        self.database = database
+    init(networkManager: NetworkManager) {
+        self.networkManager = networkManager
     }
-
-    internal let database: UserDatabase
+    
+//    public func userData(for userId: UserId) -> Promise<UserData> {
+//    }
+//
+//    public func userData(for userName: String) -> Promise<UserData> {
+//        return database.userData(with: userName)
+//    }
+    
+//    func requestUserData(for userId: UserId) -> Promise<Void> {
+//        return networkManager.send(message)
+//    }
+//
+//    func waitForUserDataResponse() -> Promise<UserData> {
+//        return .init() { [weak self] promise in
+//
+//        }
+//    }
+    
+    fileprivate weak var networkManager: NetworkManager?
 }
 
-extension UsersManager: UserInfoProvider {
-    public func userData(for userId: UserId) -> Promise<UserData> {
-        return database.userData(with: userId)
+extension UsersManager: UserCreationManager {
+    func createUser(with userName: String, color: Color) -> Promise<UserData> {
+        return firstly {
+            sendCreateUserMessage(with: userName, color: color)
+        }.then {
+            waitCreateUserResponse()
+        }
     }
-
-    public func userData(for userName: String) -> Promise<UserData> {
-        return database.userData(with: userName)
+    
+    func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
+        return networkManager.send(.createUser(userName: userName, color: color))
+    }
+    
+    func waitCreateUserResponse() -> Promise<UserData> {
+        return .init() { [weak self] promise in
+            let disposeBag = DisposeBag()
+            
+            networkManager.onMessage.bind { message in
+                guard case .createUserSuccess(let userData) = message else { return }
+                
+                promise.resolve(with: userData)
+                disposeBag.reset()
+            }.disposed(by: disposeBag)
+            
+            networkManager.onMessage.bind { message in
+                guard case .createUserError(let error) = message else { return }
+                
+                promise.reject(error)
+                disposeBag.reset()
+            }.disposed(by: disposeBag)
+            
+            // TODO: Add operation timeout check
+        }
     }
 }

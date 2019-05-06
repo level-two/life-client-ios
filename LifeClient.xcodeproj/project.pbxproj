@@ -24,8 +24,6 @@
 		93A5DBDF227EF5C60015D602 /* ChatInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBC227EF5C60015D602 /* ChatInteractions.swift */; };
 		93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */; };
 		93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */; };
-		93A5DBE3227EF5C60015D602 /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC2227EF5C60015D602 /* Server.swift */; };
-		93A5DBE4227EF5C60015D602 /* NetworkDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */; };
 		93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */; };
 		93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */; };
 		93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */; };
@@ -74,8 +72,6 @@
 		93A5DBBC227EF5C60015D602 /* ChatInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatInteractions.swift; sourceTree = "<group>"; };
 		93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataTypes.swift; sourceTree = "<group>"; };
 		93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BridgeChannelHandler.swift; sourceTree = "<group>"; };
-		93A5DBC2227EF5C60015D602 /* Server.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
-		93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkDataTypes.swift; sourceTree = "<group>"; };
 		93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameChannelHandler.swift; sourceTree = "<group>"; };
 		93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventLoopFuture+Cascade.swift"; sourceTree = "<group>"; };
 		93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerMessage.swift; sourceTree = "<group>"; };
@@ -183,12 +179,10 @@
 		936E8ED122018F4600FB7689 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				93A5DBC0227EF5C60015D602 /* Server */,
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */,
 				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
 				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
-				93A5DBC3227EF5C60015D602 /* NetworkDataTypes.swift */,
 				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
 			);
 			path = Network;
@@ -271,14 +265,6 @@
 				93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */,
 			);
 			path = Chat;
-			sourceTree = "<group>";
-		};
-		93A5DBC0227EF5C60015D602 /* Server */ = {
-			isa = PBXGroup;
-			children = (
-				93A5DBC2227EF5C60015D602 /* Server.swift */,
-			);
-			path = Server;
 			sourceTree = "<group>";
 		};
 		93A5DBC7227EF5C60015D602 /* UsersManager */ = {
@@ -542,7 +528,6 @@
 				93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */,
 				93A5DBEF227EF5C60015D602 /* Cell.swift in Sources */,
 				93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */,
-				93A5DBE3227EF5C60015D602 /* Server.swift in Sources */,
 				93A5DBF3227EF5C60015D602 /* SessionManagerInteractions.swift in Sources */,
 				93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */,
 				93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */,
@@ -568,7 +553,6 @@
 				93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */,
 				93A5DBF1227EF5C60015D602 /* GameplayInteractions.swift in Sources */,
 				9338015221C8FF680056C349 /* NetworkManager.swift in Sources */,
-				93A5DBE4227EF5C60015D602 /* NetworkDataTypes.swift in Sources */,
 				9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -31,7 +31,7 @@ class NetworkManager {
     public let onMessage = PublishSubject<(ConnectionId, Data)>()
     
     @discardableResult
-    public func send(data: Data) -> Future<Void> {
+    public func send(data: Data) -> Promise<Void> {
         return .init() { [weak self] promise in
             guard let channel = self?.channel else { throw NetworkManagerError.noConnection }
             guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
@@ -52,16 +52,15 @@ class NetworkManager {
             print("Failed to gracefully shut down: \(error)")
         }
     }
+
+    // TODO: Shouldn't it be public?
+    fileprivate var shouldReconnect: Bool = true
+    fileprivate var isConnected: Bool {
+        channel != nil
+    }
     
     fileprivate let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    
     fileprivate var channel: Channel? = nil
-    
-    fileprivate var shouldReconnect: Bool = true
-    fileprivate var isConnected = false {
-        didSet { onConnectedToServer.notifyObservers(self.isConnected)
-        }
-    }
 }
 
 
