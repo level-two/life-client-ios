@@ -20,15 +20,6 @@ import RxSwift
 import RxCocoa
 import PromiseKit
 
-//protocol UserInfoProvider {
-//    func userData(for userId: UserId) -> Promise<UserData>
-//    func userData(for userName: String) -> Promise<UserData>
-//}
-
-protocol UserCreationManager {
-    func createUser(with userName: String, color: Color) -> Promise<UserData>
-}
-
 class UsersManager {
     public enum UsersManagerError: Error {
         case operationTimeout
@@ -54,11 +45,7 @@ class UsersManager {
 //
 //        }
 //    }
-
-    fileprivate weak var networkManager: NetworkManager?
-}
-
-extension UsersManager: UserCreationManager {
+    
     public func createUser(with userName: String, color: Color) -> Promise<UserData> {
         return firstly {
             sendCreateUserMessage(with: userName, color: color)
@@ -67,6 +54,10 @@ extension UsersManager: UserCreationManager {
         }
     }
 
+    fileprivate weak var networkManager: NetworkManager?
+}
+
+extension UsersManager: UserCreationManager {
     func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
         return networkManager.send(.createUser(userName: userName, color: color))
     }
@@ -75,14 +66,14 @@ extension UsersManager: UserCreationManager {
         return .init() { [weak self] promise in
             let compositeDisposable = CompositeDisposable()
 
-            networkManager.onMessage
+            self?.networkManager?.onMessage
                 .bind { message in
                     guard case .createUserSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            networkManager.onMessage
+            self?.networkManager?.onMessage
                 .bind { message in
                     guard case .createUserError(let error) = message else { return }
                     promise.reject(error)
