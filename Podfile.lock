@@ -15,7 +15,12 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (6.8.4):
     - PromiseKit/CorePromise
-  - RxSwift (5.0.0)
+  - RxAppState (1.5.0):
+    - RxCocoa (~> 4.4)
+    - RxSwift (~> 4.4)
+  - RxCocoa (4.5.0):
+    - RxSwift (>= 4.4.2, ~> 4.4)
+  - RxSwift (4.5.0)
   - SwiftLint (0.32.0)
   - SwiftNIO (2.0.0):
     - CNIOAtomics (= 2.0.0)
@@ -29,6 +34,7 @@ PODS:
 DEPENDENCIES:
   - MessageKit
   - PromiseKit
+  - RxAppState
   - RxSwift
   - SwiftLint
   - SwiftNIO
@@ -42,6 +48,8 @@ SPEC REPOS:
     - InputBarAccessoryView
     - MessageKit
     - PromiseKit
+    - RxAppState
+    - RxCocoa
     - RxSwift
     - SwiftLint
     - SwiftNIO
@@ -55,11 +63,13 @@ SPEC CHECKSUMS:
   InputBarAccessoryView: 2b937602598e2fab3149f37f51dd7ad795653812
   MessageKit: e892a9ca49ebe6d82684d3a93ad84021fa23e2c6
   PromiseKit: 51794a832647e7b819336dc2279039ce9f1cc49b
-  RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
+  RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
+  RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
+  RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SwiftLint: 009a898ef2a1c851f45e1b59349bf6ff2ddc990d
   SwiftNIO: 90e2f451448a4a275d2bce0edb780281c1715780
   SwiftNIOConcurrencyHelpers: a79f8bb5ae0f342107b2f33b1764eb78891dcf54
 
-PODFILE CHECKSUM: c38224852a488bee2b84583875547d75d73e57b1
+PODFILE CHECKSUM: 324f867cd1bad8db9f02f69f299717cd58fb3bd0
 
 COCOAPODS: 1.6.1

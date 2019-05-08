@@ -38,7 +38,6 @@
 		93A5DBF3227EF5C60015D602 /* SessionManagerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD5227EF5C60015D602 /* SessionManagerInteractions.swift */; };
 		93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */; };
 		93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD7227EF5C60015D602 /* SessionManager.swift */; };
-		93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
@@ -82,7 +81,6 @@
 		93A5DBD5227EF5C60015D602 /* SessionManagerInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerInteractions.swift; sourceTree = "<group>"; };
 		93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBD7227EF5C60015D602 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
-		93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerInteractions.swift; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -172,7 +170,6 @@
 			isa = PBXGroup;
 			children = (
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
-				93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */,
 				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
 				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
 				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
@@ -463,6 +460,8 @@
 				"${BUILT_PRODUCTS_DIR}/InputBarAccessoryView/InputBarAccessoryView.framework",
 				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/RxAppState/RxAppState.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftNIO/NIO.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftNIOConcurrencyHelpers/NIOConcurrencyHelpers.framework",
@@ -478,6 +477,8 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/InputBarAccessoryView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAppState.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NIO.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NIOConcurrencyHelpers.framework",
@@ -508,7 +509,6 @@
 				93A5DBEF227EF5C60015D602 /* Cell.swift in Sources */,
 				93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */,
 				93A5DBF3227EF5C60015D602 /* SessionManagerInteractions.swift in Sources */,
-				93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */,
 				93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */,
 				936E8ED822019F8B00FB7689 /* CGFloat+Random.swift in Sources */,
 				93DA242122085910007CBA4D /* ChatMessage.swift in Sources */,
