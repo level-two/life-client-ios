@@ -29,7 +29,6 @@
 		93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */; };
 		93A5DBE9227EF5C60015D602 /* UsersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC9227EF5C60015D602 /* UsersManager.swift */; };
 		93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBCA227EF5C60015D602 /* UsersManagerDataTypes.swift */; };
-		93A5DBEC227EF5C60015D602 /* Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBCC227EF5C60015D602 /* Core.swift */; };
 		93A5DBED227EF5C60015D602 /* Gameplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBCE227EF5C60015D602 /* Gameplay.swift */; };
 		93A5DBEE227EF5C60015D602 /* GameFieldArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBCF227EF5C60015D602 /* GameFieldArray.swift */; };
 		93A5DBEF227EF5C60015D602 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD0227EF5C60015D602 /* Cell.swift */; };
@@ -39,14 +38,12 @@
 		93A5DBF3227EF5C60015D602 /* SessionManagerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD5227EF5C60015D602 /* SessionManagerInteractions.swift */; };
 		93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */; };
 		93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD7227EF5C60015D602 /* SessionManager.swift */; };
-		93A5DBF9227EF5C60015D602 /* CoreInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */; };
 		93A5DBFB227F03460015D602 /* NetworkManagerInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
 		93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F87221C8636F00A2354E /* ApplicationMain.swift */; };
 		93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* SceneNavigator.swift */; };
-		93C9826221D18AC700738709 /* SessionManagerOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826121D18AC700738709 /* SessionManagerOld.swift */; };
 		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
 		93DA241F22084BD7007CBA4D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241E22084BD7007CBA4D /* Color.swift */; };
 		93DA242122085910007CBA4D /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA242022085910007CBA4D /* ChatMessage.swift */; };
@@ -76,7 +73,6 @@
 		93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBC9227EF5C60015D602 /* UsersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManager.swift; sourceTree = "<group>"; };
 		93A5DBCA227EF5C60015D602 /* UsersManagerDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerDataTypes.swift; sourceTree = "<group>"; };
-		93A5DBCC227EF5C60015D602 /* Core.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Core.swift; sourceTree = "<group>"; };
 		93A5DBCE227EF5C60015D602 /* Gameplay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gameplay.swift; sourceTree = "<group>"; };
 		93A5DBCF227EF5C60015D602 /* GameFieldArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameFieldArray.swift; sourceTree = "<group>"; };
 		93A5DBD0227EF5C60015D602 /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
@@ -86,7 +82,6 @@
 		93A5DBD5227EF5C60015D602 /* SessionManagerInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerInteractions.swift; sourceTree = "<group>"; };
 		93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBD7227EF5C60015D602 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
-		93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreInteractions.swift; sourceTree = "<group>"; };
 		93A5DBFA227F03460015D602 /* NetworkManagerInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerInteractions.swift; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -95,7 +90,6 @@
 		93B4F87221C8636F00A2354E /* ApplicationMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMain.swift; sourceTree = "<group>"; };
 		93B4F87321C8636F00A2354E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93C9825F21D183EE00738709 /* SceneNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigator.swift; sourceTree = "<group>"; };
-		93C9826121D18AC700738709 /* SessionManagerOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerOld.swift; sourceTree = "<group>"; };
 		93C9826321D18B5400738709 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		93DA241E22084BD7007CBA4D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		93DA242022085910007CBA4D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
@@ -189,7 +183,6 @@
 		936E8ED222018F5300FB7689 /* Session */ = {
 			isa = PBXGroup;
 			children = (
-				93C9826121D18AC700738709 /* SessionManagerOld.swift */,
 				93A5DBD7227EF5C60015D602 /* SessionManager.swift */,
 				93A5DBD5227EF5C60015D602 /* SessionManagerInteractions.swift */,
 				93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */,
@@ -210,13 +203,11 @@
 		93A5DBB3227EEDA90015D602 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */,
 				93A5DBB6227EEE7A0015D602 /* Application */,
 				93DA24282208887B007CBA4D /* DataStructures */,
 				936E8ED122018F4600FB7689 /* Network */,
 				93A5DBC7227EF5C60015D602 /* UsersManager */,
 				936E8ED222018F5300FB7689 /* Session */,
-				93A5DBB7227EEF2D0015D602 /* CreateUser */,
 				93A5DBCD227EF5C60015D602 /* Gameplay */,
 				93A5DBB9227EF5C60015D602 /* Chat */,
 			);
@@ -228,6 +219,7 @@
 			children = (
 				9338015421C904010056C349 /* Resources */,
 				936E8ECE22018F0000FB7689 /* Login */,
+				93A5DBB7227EEF2D0015D602 /* CreateUser */,
 				936E8ECD22018EEA00FB7689 /* Gameplay */,
 				936E8ECC22018EC100FB7689 /* Chat */,
 				936E8ED022018F1D00FB7689 /* Router */,
@@ -240,7 +232,6 @@
 			isa = PBXGroup;
 			children = (
 				93B4F87321C8636F00A2354E /* Info.plist */,
-				93A5DBCC227EF5C60015D602 /* Core.swift */,
 				937F4B7F2216F912008D5375 /* ApplicationSettings.swift */,
 				93B4F87221C8636F00A2354E /* ApplicationMain.swift */,
 			);
@@ -529,14 +520,11 @@
 				93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */,
 				937F4B802216F912008D5375 /* ApplicationSettings.swift in Sources */,
 				93A5DBE9227EF5C60015D602 /* UsersManager.swift in Sources */,
-				93A5DBF9227EF5C60015D602 /* CoreInteractions.swift in Sources */,
 				93A5DBDE227EF5C60015D602 /* Chat.swift in Sources */,
 				936E8ED722019F8B00FB7689 /* UIColor+Random.swift in Sources */,
 				93A5DBED227EF5C60015D602 /* Gameplay.swift in Sources */,
 				93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */,
 				93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */,
-				93C9826221D18AC700738709 /* SessionManagerOld.swift in Sources */,
-				93A5DBEC227EF5C60015D602 /* Core.swift in Sources */,
 				93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */,
 				93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */,
 				93A5DBF1227EF5C60015D602 /* GameplayInteractions.swift in Sources */,

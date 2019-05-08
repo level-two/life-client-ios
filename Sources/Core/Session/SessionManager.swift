@@ -25,7 +25,7 @@ class SessionManager {
         case operationTimeout
     }
     
-    init(networkManager: NetworkManager, usersManager: UsersManager) {
+    init(_ networkManager: NetworkManager, _ usersManager: UsersManager) {
         self.networkManager = networkManager
         self.usersManager = usersManager
     }
