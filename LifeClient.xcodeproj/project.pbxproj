@@ -210,13 +210,13 @@
 		93A5DBB3227EEDA90015D602 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				93A5DBCC227EF5C60015D602 /* Core.swift */,
 				93A5DBDC227EF5C60015D602 /* CoreInteractions.swift */,
 				93A5DBB6227EEE7A0015D602 /* Application */,
 				93DA24282208887B007CBA4D /* DataStructures */,
 				936E8ED122018F4600FB7689 /* Network */,
 				93A5DBC7227EF5C60015D602 /* UsersManager */,
 				936E8ED222018F5300FB7689 /* Session */,
+				93A5DBB7227EEF2D0015D602 /* CreateUser */,
 				93A5DBCD227EF5C60015D602 /* Gameplay */,
 				93A5DBB9227EF5C60015D602 /* Chat */,
 			);
@@ -228,7 +228,6 @@
 			children = (
 				9338015421C904010056C349 /* Resources */,
 				936E8ECE22018F0000FB7689 /* Login */,
-				93A5DBB7227EEF2D0015D602 /* CreateUser */,
 				936E8ECD22018EEA00FB7689 /* Gameplay */,
 				936E8ECC22018EC100FB7689 /* Chat */,
 				936E8ED022018F1D00FB7689 /* Router */,
@@ -241,6 +240,7 @@
 			isa = PBXGroup;
 			children = (
 				93B4F87321C8636F00A2354E /* Info.plist */,
+				93A5DBCC227EF5C60015D602 /* Core.swift */,
 				937F4B7F2216F912008D5375 /* ApplicationSettings.swift */,
 				93B4F87221C8636F00A2354E /* ApplicationMain.swift */,
 			);

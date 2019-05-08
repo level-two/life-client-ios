@@ -54,7 +54,7 @@ class UsersManager {
         }
     }
 
-    fileprivate weak var networkManager: NetworkManager?
+    let networkManager: NetworkManager?
 }
 
 extension UsersManager: UserCreationManager {

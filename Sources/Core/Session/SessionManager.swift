@@ -31,31 +31,69 @@ class SessionManager {
     }
 
     var loggedInUserData: UserData?
-    weak var networkManager: NetworkManager
-    weak var usersManager: UsersManager
+    let networkManager: NetworkManager
+    let usersManager: UsersManager
+}
+
+extension SessionManager {
+    @discardableResult
+    public func createUserAndLogin(userName: String, color: Color) -> Promise<UserData> {
+        return firstly {
+            self.usersManager.createUser(with: userName, color: color)
+        }.then {
+            self.login(userName: userName)
+        }
+    }
+    
+    // FIXME: Deal with weak self everywhere!
+    @discardableResult
+    public func login(userName: String) -> Promise<UserData> {
+        return firstly {
+            self.sendLogin(for: userName)
+        }.then {
+            self.waitLoginResponse()
+        }.map { userData in
+            self.loggedInUserData = userData
+            return userData
+        }
+    }
+    
+    @discardableResult
+    public func logout(userName: String) -> Promise<UserData> {
+        return firstly {
+            self.sendLogout(for: userName)
+        }.then {
+            self.waitLogoutResponse()
+        }.map { userData in
+            self.loggedInUserData = nil
+            return userData
+        }
+    }
 }
 
 extension SessionManager {
     func sendLogin(for userName: String) -> Promise<Void> {
-        return networkManager.send(.login(userName: userName))
+        let message = SessionManagerMessage.login(userName: userName)
+        return networkManager.send(message)
     }
     
     func sendLogout(for userName: String) -> Promise<Void> {
-        return networkManager.send(.logout(userName: userName))
+        let message = SessionManagerMessage.logout(userName: userName)
+        return networkManager.send(message)
     }
     
     func waitLoginResponse() -> Promise<UserData> {
-        return .init() { [weak self] promise in
+        return .init() { promise in
             let compositeDisposable = CompositeDisposable()
             
-            self?.networkManager?.onMessage
+            self.networkManager.onMessage
                 .bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
             
-            self?.networkManager?.onMessage
+            self.networkManager.onMessage
                 .bind { message in
                     guard case .loginResponseError(let error) = message else { return }
                     promise.reject(error)
@@ -74,17 +112,17 @@ extension SessionManager {
     }
     
     func waitLogoutResponse() -> Promise<UserData> {
-        return .init() { [weak self] promise in
+        return .init() { promise in
             let compositeDisposable = CompositeDisposable()
             
-            self?.networkManager?.onMessage
+            self.networkManager.onMessage
                 .bind { message in
                     guard case .logoutResponseSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
             
-            self?.networkManager?.onMessage
+            self.networkManager.onMessage
                 .bind { message in
                     guard case .logoutResponseError(let error) = message else { return }
                     promise.reject(error)

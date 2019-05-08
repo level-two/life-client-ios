@@ -26,14 +26,15 @@ class NetworkManager {
         case dataToStringFailed
     }
 
-    public let onConnectionEstablished = PublishSubject<ConnectionId>()
-    public let onConnectionClosed = PublishSubject<ConnectionId>()
-    public let onMessage = PublishSubject<(ConnectionId, Data)>()
+    public let onConnectionEstablished = PublishSubject<Void>()
+    public let onConnectionClosed = PublishSubject<Void>()
+    public let onMessage = PublishSubject<Data>()
 
-    @discardableResult
-    public func send(data: Data) -> Promise<Void> {
-        return .init() { [weak self] promise in
-            guard let channel = self?.channel else { throw NetworkManagerError.noConnection }
+    public func send(_ codableMessage: Codable) -> Promise<Void> {
+        return .init() { promise in
+            guard let channel = self.channel else { throw NetworkManagerError.noConnection }
+            
+            let data = try JSONEncoder().encode(codableMessage)
             guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
 
             var buffer = channel.allocator.buffer(capacity: str.count)

@@ -21,42 +21,6 @@ import RxCocoa
 import PromiseKit
 
 extension SessionManager {
-    @discardableResult
-    public func createUserAndLogin(userName: String, color: Color) -> Promise<UserData> {
-        return firstly {
-            usersManager.createUser(with: userName, color: color)
-        }.then {
-            login(userName: userName)
-        }
-    }
-    
-    // FIXME: Deal with weak self everywhere!
-    @discardableResult
-    public func login(userName: String) -> Promise<UserData> {
-        return firstly {
-            sendLogin(for: userName)
-        }.then {
-            waitLoginResponse()
-        }.map {
-            loggedInUserData = $0
-            return userData
-        }
-    }
-    
-    @discardableResult
-    public func logout(userName: String) -> Promise<UserData> {
-        return firstly {
-            sendLogout(for: userName)
-        }.then {
-            waitLogoutResponse()
-        }.map {
-            loggedInUserData = nil
-            return userData
-        }
-    }
-}
-
-extension SessionManager {
     public func assembleInteractions() {
         networkManager.onConnectionEstablished
             .bind { [weak self] in
