@@ -18,6 +18,7 @@
 import Foundation
 import NIO
 import RxSwift
+import RxAppState
 import PromiseKit
 
 class NetworkManager {
@@ -29,6 +30,18 @@ class NetworkManager {
     public let onConnectionEstablished = PublishSubject<Void>()
     public let onConnectionClosed = PublishSubject<Void>()
     public let onMessage = PublishSubject<Data>()
+    
+    init() {
+        handleAppState()
+    }
+    
+    deinit {
+        do {
+            try self.group.syncShutdownGracefully()
+        } catch {
+            print("Failed to gracefully shut down: \(error)")
+        }
+    }
 
     public func send(_ codableMessage: Codable) -> Promise<Void> {
         return .init() { promise in
@@ -45,23 +58,15 @@ class NetworkManager {
             writeFuture.whenFailure { promise.reject($0) }
         }
     }
-
-    deinit {
-        do {
-            try self.group.syncShutdownGracefully()
-        } catch {
-            print("Failed to gracefully shut down: \(error)")
-        }
-    }
-
-    // TODO: Shouldn't it be public?
-    fileprivate var shouldReconnect: Bool = true
-    fileprivate var isConnected: Bool {
+    
+    public var isConnected: Bool {
         channel != nil
     }
 
-    fileprivate let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
-    fileprivate var channel: Channel?
+    var shouldReconnect: Bool = true
+    var channel: Channel?
+    let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
+    let disposeBag = DisposeBag()
 }
 
 extension NetworkManager {
@@ -100,5 +105,19 @@ extension NetworkManager {
                     self.run()
                 }
             }
+    }
+    
+    func handleAppState() {
+        UIApplication.shared.rx.applicationDidEnterBackground
+            .bind { [weak self] in
+                self?.shouldReconnect = false
+                _ = self?.channel?.close()
+            }.disposed(by: disposeBag)
+        
+        UIApplication.shared.rx.applicationWillEnterForeground
+            .bind { [weak self] in
+                self?.shouldReconnect = true
+                self?.run()
+            }.disposed(by: disposeBag)
     }
 }
