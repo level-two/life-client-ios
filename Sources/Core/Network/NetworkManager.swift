@@ -32,7 +32,7 @@ class NetworkManager {
     public let onMessage = PublishSubject<Data>()
     
     init() {
-        handleAppState()
+        assembleInteractions()
     }
     
     deinit {
@@ -70,6 +70,20 @@ class NetworkManager {
 }
 
 extension NetworkManager {
+    func assembleInteractions() {
+        UIApplication.shared.rx.applicationDidEnterBackground
+            .bind { [weak self] in
+                self?.shouldReconnect = false
+                _ = self?.channel?.close()
+        }.disposed(by: disposeBag)
+        
+        UIApplication.shared.rx.applicationWillEnterForeground
+            .bind { [weak self] in
+                self?.shouldReconnect = true
+                self?.run()
+        }.disposed(by: disposeBag)
+    }
+    
     var bootstrap: ClientBootstrap {
         return .init(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
@@ -105,19 +119,5 @@ extension NetworkManager {
                     self.run()
                 }
             }
-    }
-    
-    func handleAppState() {
-        UIApplication.shared.rx.applicationDidEnterBackground
-            .bind { [weak self] in
-                self?.shouldReconnect = false
-                _ = self?.channel?.close()
-            }.disposed(by: disposeBag)
-        
-        UIApplication.shared.rx.applicationWillEnterForeground
-            .bind { [weak self] in
-                self?.shouldReconnect = true
-                self?.run()
-            }.disposed(by: disposeBag)
     }
 }

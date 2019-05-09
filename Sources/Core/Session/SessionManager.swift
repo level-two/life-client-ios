@@ -28,6 +28,8 @@ class SessionManager {
     init(_ networkManager: NetworkManager, _ usersManager: UsersManager) {
         self.networkManager = networkManager
         self.usersManager = usersManager
+        
+        assembleInteractions()
     }
 
     var loggedInUserData: UserData?
@@ -68,6 +70,17 @@ extension SessionManager {
             self.loggedInUserData = nil
             return userData
         }
+    }
+}
+
+extension SessionManager {
+    public func assembleInteractions() {
+        networkManager.onConnectionEstablished
+            .bind { [weak self] in
+                guard let self = self else { return }
+                guard let userName = self.loggedInUserData?.userName else { return }
+                self.login(userName: userName)
+            }.disposed(by: disposeBag)
     }
 }
 
