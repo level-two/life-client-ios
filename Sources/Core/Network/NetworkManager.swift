@@ -30,11 +30,11 @@ class NetworkManager {
     public let onConnectionEstablished = PublishSubject<Void>()
     public let onConnectionClosed = PublishSubject<Void>()
     public let onMessage = PublishSubject<Data>()
-    
+
     init() {
         assembleInteractions()
     }
-    
+
     deinit {
         do {
             try self.group.syncShutdownGracefully()
@@ -46,7 +46,7 @@ class NetworkManager {
     public func send(_ codableMessage: Codable) -> Promise<Void> {
         return .init() { promise in
             guard let channel = self.channel else { throw NetworkManagerError.noConnection }
-            
+
             let data = try JSONEncoder().encode(codableMessage)
             guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
 
@@ -58,7 +58,7 @@ class NetworkManager {
             writeFuture.whenFailure { promise.reject($0) }
         }
     }
-    
+
     public var isConnected: Bool {
         channel != nil
     }
@@ -76,14 +76,14 @@ extension NetworkManager {
                 self?.shouldReconnect = false
                 _ = self?.channel?.close()
         }.disposed(by: disposeBag)
-        
+
         UIApplication.shared.rx.applicationWillEnterForeground
             .bind { [weak self] in
                 self?.shouldReconnect = true
                 self?.run()
         }.disposed(by: disposeBag)
     }
-    
+
     var bootstrap: ClientBootstrap {
         return .init(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)

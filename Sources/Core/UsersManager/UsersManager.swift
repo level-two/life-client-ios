@@ -24,7 +24,7 @@ class UsersManager {
     public enum UsersManagerError: Error {
         case operationTimeout
     }
-    
+
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
@@ -45,7 +45,7 @@ class UsersManager {
 //
 //        }
 //    }
-    
+
     public func createUser(with userName: String, color: Color) -> Promise<UserData> {
         return firstly {
             sendCreateUserMessage(with: userName, color: color)
@@ -59,7 +59,7 @@ class UsersManager {
 
 extension UsersManager: UserCreationManager {
     func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
-        return networkManager.send(.createUser(userName: userName, color: color))
+        return networkManager.send(UsersManagerMessage.createUser(userName: userName, color: color))
     }
 
     func waitCreateUserResponse() -> Promise<UserData> {
@@ -79,9 +79,9 @@ extension UsersManager: UserCreationManager {
                     promise.reject(error)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
-            
+
             let timeout = ApplicationSettings.operationTimeout
-            
+
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
                 .bind {

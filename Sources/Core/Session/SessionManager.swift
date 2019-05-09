@@ -24,11 +24,11 @@ class SessionManager {
     public enum SessionManagerError: Error {
         case operationTimeout
     }
-    
+
     init(_ networkManager: NetworkManager, _ usersManager: UsersManager) {
         self.networkManager = networkManager
         self.usersManager = usersManager
-        
+
         assembleInteractions()
     }
 
@@ -46,7 +46,7 @@ extension SessionManager {
             self.login(userName: userName)
         }
     }
-    
+
     // FIXME: Deal with weak self everywhere!
     @discardableResult
     public func login(userName: String) -> Promise<UserData> {
@@ -59,7 +59,7 @@ extension SessionManager {
             return userData
         }
     }
-    
+
     @discardableResult
     public func logout(userName: String) -> Promise<UserData> {
         return firstly {
@@ -89,32 +89,32 @@ extension SessionManager {
         let message = SessionManagerMessage.login(userName: userName)
         return networkManager.send(message)
     }
-    
+
     func sendLogout(for userName: String) -> Promise<Void> {
         let message = SessionManagerMessage.logout(userName: userName)
         return networkManager.send(message)
     }
-    
+
     func waitLoginResponse() -> Promise<UserData> {
         return .init() { promise in
             let compositeDisposable = CompositeDisposable()
-            
+
             self.networkManager.onMessage
                 .bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
-            
+
             self.networkManager.onMessage
                 .bind { message in
                     guard case .loginResponseError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
-            
+
             let timeout = ApplicationSettings.operationTimeout
-            
+
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
                 .bind {
@@ -123,27 +123,27 @@ extension SessionManager {
                 }.disposed(by: compositeDisposable)
         }
     }
-    
+
     func waitLogoutResponse() -> Promise<UserData> {
         return .init() { promise in
             let compositeDisposable = CompositeDisposable()
-            
+
             self.networkManager.onMessage
                 .bind { message in
                     guard case .logoutResponseSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
-            
+
             self.networkManager.onMessage
                 .bind { message in
                     guard case .logoutResponseError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
-            
+
             let timeout = ApplicationSettings.operationTimeout
-            
+
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
                 .bind {

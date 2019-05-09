@@ -20,35 +20,55 @@ import RxSwift
 import RxCocoa
 
 class Gameplay {
-    let onNewCycle = PublishSubject<Int>()
+    public let onNewCycle = PublishSubject<Int>()
+    public let onPlaceCell = PublishSubject<Cell>()
 
-    init(fieldWidth: Int, fieldHeight: Int, updatePeriod: TimeInterval) {
+    init(_ networkManager: NetworkManager) {
+        self.networkManager = networkManager
+
+        let fieldWidth = ApplicationSettings.fieldWidth
+        let fieldHeight = ApplicationSettings.fieldHeight
         self.gameField = GameField(fieldWidth, fieldHeight)
 
-        updateTimer = .scheduledTimer(withTimeInterval: updatePeriod, repeats: true) { [weak self] _ in
+        assembleInteractions()
+    }
+
+    public func place(_ cell: Cell) -> Bool {
+        guard gameField.canPlaceCell(cell) else { return }
+        gameField.placeUnacceptedCell(cell)
+        onPlaceCell.onNext(cell)
+        networkManager.send(GameplayMessage.placeCell(gameCycle: self.cycle, cell: cell))
+    }
+
+    var cycle = 0
+    let gameField: GameField
+    let networkManager: NetworkManager
+    let disposeBag = DisposeBag()
+}
+
+extension Gameplay {
+    func assembleInteractions() {
+        networkManager.onMessage.bind { [weak self] message in
             guard let self = self else { return }
-            self.cycle += 1
+            guard case GameplayMessage.newGameCycle(let gameCycle) = message else { return }
+
+            // TODO Handle case when game cycle is out of sync
+            self.cycle = gameCycle
             self.gameField.updateForNewCycle()
             self.onNewCycle.onNext(self.cycle)
-        }
-    }
+        }.disposed(by: disposeBag)
 
-    deinit {
-        updateTimer?.invalidate()
-    }
+        networkManager.onMessage.bind { [weak self] message in
+            guard let self = self else { return }
+            guard case GameplayMessage.placeCell(let gameCycle, let cell) = message else { return }
 
-    func place(_ cell: Cell, for gameCycle: Int) -> Bool {
-        if gameCycle == cycle && gameField.canPlaceCell(cell) {
-            gameField.placeAcceptedCell(cell)
-        } else if gameCycle == cycle-1 && gameField.canPlaceCellInPrevCycle(cell) {
-            gameField.placeCellInPrevCycle(cell)
-        } else {
-            return false
-        }
-        return true
+            if gameCycle == cycle {
+                self.gameField.placeAcceptedCell(cell)
+                self.onPlaceCell.onNext(cell)
+            } else if gameCycle == cycle-1 {
+                self.gameField.placeCellInPrevCycle(cell)
+                self.onPlaceCell.onNext(cell)
+            }
+        }.disposed(by: disposeBag)
     }
-
-    fileprivate var updateTimer: Timer?
-    fileprivate let gameField: GameField
-    fileprivate var cycle = 0
 }

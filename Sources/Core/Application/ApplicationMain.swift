@@ -27,7 +27,7 @@ class ApplicationMain: UIResponder, UIApplicationDelegate, ApplicationStateObser
         let networkManager       = NetworkManager()
         let usersManager         = UsersManager(networkManager)
         let sessionManager       = SessionManager(networkManager, usersManager)
-        
+
         let navigationController = UINavigationController()
         let storyboard           = UIStoryboard(name: "Main", bundle: nil)
         let sceneNavigator       = SceneNavigator(dependencyContainer, navigationController)

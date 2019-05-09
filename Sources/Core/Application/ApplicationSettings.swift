@@ -41,8 +41,20 @@ class ApplicationSettings {
         }
         return 1337
     }
-    
-    static public var operationTimeout: Double {
+
+    static public var fieldWidth: Int {
+        return 40
+    }
+
+    static public var fieldHeight: Int {
+        return 60
+    }
+
+    static public var updatePeriod: TimeInterval {
+        return 5
+    }
+
+    static public var operationTimeout: TimeInterval {
         return 5
     }
 }
