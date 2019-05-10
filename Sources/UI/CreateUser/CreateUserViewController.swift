@@ -56,7 +56,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         userNameTextField.resignFirstResponder()
 
         let color = self.colorPickSlider.pickedColor.color
-        
+
         firstly {
             sessionManager.createUserAndLogin(userName: userName, color: color)
         }.done { _ in

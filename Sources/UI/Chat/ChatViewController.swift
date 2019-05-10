@@ -46,8 +46,8 @@ extension ChatMessage {
 
 class ChatViewController: MessagesViewController {
     private var navigator: SceneNavigatorProtocol!
-    private var sessionManager: SessionProtocol!
-    private var networkManager: NetworkManagerProtocol!
+    private var sessionManager: SessionManager!
+    private var chatManager: ChatManager!
 
     @IBOutlet weak var activityIndicatorView: UIView!
     @IBOutlet weak var logoutButton: UIButton!
@@ -56,11 +56,11 @@ class ChatViewController: MessagesViewController {
     var messages: [ChatMessage] = []
     var user: User!
 
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol, networkManager: NetworkManagerProtocol) {
+    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, chatManager: ChatManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
-        self.networkManager = networkManager
-        self.user = sessionManager.user.require()
+        self.chatManager = chatManager
+        self.user = sessionManager.user
     }
 
     override func viewDidLoad() {
@@ -78,31 +78,29 @@ class ChatViewController: MessagesViewController {
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
 
-        
-        ////
-        self.networkManager.onMessage.addObserver(self) { [weak self] message in
-            guard let self = self else { return }
-            switch message {
-            case .chatMessage(let message): self.onChatMessage(message)
-            case .chatMessages(let messages, let error): self.onChatMessagesResponse(messages, error)
-            default: ()
-            }
-        }
+        chatManager.onChatMessage
+            .bind(to: self.onChatMessage)
+            .disposed(by: disposeBag)
 
-        self.sessionManager.loginStateObservable.addObserver(self) { [weak self] isLoggedIn in
-            guard let self = self else { return }
-            DispatchQueue.main.async { [weak self] in
-                self?.activityIndicatorView.isHidden = isLoggedIn
-            }
-            if isLoggedIn {
-                self.networkManager.send(message: .getChatMessages(fromId: self.messages.last?.id, count:nil))
-            }
-        }
+        chatManager.onChatMessagesResponse
+            .bind(to: self.onChatMessagesResponse)
+            .disposed(by: disposeBag)
 
-        self.networkManager.send(message: .getChatMessages(fromId: nil, count: 10))
-        ////
-        
-        
+        // TODOL Move this to the chatManager?
+        sessionManager.onLoginState
+            .bind { [weak self] isLogged in
+                guard let self = self else { return }
+
+                DispatchQueue.main.async { [weak self] in
+                    self?.activityIndicatorView.isHidden = isLoggedIn
+                }
+
+                if isLogged {
+                    self.chatManager.requestHIstory(fromId: self.messages.last?.id, count: nil)
+                }
+            }.disposed(by: disposeBag)
+
+        self.chatManager.requestHIstory(fromId: nil, count: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -119,12 +117,7 @@ class ChatViewController: MessagesViewController {
         let count = firstIndex >= 10 ? 10 : firstIndex
         let fromId = firstIndex - count
 
-        
-        
-        //
-        self.networkManager.send(message: .getChatMessages(fromId: fromId, count: count))
-        
-        
+        self.chatManager.requestHIstory(fromId: fromId, count: count)
     }
 
     private func onChatMessage(_ message: ChatMessage) {
