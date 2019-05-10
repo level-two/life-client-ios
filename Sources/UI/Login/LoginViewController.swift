@@ -63,21 +63,16 @@ extension LoginViewController {
         activityIndicatorView.isHidden = false
         playerNameTextField.resignFirstResponder()
 
-        sessionManager.login(userName: userName).observe { [weak self] result in
-            guard let self = self else { return }
-
-            DispatchQueue.main.async {
-                self.activityIndicatorView.isHidden = true
-            }
-
-            switch result {
-            case .value:
-                ApplicationSettings.setBool(true, for: .autologinEnabled)
-                ApplicationSettings.setString(userName, for: .autologinUserName)
-                self.navigator.navigate(to: .gameplay)
-            case .error(let error):
-                self.alert(error.localizedDescription)
-            }
+        firstly {
+            sessionManager.login(userName: userName)
+        }.done { _ in
+            ApplicationSettings.setBool(true, for: .autologinEnabled)
+            ApplicationSettings.setString(userName, for: .autologinUserName)
+            self.navigator.navigate(to: .gameplay)
+        }.ensure(on: .main) {
+            self.activityIndicatorView.isHidden = true
+        }.catch { error in
+            self.alert(error.localizedDescription)
         }
     }
 }

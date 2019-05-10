@@ -78,6 +78,8 @@ class ChatViewController: MessagesViewController {
         messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
 
+        
+        ////
         self.networkManager.onMessage.addObserver(self) { [weak self] message in
             guard let self = self else { return }
             switch message {
@@ -98,6 +100,9 @@ class ChatViewController: MessagesViewController {
         }
 
         self.networkManager.send(message: .getChatMessages(fromId: nil, count: 10))
+        ////
+        
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -114,7 +119,12 @@ class ChatViewController: MessagesViewController {
         let count = firstIndex >= 10 ? 10 : firstIndex
         let fromId = firstIndex - count
 
+        
+        
+        //
         self.networkManager.send(message: .getChatMessages(fromId: fromId, count: count))
+        
+        
     }
 
     private func onChatMessage(_ message: ChatMessage) {
@@ -236,20 +246,15 @@ extension ChatViewController {
         activityIndicatorView.isHidden = false
         self.messageInputBar.inputTextView.resignFirstResponder()
 
-        sessionManager.logout(userName: user.userName).observe { [weak self] result in
-            guard let self = self else { return }
-
-            DispatchQueue.main.async {
-                self.activityIndicatorView.isHidden = true
-            }
-
-            switch result {
-            case .value:
-                ApplicationSettings.setBool(false, for: .autologinEnabled)
-                self.navigator.navigate(to: .login)
-            case .error(let error):
-                self.alert(error.localizedDescription)
-            }
+        firstly {
+            sessionManager.logout(userName: userName)
+        }.done { _ in
+            ApplicationSettings.setBool(false, for: .autologinEnabled)
+            self.navigator.navigate(to: .login)
+        }.ensure(on: .main) {
+            self.activityIndicatorView.isHidden = true
+        }.catch { error in
+            self.alert(error.localizedDescription)
         }
     }
 }

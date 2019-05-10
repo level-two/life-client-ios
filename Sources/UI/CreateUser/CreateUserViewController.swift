@@ -55,20 +55,16 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         activityIndicatorView.isHidden = false
         userNameTextField.resignFirstResponder()
 
-        let uicolor = self.colorPickSlider.pickedColor
-        sessionManager.createUserAndLogin(userName: userName, uicolor: uicolor).observe { [weak self] result in
-            guard let self = self else { return }
-
-            DispatchQueue.main.async {
-                self.activityIndicatorView.isHidden = true
-            }
-
-            switch result {
-            case .value:
-                self.navigator.navigate(to: .gameplay)
-            case .error(let error):
-                self.alert(error.localizedDescription)
-            }
+        let color = self.colorPickSlider.pickedColor.color
+        
+        firstly {
+            sessionManager.createUserAndLogin(userName: userName, color: color)
+        }.done { _ in
+            self.navigator.navigate(to: .gameplay)
+        }.ensure(on: .main) {
+            self.activityIndicatorView.isHidden = true
+        }.catch { error in
+            self.alert(error.localizedDescription)
         }
     }
 

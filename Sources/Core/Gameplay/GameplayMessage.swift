@@ -20,6 +20,8 @@ import Foundation
 enum GameplayMessage: Codable {
     case placeCell(cell: Cell, gameCycle: Int)
     case newGameCycle(gameCycle: Int)
+
+    // TODO: Implement whole game field request
 }
 
 extension GameplayMessage {
