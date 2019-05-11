@@ -16,17 +16,18 @@
 // -----------------------------------------------------------------------------
 
 import UIKit
+import PromiseKit
 
 class CreateUserViewController: UIViewController, UITextFieldDelegate {
     private var navigator: SceneNavigatorProtocol!
-    private var sessionManager: SessionProtocol!
+    private var sessionManager: SessionManager!
 
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var colorPickSlider: ColorPickSlider!
     @IBOutlet weak var colorPreviewLabel: UILabel!
     @IBOutlet weak var activityIndicatorView: UIView!
 
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol) {
+    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
     }
