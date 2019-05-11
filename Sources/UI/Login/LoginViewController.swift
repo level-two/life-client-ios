@@ -15,27 +15,32 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------------
 
+import Foundation
 import UIKit
+import PromiseKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var playerNameTextField: UITextField!
 
     private var navigator: SceneNavigatorProtocol!
-    private var sessionManager: SessionProtocol!
+    private var sessionManager: SessionManager!
     @IBOutlet weak var activityIndicatorView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         playerNameTextField.delegate = self
         activityIndicatorView.isHidden = true
-        if ApplicationSettings.getBool(for: .autologinEnabled) {
-            let autologinUserName = ApplicationSettings.getString(for: .autologinUserName).require()
-            playerNameTextField.text = autologinUserName
-            login(userName: autologinUserName)
-        }
+
+        guard
+            ApplicationSettings.autologinEnabled == true,
+            let autologinUserName = ApplicationSettings.autologinUserName
+            else { return }
+
+        playerNameTextField.text = autologinUserName
+        login(userName: autologinUserName )
     }
 
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol) {
+    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
     }
@@ -66,8 +71,8 @@ extension LoginViewController {
         firstly {
             sessionManager.login(userName: userName)
         }.done { _ in
-            ApplicationSettings.setBool(true, for: .autologinEnabled)
-            ApplicationSettings.setString(userName, for: .autologinUserName)
+            ApplicationSettings.autologinEnabled = true
+            ApplicationSettings.autologinUserName = userName
             self.navigator.navigate(to: .gameplay)
         }.ensure(on: .main) {
             self.activityIndicatorView.isHidden = true

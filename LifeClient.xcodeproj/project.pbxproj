@@ -35,14 +35,12 @@
 		93A5DBF2227EF5C60015D602 /* GameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD3227EF5C60015D602 /* GameField.swift */; };
 		93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */; };
 		93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD7227EF5C60015D602 /* SessionManager.swift */; };
+		93A5DBFF2286E0430015D602 /* Disposable+CompositeDisposale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
 		93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93B4F87221C8636F00A2354E /* ApplicationMain.swift */; };
 		93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9825F21D183EE00738709 /* SceneNavigator.swift */; };
-		93C9826421D18B5400738709 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93C9826321D18B5400738709 /* User.swift */; };
-		93DA241F22084BD7007CBA4D /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA241E22084BD7007CBA4D /* Color.swift */; };
-		93DA242122085910007CBA4D /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DA242022085910007CBA4D /* ChatMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +73,7 @@
 		93A5DBD3227EF5C60015D602 /* GameField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameField.swift; sourceTree = "<group>"; };
 		93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBD7227EF5C60015D602 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disposable+CompositeDisposale.swift"; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -82,9 +81,6 @@
 		93B4F87221C8636F00A2354E /* ApplicationMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationMain.swift; sourceTree = "<group>"; };
 		93B4F87321C8636F00A2354E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93C9825F21D183EE00738709 /* SceneNavigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneNavigator.swift; sourceTree = "<group>"; };
-		93C9826321D18B5400738709 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		93DA241E22084BD7007CBA4D /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
-		93DA242022085910007CBA4D /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		B1D04ECAD47EA6B965018B9E /* Pods-LifeClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -194,12 +190,12 @@
 			isa = PBXGroup;
 			children = (
 				93A5DBB6227EEE7A0015D602 /* Application */,
-				93DA24282208887B007CBA4D /* DataStructures */,
 				936E8ED122018F4600FB7689 /* Network */,
 				93A5DBC7227EF5C60015D602 /* UsersManager */,
 				936E8ED222018F5300FB7689 /* Session */,
 				93A5DBCD227EF5C60015D602 /* Gameplay */,
 				93A5DBB9227EF5C60015D602 /* Chat */,
+				93A5DC002286E30C0015D602 /* Shared */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -269,6 +265,14 @@
 			path = Gameplay;
 			sourceTree = "<group>";
 		};
+		93A5DC002286E30C0015D602 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		93B4F84C21C85C2E00A2354E = {
 			isa = PBXGroup;
 			children = (
@@ -294,16 +298,6 @@
 				93A5DBB4227EEE140015D602 /* UI */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		93DA24282208887B007CBA4D /* DataStructures */ = {
-			isa = PBXGroup;
-			children = (
-				93C9826321D18B5400738709 /* User.swift */,
-				93DA241E22084BD7007CBA4D /* Color.swift */,
-				93DA242022085910007CBA4D /* ChatMessage.swift */,
-			);
-			path = DataStructures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -393,7 +387,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
+			shellScript = "#\"${PODS_ROOT}/SwiftLint/swiftlint\"\n";
 		};
 		9311A94F227EE82400391CF1 /* SwiftLint Autocorrect */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -487,12 +481,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */,
-				93DA241F22084BD7007CBA4D /* Color.swift in Sources */,
 				9392845121D030D800F6C55B /* LoginViewController.swift in Sources */,
 				93A5DBF0227EF5C60015D602 /* GameplayMessage.swift in Sources */,
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
 				93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
+				93A5DBFF2286E0430015D602 /* Disposable+CompositeDisposale.swift in Sources */,
 				93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
 				93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */,
@@ -500,10 +494,8 @@
 				93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */,
 				93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */,
 				936E8ED822019F8B00FB7689 /* CGFloat+Random.swift in Sources */,
-				93DA242122085910007CBA4D /* ChatMessage.swift in Sources */,
 				93A5DBF2227EF5C60015D602 /* GameField.swift in Sources */,
 				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
-				93C9826421D18B5400738709 /* User.swift in Sources */,
 				93A5DBEE227EF5C60015D602 /* GameFieldArray.swift in Sources */,
 				93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */,
 				93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */,

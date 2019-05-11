@@ -16,6 +16,7 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
+import UIKit
 
 typealias UserId = Int
 
@@ -32,21 +33,39 @@ struct Color: Codable {
 extension Color {
     public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
-        let r = try container.decode(Int.self)
-        let g = try container.decode(Int.self)
-        let b = try container.decode(Int.self)
-        let a = try container.decode(Int.self)
+        let redComponent = try container.decode(Int.self)
+        let greenComponent = try container.decode(Int.self)
+        let blueComponent = try container.decode(Int.self)
+        let alphaComponent = try container.decode(Int.self)
 
-        red = Double(r)/255
-        green = Double(g)/255
-        blue = Double(b)/255
-        alpha = Double(a)/255
+        self.red = Double(redComponent)/255
+        self.green = Double(greenComponent)/255
+        self.blue = Double(blueComponent)/255
+        self.alpha = Double(alphaComponent)/255
     }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(Int(red*255))
         try container.encode(Int(green*255))
         try container.encode(Int(blue*255))
         try container.encode(Int(alpha*255))
+    }
+}
+
+extension UIColor {
+    convenience init(color: Color) {
+        self.init(red: CGFloat(color.red),
+                  green: CGFloat(color.green),
+                  blue: CGFloat(color.blue),
+                  alpha: CGFloat(color.alpha))
+    }
+
+    var color: Color {
+        let color = CIColor(color: self)
+        return Color(red: Double(color.red),
+                     green: Double(color.green),
+                     blue: Double(color.blue),
+                     alpha: Double(color.alpha))
     }
 }

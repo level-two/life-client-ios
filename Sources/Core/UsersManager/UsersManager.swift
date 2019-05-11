@@ -48,16 +48,16 @@ class UsersManager {
 
     public func createUser(with userName: String, color: Color) -> Promise<UserData> {
         return firstly {
-            sendCreateUserMessage(with: userName, color: color)
+            self.sendCreateUserMessage(with: userName, color: color)
         }.then {
-            waitCreateUserResponse()
+            self.waitCreateUserResponse()
         }
     }
 
-    let networkManager: NetworkManager?
+    let networkManager: NetworkManager
 }
 
-extension UsersManager: UserCreationManager {
+extension UsersManager {
     func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
         return networkManager.send(UsersManagerMessage.createUser(userName: userName, color: color))
     }
@@ -66,14 +66,14 @@ extension UsersManager: UserCreationManager {
         return .init() { [weak self] promise in
             let compositeDisposable = CompositeDisposable()
 
-            self?.networkManager?.onMessage
+            self?.networkManager.onMessage
                 .bind { message in
                     guard case .createUserSuccess(let userData) = message else { return }
                     promise.resolve(with: userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            self?.networkManager?.onMessage
+            self?.networkManager.onMessage
                 .bind { message in
                     guard case .createUserError(let error) = message else { return }
                     promise.reject(error)
@@ -84,7 +84,7 @@ extension UsersManager: UserCreationManager {
 
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
-                .bind {
+                .bind { _ in
                     promise.reject(UsersManagerError.operationTimeout)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)

@@ -23,7 +23,7 @@ class ApplicationSettings {
         set { UserDefaults.standard.set(newValue, forKey: #function) }
     }
 
-    static public var autologinUserName: String {
+    static public var autologinUserName: String? {
         get { return UserDefaults.standard.string(forKey: #function) }
         set { UserDefaults.standard.set(newValue, forKey: #function) }
     }

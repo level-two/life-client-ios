@@ -17,9 +17,8 @@
 
 import UIKit
 import MessageKit
-import MessageInputBar
 
-extension ChatMessage: MessageType {
+extension ChatMessageData: MessageType {
     var messageId: String {
         return String(id)
     }
@@ -38,9 +37,9 @@ extension ChatMessage: MessageType {
     }
 }
 
-extension ChatMessage {
-    static var dummy: ChatMessage {
-        return ChatMessage(user: User(userName: "", userId: 0, color: UIColor.black.color), message: "", id: 0)
+extension ChatMessageData {
+    static var dummy: ChatMessageData {
+        return .init(user: User(userName: "", userId: 0, color: UIColor.black.color), message: "", id: 0)
     }
 }
 
@@ -60,7 +59,7 @@ class ChatViewController: MessagesViewController {
     var sessionManager: SessionManager!
     var chatManager: ChatManager!
 
-    var messages: [ChatMessage] = []
+    var messages: [ChatMessageData] = []
     var user: User!
 }
 
@@ -151,7 +150,7 @@ extension ChatViewController {
 }
 
 extension ChatViewController {
-    private func updateViewWithMessage(_ message: ChatMessage) {
+    private func updateViewWithMessage(_ message: ChatMessageData) {
         addMessage(message: message)
         messagesCollectionView.reloadData()
 
@@ -162,7 +161,7 @@ extension ChatViewController {
         }
     }
 
-    private func updateViewWithHistory(_ chatMessages: [ChatMessage]) {
+    private func updateViewWithHistory(_ chatMessages: [ChatMessageData]) {
         let messagesWereEmpty = (messages.count == 0)
         chatMessages?.forEach(addMessage)
 
@@ -179,7 +178,7 @@ extension ChatViewController {
         }
     }
 
-    private func addMessage(message: ChatMessage) {
+    private func addMessage(message: ChatMessageData) {
         if let idx = messages.firstIndex(where: { $0.id >= message.id }) {
             if messages[idx].id != message.id {
                 messages.insert(message, at: idx)
