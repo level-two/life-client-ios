@@ -35,6 +35,7 @@ class SessionManager {
     var loggedInUserData: UserData?
     let networkManager: NetworkManager
     let usersManager: UsersManager
+    let disposeBag = DisposeBag()
 }
 
 extension SessionManager {
@@ -99,15 +100,16 @@ extension SessionManager {
         return .init() { promise in
             let compositeDisposable = CompositeDisposable()
 
-            self.networkManager.onMessage
-                .bind { message in
+            let decodedMessage = networkManager.onMessage
+                .compactMap { try JSONDecoder().decode(SessionManagerMessage.self, from: $0) }
+
+            decodedMessage.bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }
-                    promise.resolve(with: userData)
+                    promise.fulfill(userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            self.networkManager.onMessage
-                .bind { message in
+            decodedMessage.bind { message in
                     guard case .loginResponseError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
@@ -117,8 +119,8 @@ extension SessionManager {
 
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
-                .bind {
-                    promise.reject(UsersManagerError.operationTimeout)
+                .bind { _ in
+                    promise.reject(SessionManagerError.operationTimeout)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
         }
@@ -128,15 +130,16 @@ extension SessionManager {
         return .init() { promise in
             let compositeDisposable = CompositeDisposable()
 
-            self.networkManager.onMessage
-                .bind { message in
+            let decodedMessage = networkManager.onMessage
+                .compactMap { try JSONDecoder().decode(SessionManagerMessage.self, from: $0) }
+
+            decodedMessage.bind { message in
                     guard case .logoutResponseSuccess(let userData) = message else { return }
-                    promise.resolve(with: userData)
+                    promise.fulfill(userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            self.networkManager.onMessage
-                .bind { message in
+            decodedMessage.bind { message in
                     guard case .logoutResponseError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
@@ -146,8 +149,8 @@ extension SessionManager {
 
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
-                .bind {
-                    promise.reject(UsersManagerError.operationTimeout)
+                .bind { _ in
+                    promise.reject(SessionManagerError.operationTimeout)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
         }

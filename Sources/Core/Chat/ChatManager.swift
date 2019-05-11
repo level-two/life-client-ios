@@ -34,15 +34,15 @@ class ChatManager {
     }
 
     public func send(messageText: String) -> Promise<Void> {
-        let message = ChatManagerMessage.sendChatMessage(message: messageText)
+        let message = ChatMessage.sendChatMessage(message: messageText)
         return networkManager.send(message)
     }
 
     public func requestHIstory(fromId: Int, count: Int) -> Promise<[ChatMessageData]> {
         return firstly {
-            sendHistoryRequest(fromId: fromId, count: count)
+            self.sendHistoryRequest(fromId: fromId, count: count)
         }.then {
-            waitHistoryResponse()
+            self.waitHistoryResponse()
         }
     }
 
@@ -52,15 +52,18 @@ class ChatManager {
 
 extension ChatManager {
     func assembleInteractions() {
-        networkManager.onMessage.bind { [weak self] message in
-            guard let self = self else { return }
-            guard case NetworkManagerMessage.chatMessage(let chatMessageData) = message else { return }
-            self.onMessage.onNext(chatMessageData)
-        }.disposed(by: disposeBag)
+        networkManager.onMessage
+            .compactMap { try JSONDecoder().decode(ChatMessage.self, from: $0) }
+            .bind { [weak self] message in
+                guard let self = self else { return }
+                guard case .chatMessage(let chatMessageData) = message else { return }
+
+                self.onMessage.onNext(chatMessageData)
+            }.disposed(by: disposeBag)
     }
 
     func sendHistoryRequest(fromId: Int, count: Int) -> Promise<Void> {
-        let message = ChatManagerMessage.chatHistoryRequest(fromId: fromId, count: count)
+        let message = ChatMessage.chatHistoryRequest(fromId: fromId, count: count)
         return networkManager.send(message)
     }
 
@@ -68,16 +71,17 @@ extension ChatManager {
         return .init() { promise in
             let compositeDisposable = CompositeDisposable()
 
-            self.networkManager.onMessage
-                .bind { message in
-                    guard case ChatManagerMessage.chatHistoryResponse(let messages) = message else { return }
-                    promise.resolve(with: messages)
+            let decodedMessage = networkManager.onMessage
+                .compactMap { try JSONDecoder().decode(ChatMessage.self, from: $0) }
+
+            decodedMessage.bind { message in
+                    guard case .chatHistoryResponse(let messages) = message else { return }
+                    promise.fulfill(messages)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            self.networkManager.onMessage
-                .bind { message in
-                    guard case ChatManagerMessage.chatHistoryError(let error) = message else { return }
+            decodedMessage.bind { message in
+                    guard case .chatHistoryError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
@@ -86,7 +90,7 @@ extension ChatManager {
 
             Observable<Int>
                 .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
-                .bind {
+                .bind { _ in
                     promise.reject(ChatManagerError.operationTimeout)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)

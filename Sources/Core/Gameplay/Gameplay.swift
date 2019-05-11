@@ -33,11 +33,11 @@ class Gameplay {
         assembleInteractions()
     }
 
-    public func place(_ cell: Cell) -> Bool {
+    public func place(_ cell: Cell) {
         guard gameField.canPlaceCell(cell) else { return }
         gameField.placeUnacceptedCell(cell)
         onPlaceCell.onNext(cell)
-        networkManager.send(GameplayMessage.placeCell(gameCycle: self.cycle, cell: cell))
+        _ = networkManager.send(GameplayMessage.placeCell(cell: cell, gameCycle: self.cycle))
     }
 
     var cycle = 0
@@ -48,9 +48,12 @@ class Gameplay {
 
 extension Gameplay {
     func assembleInteractions() {
-        networkManager.onMessage.bind { [weak self] message in
+        let decodedMessage = networkManager.onMessage
+            .compactMap { try JSONDecoder().decode(GameplayMessage.self, from: $0) }
+
+        decodedMessage.bind { [weak self] message in
             guard let self = self else { return }
-            guard case GameplayMessage.newGameCycle(let gameCycle) = message else { return }
+            guard case .newGameCycle(let gameCycle) = message else { return }
 
             // TODO Handle case when game cycle is out of sync
             self.cycle = gameCycle
@@ -58,14 +61,14 @@ extension Gameplay {
             self.onNewCycle.onNext(self.cycle)
         }.disposed(by: disposeBag)
 
-        networkManager.onMessage.bind { [weak self] message in
+        decodedMessage.bind { [weak self] message in
             guard let self = self else { return }
-            guard case GameplayMessage.placeCell(let gameCycle, let cell) = message else { return }
+            guard case .placeCell(let cell, let gameCycle) = message else { return }
 
-            if gameCycle == cycle {
+            if gameCycle == self.cycle {
                 self.gameField.placeAcceptedCell(cell)
                 self.onPlaceCell.onNext(cell)
-            } else if gameCycle == cycle-1 {
+            } else if gameCycle == self.cycle-1 {
                 self.gameField.placeCellInPrevCycle(cell)
                 self.onPlaceCell.onNext(cell)
             }

@@ -18,12 +18,8 @@
 import Foundation
 import RxSwift
 
-extension Disposable {
-    /// Adds `self` to `compositeDisposable`
-    ///
-    /// - parameter compositeDisposable: `CompositeDisposable` to add `self` to.
-    @discardableResult
-    public func disposed(by compositeDisposable: CompositeDisposable) -> CompositeDisposable.DisposeKey? {
-        return compositeDisposable.insert(self)
+extension ObservableType {
+    func compactMap<R>(_ transform: @escaping (Self.E) throws -> R?) -> RxSwift.Observable<R> {
+        return self.map { try? transform($0) }.filter { $0 != nil }.map { $0! }
     }
 }

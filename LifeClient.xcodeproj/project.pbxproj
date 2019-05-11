@@ -24,7 +24,6 @@
 		93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */; };
 		93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */; };
 		93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */; };
-		93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */; };
 		93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */; };
 		93A5DBE9227EF5C60015D602 /* UsersManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBC9227EF5C60015D602 /* UsersManager.swift */; };
 		93A5DBEA227EF5C60015D602 /* UsersManagerDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBCA227EF5C60015D602 /* UsersManagerDataTypes.swift */; };
@@ -36,6 +35,7 @@
 		93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */; };
 		93A5DBF5227EF5C60015D602 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBD7227EF5C60015D602 /* SessionManager.swift */; };
 		93A5DBFF2286E0430015D602 /* Disposable+CompositeDisposale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */; };
+		93A5DC02228762A70015D602 /* ObservableType+compactMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DC01228762A70015D602 /* ObservableType+compactMap.swift */; };
 		93B4F87521C8636F00A2354E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86D21C8636F00A2354E /* Assets.xcassets */; };
 		93B4F87621C8636F00A2354E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F86E21C8636F00A2354E /* LaunchScreen.storyboard */; };
 		93B4F87721C8636F00A2354E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 93B4F87021C8636F00A2354E /* Main.storyboard */; };
@@ -62,7 +62,6 @@
 		93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataTypes.swift; sourceTree = "<group>"; };
 		93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BridgeChannelHandler.swift; sourceTree = "<group>"; };
 		93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FrameChannelHandler.swift; sourceTree = "<group>"; };
-		93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventLoopFuture+Cascade.swift"; sourceTree = "<group>"; };
 		93A5DBC8227EF5C60015D602 /* UsersManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBC9227EF5C60015D602 /* UsersManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManager.swift; sourceTree = "<group>"; };
 		93A5DBCA227EF5C60015D602 /* UsersManagerDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersManagerDataTypes.swift; sourceTree = "<group>"; };
@@ -74,6 +73,7 @@
 		93A5DBD6227EF5C60015D602 /* SessionManagerMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManagerMessage.swift; sourceTree = "<group>"; };
 		93A5DBD7227EF5C60015D602 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Disposable+CompositeDisposale.swift"; sourceTree = "<group>"; };
+		93A5DC01228762A70015D602 /* ObservableType+compactMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableType+compactMap.swift"; sourceTree = "<group>"; };
 		93B4F85521C85C2F00A2354E /* LifeClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LifeClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B4F86D21C8636F00A2354E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93B4F86F21C8636F00A2354E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -161,7 +161,6 @@
 			children = (
 				9338015121C8FF680056C349 /* NetworkManager.swift */,
 				93A5DBC1227EF5C60015D602 /* BridgeChannelHandler.swift */,
-				93A5DBC6227EF5C60015D602 /* EventLoopFuture+Cascade.swift */,
 				93A5DBC4227EF5C60015D602 /* FrameChannelHandler.swift */,
 			);
 			path = Network;
@@ -269,6 +268,7 @@
 			isa = PBXGroup;
 			children = (
 				93A5DBFE2286E0430015D602 /* Disposable+CompositeDisposale.swift */,
+				93A5DC01228762A70015D602 /* ObservableType+compactMap.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -487,7 +487,6 @@
 				93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */,
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				93A5DBFF2286E0430015D602 /* Disposable+CompositeDisposale.swift in Sources */,
-				93A5DBE7227EF5C60015D602 /* EventLoopFuture+Cascade.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
 				93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */,
 				93A5DBEF227EF5C60015D602 /* Cell.swift in Sources */,
@@ -496,6 +495,7 @@
 				936E8ED822019F8B00FB7689 /* CGFloat+Random.swift in Sources */,
 				93A5DBF2227EF5C60015D602 /* GameField.swift in Sources */,
 				9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */,
+				93A5DC02228762A70015D602 /* ObservableType+compactMap.swift in Sources */,
 				93A5DBEE227EF5C60015D602 /* GameFieldArray.swift in Sources */,
 				93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */,
 				93A5DBF4227EF5C60015D602 /* SessionManagerMessage.swift in Sources */,

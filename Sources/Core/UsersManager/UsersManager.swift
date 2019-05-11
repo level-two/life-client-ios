@@ -66,15 +66,16 @@ extension UsersManager {
         return .init() { [weak self] promise in
             let compositeDisposable = CompositeDisposable()
 
-            self?.networkManager.onMessage
-                .bind { message in
+            let decodedMessage = networkManager.onMessage
+                .compactMap { try JSONDecoder().decode(UsersManagerMessage.self, from: $0) }
+
+            decodedMessage.bind { message in
                     guard case .createUserSuccess(let userData) = message else { return }
-                    promise.resolve(with: userData)
+                    promise.fulfill(userData)
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
-            self?.networkManager.onMessage
-                .bind { message in
+            decodedMessage.bind { message in
                     guard case .createUserError(let error) = message else { return }
                     promise.reject(error)
                     compositeDisposable.dispose()
