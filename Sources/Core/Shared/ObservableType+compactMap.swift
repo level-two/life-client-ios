@@ -20,6 +20,6 @@ import RxSwift
 
 extension ObservableType {
     func compactMap<R>(_ transform: @escaping (Self.E) throws -> R?) -> RxSwift.Observable<R> {
-        return self.map { try? transform($0) }.filter { $0 != nil }.map { $0! }
+        return self.map { try transform($0) }.filter { $0 != nil }.map { $0! }
     }
 }

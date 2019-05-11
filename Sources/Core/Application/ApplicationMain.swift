@@ -18,7 +18,7 @@
 import UIKit
 
 @UIApplicationMain
-class ApplicationMain: UIResponder, UIApplicationDelegate, ApplicationStateObservable {
+class ApplicationMain: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var dependencyContainer: DependencyContainer!
 

@@ -60,7 +60,7 @@ class NetworkManager {
     }
 
     public var isConnected: Bool {
-        channel != nil
+        return channel != nil
     }
 
     var shouldReconnect: Bool = true
@@ -72,13 +72,13 @@ class NetworkManager {
 extension NetworkManager {
     func assembleInteractions() {
         UIApplication.shared.rx.applicationDidEnterBackground
-            .bind { [weak self] in
+            .bind {[weak self] _ in
                 self?.shouldReconnect = false
                 _ = self?.channel?.close()
         }.disposed(by: disposeBag)
 
         UIApplication.shared.rx.applicationWillEnterForeground
-            .bind { [weak self] in
+            .bind { [weak self] _ in
                 self?.shouldReconnect = true
                 self?.run()
         }.disposed(by: disposeBag)
@@ -90,12 +90,14 @@ extension NetworkManager {
             .channelInitializer { [weak self] channel in
                 guard let self = self else { return nil }
 
+                let frameHandler = FrameChannelHandler()
                 let bridge = BridgeChannelHandler()
+
                 bridge.onMessage
                     .bind(to: self.onMessage)
                     .disposed(by: bridge.disposeBag)
 
-                return channel.pipeline.addHandlers(FrameChannelHandler(), bridge, first: true)
+                return channel.pipeline.addHandlers(frameHandler, bridge)
             }
     }
 
