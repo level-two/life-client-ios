@@ -45,24 +45,60 @@ extension ChatMessage {
 }
 
 class ChatViewController: MessagesViewController {
-    private var navigator: SceneNavigatorProtocol!
-    private var sessionManager: SessionManager!
-    private var chatManager: ChatManager!
-
-    @IBOutlet weak var activityIndicatorView: UIView!
-    @IBOutlet weak var logoutButton: UIButton!
-    private let refreshControl = UIRefreshControl()
-
-    var messages: [ChatMessage] = []
-    var user: User!
-
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, chatManager: ChatManager) {
+    public func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, chatManager: ChatManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.chatManager = chatManager
         self.user = sessionManager.user
     }
 
+    @IBOutlet weak var activityIndicatorView: UIView!
+    @IBOutlet weak var logoutButton: UIButton!
+    let refreshControl = UIRefreshControl()
+
+    var navigator: SceneNavigatorProtocol!
+    var sessionManager: SessionManager!
+    var chatManager: ChatManager!
+
+    var messages: [ChatMessage] = []
+    var user: User!
+}
+
+extension ChatViewController {
+    @IBAction func loadMoreMessages() {
+        let firstIndex = messages.first.require().id
+        guard firstIndex > 0 else {
+            preconditionFailure("UIRefreshControl expected be hidden or disabled when we already received all messages")
+        }
+
+        let count = firstIndex >= 10 ? 10 : firstIndex
+        let fromId = firstIndex - count
+
+        firstly {
+            self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
+        }.then(on: .main) {
+            self.updateViewWithHistory($0)
+        }
+    }
+
+    @IBAction func onLogout() {
+        activityIndicatorView.isHidden = false
+        self.messageInputBar.inputTextView.resignFirstResponder()
+
+        firstly {
+            self.sessionManager.logout(userName: userName)
+        }.done { _ in
+            ApplicationSettings.setBool(false, for: .autologinEnabled)
+            self.navigator.navigate(to: .login)
+        }.ensure(on: .main) {
+            self.activityIndicatorView.isHidden = true
+        }.catch { error in
+            self.alert(error.localizedDescription)
+        }
+    }
+}
+
+extension ChatViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -75,87 +111,71 @@ class ChatViewController: MessagesViewController {
 
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
-        messageInputBar.delegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        messageInputBar.delegate = self
 
+        assembleInteractions()
+
+        self.chatManager.requestHIstory(fromId: nil, count: 10)
+    }
+
+    func assembleInteractions() {
         chatManager.onChatMessage
+            .observeOn(MainScheduler.instance)
             .bind(to: self.onChatMessage)
             .disposed(by: disposeBag)
 
-        chatManager.onChatMessagesResponse
-            .bind(to: self.onChatMessagesResponse)
-            .disposed(by: disposeBag)
-
-        // TODOL Move this to the chatManager?
+        // TODO: Move this to the chatManager?
         sessionManager.onLoginState
-            .bind { [weak self] isLogged in
+            .bind { [weak self] isLoggedIn in
                 guard let self = self else { return }
 
-                DispatchQueue.main.async { [weak self] in
-                    self?.activityIndicatorView.isHidden = isLoggedIn
+                DispatchQueue.main.async {
+                    self.activityIndicatorView.isHidden = isLoggedIn
                 }
 
-                if isLogged {
-                    self.chatManager.requestHIstory(fromId: self.messages.last?.id, count: nil)
+                guard isLoggedIn else { return }
+
+                firstly {
+                    self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
+                }.then(on: .main) {
+                    self.updateViewWithHistory($0)
                 }
             }.disposed(by: disposeBag)
-
-        self.chatManager.requestHIstory(fromId: nil, count: 10)
     }
 
     override func viewWillAppear(_ animated: Bool) {
         view.bringSubviewToFront(activityIndicatorView)
         view.bringSubviewToFront(logoutButton)
     }
+}
 
-    @IBAction func loadMoreMessages() {
-        let firstIndex = messages.first.require().id
-        guard firstIndex > 0 else {
-            preconditionFailure("UIRefreshControl expected be hidden or disabled when we already received all messages")
-        }
+extension ChatViewController {
+    private func updateViewWithMessage(_ message: ChatMessage) {
+        addMessage(message: message)
+        messagesCollectionView.reloadData()
 
-        let count = firstIndex >= 10 ? 10 : firstIndex
-        let fromId = firstIndex - count
-
-        self.chatManager.requestHIstory(fromId: fromId, count: count)
-    }
-
-    private func onChatMessage(_ message: ChatMessage) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-
-            let isLastSectionVisible = self.isLastSectionVisible()
-
-            self.addMessage(message: message)
-            self.messagesCollectionView.reloadData()
-
-            if message.user.userName == self.user.userName || isLastSectionVisible {
-                self.messagesCollectionView.scrollToBottom(animated: true)
-            } else {
-                // show arrow button to scroll down
-                // or badge
-            }
+        if message.user.userName == user.userName || isLastSectionVisible() {
+            messagesCollectionView.scrollToBottom(animated: true)
+        } else {
+            // TODO: show arrow button to scroll down or badge
         }
     }
 
-    private func onChatMessagesResponse(_ chatMessages: [ChatMessage]?, _ error: Error?) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+    private func updateViewWithHistory(_ chatMessages: [ChatMessage]) {
+        let messagesWereEmpty = (messages.count == 0)
+        chatMessages?.forEach(addMessage)
 
-            let messagesWereEmpty = (self.messages.count == 0)
-            chatMessages?.forEach(self.addMessage)
+        if messagesWereEmpty {
+            messagesCollectionView.reloadData()
+            messagesCollectionView.scrollToBottom(animated: false)
+        } else {
+            refreshControl.endRefreshing()
+            messagesCollectionView.reloadDataAndKeepOffset()
+        }
 
-            if messagesWereEmpty {
-                self.messagesCollectionView.reloadData()
-                self.messagesCollectionView.scrollToBottom(animated: false)
-            } else {
-                self.refreshControl.endRefreshing()
-                self.messagesCollectionView.reloadDataAndKeepOffset()
-            }
-
-            if self.messages.count == 0 || self.messages.first?.id == 0 {
-                self.messagesCollectionView.refreshControl = nil
-            }
+        if self.messages.count == 0 || messages.first?.id == 0 {
+            messagesCollectionView.refreshControl = nil
         }
     }
 
@@ -223,31 +243,12 @@ extension ChatViewController: MessagesDisplayDelegate {
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        self.networkManager.send(message: .sendChatMessage(message: text)).observe { [weak self] result in
-            DispatchQueue.main.async { [weak self] in
-                switch result {
-                case .error: self?.alert("Failed to send message")
-                case .value: inputBar.inputTextView.text = ""
-                }
-            }
-        }
-    }
-}
-
-extension ChatViewController {
-    @IBAction func onLogout() {
-        activityIndicatorView.isHidden = false
-        self.messageInputBar.inputTextView.resignFirstResponder()
-
         firstly {
-            sessionManager.logout(userName: userName)
-        }.done { _ in
-            ApplicationSettings.setBool(false, for: .autologinEnabled)
-            self.navigator.navigate(to: .login)
-        }.ensure(on: .main) {
-            self.activityIndicatorView.isHidden = true
-        }.catch { error in
-            self.alert(error.localizedDescription)
+            self.chatManager.send(message: text)
+        }.then(on: .main) {
+            self.inputBar.inputTextView.text = ""
+        }.catch(on: .main) {
+            self.alert("Failed to send message")
         }
     }
 }
