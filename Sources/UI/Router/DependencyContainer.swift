@@ -27,16 +27,27 @@ protocol ViewControllerFactory {
 
 class DependencyContainer {
     private var storyboard: UIStoryboard!
-    private var networkManager: NetworkManagerProtocol!
-    private var sessionManager: SessionProtocol!
+    private var networkManager: NetworkManager!
+    private var usersManager: UsersManager!
+    private var sessionManager: SessionManager!
+    private var chatManager: ChatManager!
+    private var gameplay: Gameplay!
     private var sceneNavigator: SceneNavigatorProtocol!
 
-    func setupDependencies(storyboard: UIStoryboard, networkManager: NetworkManagerProtocol,
-                           sessionManager: SessionProtocol, sceneNavigator: SceneNavigatorProtocol) {
-        self.storyboard     = storyboard
+    func setupDependencies(storyboard: UIStoryboard,
+                           networkManager: NetworkManager,
+                           usersManager: UsersManager,
+                           sessionManager: SessionManager,
+                           sceneNavigator: SceneNavigatorProtocol,
+                           chatManager: ChatManager,
+                           gameplay: Gameplay) {
+        self.storyboard = storyboard
         self.networkManager = networkManager
+        self.usersManager = usersManager
         self.sessionManager = sessionManager
         self.sceneNavigator = sceneNavigator
+        self.chatManager = chatManager
+        self.gameplay = gameplay
     }
 }
 
@@ -55,13 +66,13 @@ extension DependencyContainer: ViewControllerFactory {
 
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, chatManager: chatManager)
         return vc
     }
 
     func makeGameplayViewController() -> GameplayViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "GameplayViewController") as! GameplayViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, networkManager: networkManager)
+        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, gameplay: gameplay)
         return vc
     }
 }

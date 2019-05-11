@@ -36,15 +36,13 @@ class GameplayViewController: UIViewController {
     var players: [PlayerCells] = []
 
     var navigator: SceneNavigatorProtocol!
-    var sessionManager: SessionProtocol!
-    var networkManager: NetworkManagerProtocol!
-    var user: User!
+    var sessionManager: SessionManager!
+    var gameplay: Gameplay!
 
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionProtocol, networkManager: NetworkManagerProtocol) {
+    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, gameplay: Gameplay) {
         self.navigator = navigator
         self.sessionManager = sessionManager
-        self.networkManager = networkManager
-        self.user = sessionManager.user.require()
+        self.gameplay = gameplay
     }
 
     override func viewDidAppear(_ animated: Bool) {
