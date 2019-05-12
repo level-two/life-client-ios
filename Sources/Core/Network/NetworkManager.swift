@@ -72,31 +72,29 @@ class NetworkManager {
 extension NetworkManager {
     func assembleInteractions() {
         UIApplication.shared.rx.applicationDidEnterBackground
-            .bind {[weak self] _ in
+            .bind { [weak self] _ in
                 self?.shouldReconnect = false
                 _ = self?.channel?.close()
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
 
         UIApplication.shared.rx.applicationWillEnterForeground
             .bind { [weak self] _ in
                 self?.shouldReconnect = true
                 self?.run()
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 
     var bootstrap: ClientBootstrap {
-        return .init(group: self.group)
+        return ClientBootstrap(group: self.group)
             .channelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
             .channelInitializer { [weak self] channel in
-                guard let self = self else { return nil }
-
-                let frameHandler = FrameChannelHandler()
                 let bridge = BridgeChannelHandler()
 
                 bridge.onMessage
-                    .bind(to: self.onMessage)
+                    .bind { [weak self] in self?.onMessage.onNext($0) }
                     .disposed(by: bridge.disposeBag)
 
+                let frameHandler = FrameChannelHandler()
                 return channel.pipeline.addHandlers(frameHandler, bridge)
             }
     }
@@ -104,22 +102,32 @@ extension NetworkManager {
     func run() {
         print("Connecting to \(ApplicationSettings.host):\(ApplicationSettings.port)...")
 
-        bootstrap.connect(host: ApplicationSettings.host, port: ApplicationSettings.port)
-            .then { [weak self] channel -> EventLoopFuture<Void> in
-                print("Connected")
-                self?.onConnectionEstablished.onNext(())
-                self?.channel = channel
-                return channel.closeFuture
-            }.whenComplete { [weak self] in
+        let connectFuture = bootstrap.connect(host: ApplicationSettings.host, port: ApplicationSettings.port)
+        connectFuture.whenSuccess { [weak self] channel in
+            guard let self = self else { return }
+
+            print("Connected")
+
+            self.onConnectionEstablished.onNext(())
+            self.channel = channel
+
+            channel.closeFuture.whenComplete { [weak self] _ in
                 guard let self = self else { return }
 
                 print("Disconnected")
+
                 self.onConnectionClosed.onNext(())
                 self.channel = nil
-                if self.shouldReconnect {
-                    sleep(1)
-                    self.run()
-                }
+
+                guard self.shouldReconnect else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: self.run)
             }
+        }
+
+        connectFuture.whenFailure { [weak self] _ in
+            guard let self = self else { return }
+            guard self.shouldReconnect else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: self.run)
+        }
     }
 }
