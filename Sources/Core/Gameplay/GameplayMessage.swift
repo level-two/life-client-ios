@@ -25,6 +25,18 @@ enum GameplayMessage: Codable {
 }
 
 extension GameplayMessage {
+    init(from json: String) throws {
+        self = try JSONDecoder().decode(GameplayMessage.self, from: json.data(using: .utf8)!)
+    }
+
+    var json: String {
+        guard let data = try? JSONEncoder().encode(self) else { fatalError() }
+        guard let jsonString = String(data: data, encoding: .utf8) else { fatalError() }
+        return jsonString
+    }
+}
+
+extension GameplayMessage {
     private enum CodingKeys: String, CodingKey {
         case placeCell
         case newGameCycle

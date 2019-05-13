@@ -27,6 +27,18 @@ enum SessionManagerMessage: Codable {
 }
 
 extension SessionManagerMessage {
+    init(from json: String) throws {
+        self = try JSONDecoder().decode(SessionManagerMessage.self, from: json.data(using: .utf8)!)
+    }
+
+    var json: String {
+        guard let data = try? JSONEncoder().encode(self) else { fatalError() }
+        guard let jsonString = String(data: data, encoding: .utf8) else { fatalError() }
+        return jsonString
+    }
+}
+
+extension SessionManagerMessage {
     private enum CodingKeys: String, CodingKey {
         case login
         case logout

@@ -20,11 +20,10 @@ import NIO
 
 class FrameChannelHandler: ChannelInboundHandler {
     public typealias InboundIn = ByteBuffer
-    public typealias InboundOut = Data
+    public typealias InboundOut = String
 
     public enum FrameError: Error {
         case unableGetDataChunk
-        case messageToDataFailed
     }
 
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
@@ -37,13 +36,7 @@ class FrameChannelHandler: ChannelInboundHandler {
 
         while let newlineRange = collected.rangeOfCharacter(from: .newlines) {
             let message = collected[..<newlineRange.lowerBound]
-
-            if let messageData = message.data(using: .utf8) {
-                ctx.fireChannelRead(self.wrapInboundOut(messageData))
-            } else {
-                ctx.fireErrorCaught(FrameError.messageToDataFailed)
-            }
-
+            ctx.fireChannelRead(self.wrapInboundOut(String(message)))
             collected.removeSubrange(..<newlineRange.upperBound)
         }
     }

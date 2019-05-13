@@ -21,9 +21,9 @@ import RxSwift
 import RxCocoa
 
 class BridgeChannelHandler: ChannelInboundHandler {
-    public typealias InboundIn = Data
+    public typealias InboundIn = String
 
-    public let onMessage = PublishSubject<Data>()
+    public let onMessage = PublishSubject<String>()
     public let disposeBag = DisposeBag()
 
     public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {

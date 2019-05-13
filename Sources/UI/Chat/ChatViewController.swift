@@ -17,21 +17,21 @@
 
 import UIKit
 import MessageKit
+import PromiseKit
 
 extension ChatMessageData: MessageType {
+    var sender: SenderType {
+        return .init(id: user.userName, displayName: user.userName)
+    }
+    
     var messageId: String {
         return String(id)
     }
-
-    var sender: Sender {
-        return Sender(id: user.userName, displayName: user.userName)
-    }
-
-    // TODO
+    
     var sentDate: Date {
         return Date()
     }
-
+    
     var kind: MessageKind {
         return .text(message)
     }
@@ -39,7 +39,7 @@ extension ChatMessageData: MessageType {
 
 extension ChatMessageData {
     static var dummy: ChatMessageData {
-        return .init(user: User(userName: "", userId: 0, color: UIColor.black.color), message: "", id: 0)
+        return ChatMessageData(user: UserData(userName: "", userId: 0, color: UIColor.black.color), message: "", id: 0)
     }
 }
 
@@ -48,7 +48,7 @@ class ChatViewController: MessagesViewController {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.chatManager = chatManager
-        self.user = sessionManager.user
+        self.user = sessionManager.loggedInUserData
     }
 
     @IBOutlet weak var activityIndicatorView: UIView!
@@ -60,7 +60,7 @@ class ChatViewController: MessagesViewController {
     var chatManager: ChatManager!
 
     var messages: [ChatMessageData] = []
-    var user: User!
+    var user: UserData!
 }
 
 extension ChatViewController {
@@ -85,9 +85,9 @@ extension ChatViewController {
         self.messageInputBar.inputTextView.resignFirstResponder()
 
         firstly {
-            self.sessionManager.logout(userName: userName)
+            self.sessionManager.logout(userName: self.user.userName)
         }.done { _ in
-            ApplicationSettings.setBool(false, for: .autologinEnabled)
+            ApplicationSettings.autologinEnabled = false
             self.navigator.navigate(to: .login)
         }.ensure(on: .main) {
             self.activityIndicatorView.isHidden = true

@@ -29,7 +29,7 @@ class NetworkManager {
 
     public let onConnectionEstablished = PublishSubject<Void>()
     public let onConnectionClosed = PublishSubject<Void>()
-    public let onMessage = PublishSubject<Data>()
+    public let onMessage = PublishSubject<String>()
 
     init() {
         assembleInteractions()
@@ -43,18 +43,12 @@ class NetworkManager {
         }
     }
 
-    public func send(_ codableMessage: Codable) -> Promise<Void> {
+    public func send(_ json: String) -> Promise<Void> {
         return .init() { promise in
             guard let channel = self.channel else { throw NetworkManagerError.noConnection }
 
-            let data = try JSONEncoder().encode(codableMessage)
-            guard let str = String(data: data, encoding: .utf8) else { throw NetworkManagerError.dataToStringFailed }
-
-            var buffer = channel.allocator.buffer(capacity: str.count)
-            buffer.write(string: str)
-
-            let writeFuture = channel.writeAndFlush(buffer, promise: nil)
-            writeFuture.whenSuccess { promise.resolve() }
+            let writeFuture = channel.writeAndFlush(json)
+            writeFuture.whenSuccess { promise.fulfill($0) }
             writeFuture.whenFailure { promise.reject($0) }
         }
     }

@@ -37,7 +37,8 @@ class Gameplay {
         guard gameField.canPlaceCell(cell) else { return }
         gameField.placeUnacceptedCell(cell)
         onPlaceCell.onNext(cell)
-        _ = networkManager.send(GameplayMessage.placeCell(cell: cell, gameCycle: self.cycle))
+        let message = GameplayMessage.placeCell(cell: cell, gameCycle: self.cycle)
+        _ = networkManager.send(message.json)
     }
 
     var cycle = 0
@@ -49,7 +50,7 @@ class Gameplay {
 extension Gameplay {
     func assembleInteractions() {
         let decodedMessage = networkManager.onMessage
-            .compactMap { try JSONDecoder().decode(GameplayMessage.self, from: $0) }
+            .compactMap { try GameplayMessage(from: $0) }
 
         decodedMessage.bind { [weak self] message in
             guard let self = self else { return }

@@ -41,9 +41,10 @@ class SessionManager {
 extension SessionManager {
     @discardableResult
     public func createUserAndLogin(userName: String, color: Color) -> Promise<UserData> {
+        // FIXME: Revise self capturing in closures
         return firstly {
             self.usersManager.createUser(with: userName, color: color)
-        }.then {
+        }.then { _ in
             self.login(userName: userName)
         }
     }
@@ -88,12 +89,12 @@ extension SessionManager {
 extension SessionManager {
     func sendLogin(for userName: String) -> Promise<Void> {
         let message = SessionManagerMessage.login(userName: userName)
-        return networkManager.send(message)
+        return networkManager.send(message.json)
     }
 
     func sendLogout(for userName: String) -> Promise<Void> {
         let message = SessionManagerMessage.logout(userName: userName)
-        return networkManager.send(message)
+        return networkManager.send(message.json)
     }
 
     func waitLoginResponse() -> Promise<UserData> {
@@ -101,7 +102,7 @@ extension SessionManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try JSONDecoder().decode(SessionManagerMessage.self, from: $0) }
+                .compactMap { try SessionManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }
@@ -131,7 +132,7 @@ extension SessionManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try JSONDecoder().decode(SessionManagerMessage.self, from: $0) }
+                .compactMap { try SessionManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .logoutResponseSuccess(let userData) = message else { return }

@@ -28,6 +28,18 @@ enum ChatMessage: Codable {
 }
 
 extension ChatMessage {
+    init(from json: String) throws {
+        self = try JSONDecoder().decode(ChatMessage.self, from: json.data(using: .utf8)!)
+    }
+
+    var json: String {
+        guard let data = try? JSONEncoder().encode(self) else { fatalError() }
+        guard let jsonString = String(data: data, encoding: .utf8) else { fatalError() }
+        return jsonString
+    }
+}
+
+extension ChatMessage {
     private enum CodingKeys: String, CodingKey {
         case sendChatMessage
         case chatHistoryRequest

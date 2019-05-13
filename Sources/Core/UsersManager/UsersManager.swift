@@ -59,7 +59,8 @@ class UsersManager {
 
 extension UsersManager {
     func sendCreateUserMessage(with userName: String, color: Color) -> Promise<Void> {
-        return networkManager.send(UsersManagerMessage.createUser(userName: userName, color: color))
+        let message = UsersManagerMessage.createUser(userName: userName, color: color)
+        return networkManager.send(message.json)
     }
 
     func waitCreateUserResponse() -> Promise<UserData> {
@@ -67,7 +68,7 @@ extension UsersManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try JSONDecoder().decode(UsersManagerMessage.self, from: $0) }
+                .compactMap { try UsersManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .createUserSuccess(let userData) = message else { return }

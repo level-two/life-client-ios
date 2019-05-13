@@ -35,7 +35,7 @@ class ChatManager {
 
     public func send(messageText: String) -> Promise<Void> {
         let message = ChatMessage.sendChatMessage(message: messageText)
-        return networkManager.send(message)
+        return networkManager.send(message.json)
     }
 
     public func requestHIstory(fromId: Int, count: Int) -> Promise<[ChatMessageData]> {
@@ -53,7 +53,7 @@ class ChatManager {
 extension ChatManager {
     func assembleInteractions() {
         networkManager.onMessage
-            .compactMap { try JSONDecoder().decode(ChatMessage.self, from: $0) }
+            .compactMap { try ChatMessage(from: $0) }
             .bind { [weak self] message in
                 guard let self = self else { return }
                 guard case .chatMessage(let chatMessageData) = message else { return }
@@ -64,7 +64,7 @@ extension ChatManager {
 
     func sendHistoryRequest(fromId: Int, count: Int) -> Promise<Void> {
         let message = ChatMessage.chatHistoryRequest(fromId: fromId, count: count)
-        return networkManager.send(message)
+        return networkManager.send(message.json)
     }
 
     func waitHistoryResponse() -> Promise<[ChatMessageData]> {
@@ -72,7 +72,7 @@ extension ChatManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try JSONDecoder().decode(ChatMessage.self, from: $0) }
+                .compactMap { try ChatMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .chatHistoryResponse(let messages) = message else { return }
