@@ -69,3 +69,10 @@ extension UIColor {
                      alpha: Double(color.alpha))
     }
 }
+
+extension Color {
+    var uiColor: UIColor { return UIColor(color: self) }
+    var cgColor: CGColor { return uiColor.cgColor }
+    var ciColor: CIColor { return CIColor(color: uiColor) }
+    //var data: Data { return try! JSONEncoder().encode(self) }
+}

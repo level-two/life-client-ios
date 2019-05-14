@@ -15,33 +15,11 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // -----------------------------------------------------------------------------
 
+import Foundation
 import UIKit
 import MessageKit
 import PromiseKit
-
-extension ChatMessageData: MessageType {
-    var sender: SenderType {
-        return .init(id: user.userName, displayName: user.userName)
-    }
-    
-    var messageId: String {
-        return String(id)
-    }
-    
-    var sentDate: Date {
-        return Date()
-    }
-    
-    var kind: MessageKind {
-        return .text(message)
-    }
-}
-
-extension ChatMessageData {
-    static var dummy: ChatMessageData {
-        return ChatMessageData(user: UserData(userName: "", userId: 0, color: UIColor.black.color), message: "", id: 0)
-    }
-}
+import RxSwift
 
 class ChatViewController: MessagesViewController {
     public func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, chatManager: ChatManager) {
@@ -59,16 +37,15 @@ class ChatViewController: MessagesViewController {
     var sessionManager: SessionManager!
     var chatManager: ChatManager!
 
-    var messages: [ChatMessageData] = []
+    var messages: [ChatViewMessage] = []
     var user: UserData!
+    let disposeBag = DisposeBag()
 }
 
 extension ChatViewController {
     @IBAction func loadMoreMessages() {
-        let firstIndex = messages.first.require().id
-        guard firstIndex > 0 else {
-            preconditionFailure("UIRefreshControl expected be hidden or disabled when we already received all messages")
-        }
+        guard let firstIndex = messages.first?.id else { return }
+        assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
 
         let count = firstIndex >= 10 ? 10 : firstIndex
         let fromId = firstIndex - count
@@ -178,7 +155,7 @@ extension ChatViewController {
         }
     }
 
-    private func addMessage(message: ChatMessageData) {
+    private func addMessage(message: ChatV) {
         if let idx = messages.firstIndex(where: { $0.id >= message.id }) {
             if messages[idx].id != message.id {
                 messages.insert(message, at: idx)
@@ -200,7 +177,7 @@ extension ChatViewController: MessagesDataSource {
         return messages.count
     }
 
-    func currentSender() -> Sender {
+    func currentSender() -> SenderType {
         return Sender(id: user.userName, displayName: user.userName)
     }
 
@@ -236,17 +213,17 @@ extension ChatViewController: MessagesDisplayDelegate {
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
         let message = messages[indexPath.section]
-        avatarView.backgroundColor = message.user.color.uiColor
+        avatarView.backgroundColor = message.color.uiColor
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         firstly {
-            self.chatManager.send(message: text)
-        }.then(on: .main) {
-            self.inputBar.inputTextView.text = ""
-        }.catch(on: .main) {
+            self.chatManager.send(messageText: text)
+        }.map(on: .main) {
+            self.messageInputBar.inputTextView.text = ""
+        }.catch(on: .main) { _ in
             self.alert("Failed to send message")
         }
     }

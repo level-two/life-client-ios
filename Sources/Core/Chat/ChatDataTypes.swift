@@ -26,9 +26,9 @@ struct ChatMessageData: Codable {
     let userId: UserId
     let text: String
 
-//    init(id: Int, userId: UserId, text: String) {
-//        self.id = id
-//        self.userId = userId
-//        self.text = text
-//    }
+    init(id: Int, userId: UserId, text: String) {
+        self.id = id
+        self.userId = userId
+        self.text = text
+    }
 }
