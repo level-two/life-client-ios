@@ -12,7 +12,7 @@ import MessageKit
 struct ChatViewMessage {
     let id: Int
     let text: String
-    
+
     let userId: UserId
     var userName: String
     var color: Color
@@ -22,7 +22,7 @@ extension ChatViewMessage: MessageType {
     var sender: SenderType {
         return Sender(senderId: String(userId), displayName: userName)
     }
-    
+
     var messageId: String {
         return String(id)
     }

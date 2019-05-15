@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		07E741089D13D2F261EFF2A2 /* Pods_LifeClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */; };
 		931D5D74228B5D5A0054760B /* ChatViewTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D73228B5D5A0054760B /* ChatViewTypes.swift */; };
+		931D5D76228C17AE0054760B /* ChatInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D75228C17AE0054760B /* ChatInteractions.swift */; };
+		931D5D78228C1FAF0054760B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D77228C1FAF0054760B /* ChatViewController.swift */; };
+		931D5D7A228CA9DF0054760B /* Old.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D79228CA9DF0054760B /* Old.swift */; };
 		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
 		9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */; };
 		9338015221C8FF680056C349 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetworkManager.swift */; };
@@ -19,7 +22,7 @@
 		9392845121D030D800F6C55B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845021D030D800F6C55B /* LoginViewController.swift */; };
 		9392845321D030EC00F6C55B /* CreateUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845221D030EC00F6C55B /* CreateUserViewController.swift */; };
 		9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845421D030FD00F6C55B /* GameplayViewController.swift */; };
-		9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845621D0310A00F6C55B /* ChatViewController.swift */; };
+		9392845721D0310A00F6C55B /* ChatPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9392845621D0310A00F6C55B /* ChatPresenter.swift */; };
 		93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBA227EF5C60015D602 /* ChatMessage.swift */; };
 		93A5DBDE227EF5C60015D602 /* ChatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBB227EF5C60015D602 /* ChatManager.swift */; };
 		93A5DBE0227EF5C60015D602 /* ChatDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */; };
@@ -48,6 +51,9 @@
 		0389F3F9C97BF01E7A5FA04E /* Pods-LifeClient.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LifeClient.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LifeClient/Pods-LifeClient.debug.xcconfig"; sourceTree = "<group>"; };
 		3F26DE75927D9A9B2676EF88 /* Pods_LifeClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LifeClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		931D5D73228B5D5A0054760B /* ChatViewTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewTypes.swift; sourceTree = "<group>"; };
+		931D5D75228C17AE0054760B /* ChatInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInteractions.swift; sourceTree = "<group>"; };
+		931D5D77228C1FAF0054760B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		931D5D79228CA9DF0054760B /* Old.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Old.swift; sourceTree = "<group>"; };
 		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		9338015121C8FF680056C349 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -58,7 +64,7 @@
 		9392845021D030D800F6C55B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		9392845221D030EC00F6C55B /* CreateUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserViewController.swift; sourceTree = "<group>"; };
 		9392845421D030FD00F6C55B /* GameplayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameplayViewController.swift; sourceTree = "<group>"; };
-		9392845621D0310A00F6C55B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		9392845621D0310A00F6C55B /* ChatPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPresenter.swift; sourceTree = "<group>"; };
 		93A5DBBA227EF5C60015D602 /* ChatMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		93A5DBBB227EF5C60015D602 /* ChatManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatManager.swift; sourceTree = "<group>"; };
 		93A5DBBD227EF5C60015D602 /* ChatDataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatDataTypes.swift; sourceTree = "<group>"; };
@@ -128,7 +134,10 @@
 		936E8ECC22018EC100FB7689 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				9392845621D0310A00F6C55B /* ChatViewController.swift */,
+				931D5D77228C1FAF0054760B /* ChatViewController.swift */,
+				9392845621D0310A00F6C55B /* ChatPresenter.swift */,
+				931D5D75228C17AE0054760B /* ChatInteractions.swift */,
+				931D5D79228CA9DF0054760B /* Old.swift */,
 				931D5D73228B5D5A0054760B /* ChatViewTypes.swift */,
 			);
 			path = Chat;
@@ -486,6 +495,8 @@
 				9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */,
 				9392845121D030D800F6C55B /* LoginViewController.swift in Sources */,
 				93A5DBF0227EF5C60015D602 /* GameplayMessage.swift in Sources */,
+				931D5D76228C17AE0054760B /* ChatInteractions.swift in Sources */,
+				931D5D78228C1FAF0054760B /* ChatViewController.swift in Sources */,
 				9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */,
 				93A5DBE8227EF5C60015D602 /* UsersManagerMessage.swift in Sources */,
 				931D5D74228B5D5A0054760B /* ChatViewTypes.swift in Sources */,
@@ -512,8 +523,9 @@
 				93B4F87821C8636F00A2354E /* ApplicationMain.swift in Sources */,
 				93C9826021D183EE00738709 /* SceneNavigator.swift in Sources */,
 				93A5DBE5227EF5C60015D602 /* FrameChannelHandler.swift in Sources */,
+				931D5D7A228CA9DF0054760B /* Old.swift in Sources */,
 				9338015221C8FF680056C349 /* NetworkManager.swift in Sources */,
-				9392845721D0310A00F6C55B /* ChatViewController.swift in Sources */,
+				9392845721D0310A00F6C55B /* ChatPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
