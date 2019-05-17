@@ -20,7 +20,7 @@ extension ChatViewMessage: MessageType {
     }
 
     var messageId: String {
-        return String(messageData.id)
+        return String(messageData.messageId)
     }
 
     var sentDate: Date {

@@ -22,12 +22,12 @@ enum ChatMessageDataError: Error {
 }
 
 struct ChatMessageData: Codable {
-    let id: Int
+    let messageId: Int
     let userId: UserId
     let text: String
 
-    init(id: Int, userId: UserId, text: String) {
-        self.id = id
+    init(messageId: Int, userId: UserId, text: String) {
+        self.messageId = messageId
         self.userId = userId
         self.text = text
     }

@@ -63,11 +63,11 @@ class ChatViewController: MessagesViewController {
     }
 
     public func add(newMessages: ChatViewMessage...) {
-        newMessages.forEach { messages[$0.id] = $0 }
+        newMessages.forEach { messages[$0.messageData.messageId] = $0 }
     }
 
     public func add(newMessages: [ChatViewMessage]) {
-        newMessages.forEach { messages[$0.id] = $0 }
+        newMessages.forEach { messages[$0.messageData.messageId] = $0 }
     }
 
     public func reloadDataKeepingOffset() {

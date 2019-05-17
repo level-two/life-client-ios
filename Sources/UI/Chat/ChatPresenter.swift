@@ -44,11 +44,19 @@ class ChatPresenter {
     public func addMessage(_ message: ChatViewMessage) {
         chatViewController.add(newMessages: message)
 
-        if message.userName == user.userName || chatViewController.isLastSectionVisible {
+        if message.userData.userName == user.userName || chatViewController.isLastSectionVisible {
             chatViewController.reloadDataScrollingToBottom(animated: true)
         } else {
             chatViewController.reloadDataKeepingOffset()
         }
+    }
+    
+    public func startedHistoryRequest() {
+        chatViewController.beginRefreshing()
+    }
+    
+    public func finishedHistoryRequest() {
+        chatViewController.endRefreshing()
     }
 
     public func addHistory(_ messages: [ChatViewMessage]) {
@@ -60,10 +68,10 @@ class ChatPresenter {
             chatViewController.reloadDataScrollingToBottom(animated: false)
         } else {
             chatViewController.reloadDataKeepingOffset()
-            chatViewController.endRefreshing()
+            //chatViewController.endRefreshing()
         }
 
-        if messages.contains(where: {$0.id == 0}) {
+        if messages.contains(where: {$0.messageData.messageId == 0}) {
             chatViewController.disableRefreshControl()
         }
     }

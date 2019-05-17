@@ -38,7 +38,7 @@ class ChatManager {
         return networkManager.send(message.json)
     }
 
-    public func requestHIstory(fromId: Int, count: Int) -> Promise<[ChatMessageData]> {
+    public func requestHistory(fromId: Int, count: Int) -> Promise<[ChatMessageData]> {
         return firstly {
             self.sendHistoryRequest(fromId: fromId, count: count)
         }.then {

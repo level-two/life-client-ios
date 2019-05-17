@@ -46,47 +46,61 @@ class ChatInteractions {
 
 extension ChatInteractions {
     func assembleInteractions() {
-        chatManager.onChatMessage
-            .bind { message in
-                firstly {
-                    self.usersManager.getUserData(for: message.userId)
-                }.then { userData in
-                    let chatViewMessage = .init(with: message, and: userData)
-                    self.chatPresenter.addMessage(chatViewMessage)
-                }
-            }.disposed(by: disposeBag)
+        chatManager.onMessage.bind { message in
+            firstly {
+                self.usersManager.getUserData(for: message.userId)
+            }.then { userData in
+                let chatViewMessage = .init(with: message, and: userData)
+                self.chatPresenter.addMessage(chatViewMessage)
+            }
+        }.disposed(by: disposeBag)
         
-        sessionManager.onLoginState
-            .bind { [weak self] isLoggedIn in
-                guard let self = self else { return }
+        /*
+        sessionManager.onLoginState.bind { [weak self] isLoggedIn in
+            guard let self = self else { return }
 
 //                self.activityIndicatorView.isHidden = isLoggedIn
 
-                guard isLoggedIn else { return }
-
-                firstly {
-                    self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
-                }.then(on: .main) {
-                    self.updateViewWithHistory($0)
-                }
-            }.disposed(by: disposeBag)
-
-        presenter.onLoadMoreMessages.bind {
-            guard let firstIndex = messages.first?.id else { return }
+            guard isLoggedIn else { return }
+            
+            firstly {
+                self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
+            }.then {
+                
+            }
+        }.disposed(by: disposeBag)
+         */
+        
+        chatPresenter.onLoadMoreMessages.bind {
+            guard let firstIndex = self.messages.first?.messageData.messageId else { return }
             assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
 
             let count = firstIndex >= 10 ? 10 : firstIndex
             let fromId = firstIndex - count
-
+            
+            var chatMessageData: [ChatMessageData]?
+            
             firstly {
-                self.chatManager.requestHistory(fromId: fromId, count: count)
-            }.then(on: .main) {
-                self.updateViewWithHistory($0)
+                self.chatPresenter.startedHistoryRequest()
+                return self.chatManager.requestHistory(fromId: fromId, count: count)
+            }.then { messages in
+                chatMessageData = messages
+                let userIds = Array(Set(chatMessageData))
+                return usersManager.getUserData(for: userIds)
+            }.done { usersData in
+                let chatViewMessages = chatMessageData.map { messageData
+                    ChatViewMessage(messageData: messageData, userData: usersData.first { $0.userId == messageData.userId })
+                }
+                
+                //self.messages.append(chatViewMessages)
+                self.chatPresenter.addHistory(chatViewMessages)
+            }.ensure(on: DispatchQueue.main) {
+                self.chatPresenter.finishedHistoryRequest()
             }
-        }
+        }.disposed(by: disposeBag)
 
-        presenter.onLogout.bind {
-            presenter.showActivityIndicator()
+        chatPresenter.onLogout.bind {
+            //presenter.showActivityIndicator()
 
             firstly {
                 self.sessionManager.logout(userName: self.user.userName)
@@ -94,10 +108,10 @@ extension ChatInteractions {
                 ApplicationSettings.autologinEnabled = false
                 self.navigator.navigate(to: .login)
             }.ensure(on: .main) {
-                presenter.hideActivityIndicator()
+                //presenter.hideActivityIndicator()
             }.catch { error in
                 self.alert(error.localizedDescription)
             }
-        }
+        }.disposed(by: disposeBag)
     }
 }
