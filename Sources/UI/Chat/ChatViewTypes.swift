@@ -10,21 +10,17 @@ import Foundation
 import MessageKit
 
 struct ChatViewMessage {
-    let id: Int
-    let text: String
-
-    let userId: UserId
-    var userName: String
-    var color: Color
+    var messageData: ChatMessageData
+    var userData: UserData
 }
 
 extension ChatViewMessage: MessageType {
     var sender: SenderType {
-        return Sender(senderId: String(userId), displayName: userName)
+        return Sender(senderId: String(userData.userId), displayName: userData.userName)
     }
 
     var messageId: String {
-        return String(id)
+        return String(messageData.id)
     }
 
     var sentDate: Date {
@@ -32,12 +28,13 @@ extension ChatViewMessage: MessageType {
     }
 
     var kind: MessageKind {
-        return .text(text)
+        return .text(messageData.text)
     }
 }
 
 extension ChatViewMessage {
     static var dummy: ChatViewMessage {
-        return .init(id: 0, text: "", userId: 0, userName: "", color: UIColor.black.color)
+        return .init(messageData: ChatMessageData(id: 0, userId: 0, text: ""),
+                     userData: UserData(userId: 0, userName: "", color: UIColor.black.color))
     }
 }

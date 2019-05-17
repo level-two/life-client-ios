@@ -21,16 +21,23 @@ import PromiseKit
 import RxSwift
 
 class ChatInteractions {
-    init(_ navigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ chatManager: ChatManager) {
+    init(_ navigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ usersManager: UsersManager, _ chatManager: ChatManager, _ chatPresenter: ChatPresenter) {
         self.navigator = navigator
         self.sessionManager = sessionManager
+        self.usersManager = usersManager
         self.chatManager = chatManager
+        self.chatPresenter = chatPresenter
+        
         self.user = sessionManager.loggedInUserData
+        chatPresenter.user = sessionManager.loggedInUserData
     }
 
-    var navigator: SceneNavigatorProtocol
-    var sessionManager: SessionManager
-    var chatManager: ChatManager
+    let navigator: SceneNavigatorProtocol
+    let sessionManager: SessionManager
+    let usersManager: UsersManager
+    let chatManager: ChatManager
+    
+    let chatPresenter: ChatPresenter
 
     var messages: [ChatViewMessage] = []
     var user: UserData?
@@ -40,10 +47,15 @@ class ChatInteractions {
 extension ChatInteractions {
     func assembleInteractions() {
         chatManager.onChatMessage
-            .observeOn(MainScheduler.instance)
-            .bind(to: self.onChatMessage)
-            .disposed(by: disposeBag)
-
+            .bind { message in
+                firstly {
+                    self.usersManager.getUserData(for: message.userId)
+                }.then { userData in
+                    let chatViewMessage = .init(with: message, and: userData)
+                    self.chatPresenter.addMessage(chatViewMessage)
+                }
+            }.disposed(by: disposeBag)
+        
         sessionManager.onLoginState
             .bind { [weak self] isLoggedIn in
                 guard let self = self else { return }
@@ -67,7 +79,7 @@ extension ChatInteractions {
             let fromId = firstIndex - count
 
             firstly {
-                self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
+                self.chatManager.requestHistory(fromId: fromId, count: count)
             }.then(on: .main) {
                 self.updateViewWithHistory($0)
             }

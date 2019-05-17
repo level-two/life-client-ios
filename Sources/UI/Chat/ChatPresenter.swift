@@ -16,13 +16,21 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
-import UIKit
-import MessageKit
 import RxSwift
-import RxCocoa
 
 class ChatPresenter {
     public let onSendButton = PublishSubject<String>()
+    public let onLoadMoreMessages = PublishSubject<Void>()
+    public let onLogout = PublishSubject<Void>()
+    
+    init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
+        self.chatViewController = chatViewController
+        self.user = currentUser
+
+        chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
+        chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
+        chatViewController.onLogout.bind(to: onLogout).disposed(by: disposeBag)
+    }
 
     public var inputBarText: String {
         get {
@@ -31,13 +39,6 @@ class ChatPresenter {
         set {
             chatViewController.messageInputBar.inputTextView.text = newValue
         }
-    }
-
-    init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
-        self.chatViewController = chatViewController
-        self.user = currentUser
-
-        chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
     }
 
     public func addMessage(_ message: ChatViewMessage) {

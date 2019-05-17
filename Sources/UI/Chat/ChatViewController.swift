@@ -23,6 +23,7 @@ import RxSwift
 class ChatViewController: MessagesViewController {
     public let onSendButton = PublishSubject<String>()
     public let onLoadMoreMessages = PublishSubject<Void>()
+    public let onLogout = PublishSubject<Void>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,9 +34,8 @@ class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
 
-        refreshControl.rx.controlEvent(.valueChanged)
-            .bind(to: onLoadMoreMessages)
-            .disposed(by: disposeBag)
+        refreshControl.rx.controlEvent(.valueChanged).bind(to: onLoadMoreMessages).disposed(by: disposeBag)
+        logoutButton.rx.tap.bind(to: onLogout).disposed(by: disposeBag)
     }
 
     override func viewWillAppear(_ animated: Bool) {
