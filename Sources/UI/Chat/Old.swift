@@ -21,46 +21,47 @@ import MessageKit
 import PromiseKit
 import RxSwift
 
-class ChatViewController: MessagesViewController {
+/*
+class ChatViewControllerOld: MessagesViewController {
     public func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, chatManager: ChatManager) {
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.chatManager = chatManager
         self.user = sessionManager.loggedInUserData
     }
-    
+
     @IBOutlet weak var activityIndicatorView: UIView!
     @IBOutlet weak var logoutButton: UIButton!
     let refreshControl = UIRefreshControl()
-    
+
     var navigator: SceneNavigatorProtocol!
     var sessionManager: SessionManager!
     var chatManager: ChatManager!
-    
+
     var messages: [ChatViewMessage] = []
     var user: UserData!
     let disposeBag = DisposeBag()
 }
 
-extension ChatViewController {
+extension ChatViewControllerOld {
     @IBAction func loadMoreMessages() {
         guard let firstIndex = messages.first?.id else { return }
         assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
-        
+
         let count = firstIndex >= 10 ? 10 : firstIndex
         let fromId = firstIndex - count
-        
+
         firstly {
             self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
             }.then(on: .main) {
                 self.updateViewWithHistory($0)
         }
     }
-    
+
     @IBAction func onLogout() {
         activityIndicatorView.isHidden = false
         self.messageInputBar.inputTextView.resignFirstResponder()
-        
+
         firstly {
             self.sessionManager.logout(userName: self.user.userName)
             }.done { _ in
@@ -74,44 +75,44 @@ extension ChatViewController {
     }
 }
 
-extension ChatViewController {
+extension ChatViewControllerOld {
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         activityIndicatorView.isHidden = true
-        
+
         messagesCollectionView.refreshControl = self.refreshControl
         refreshControl.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
-        
+
         maintainPositionOnKeyboardFrameChanged = true // default false
-        
+
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
-        
+
         assembleInteractions()
-        
+
         self.chatManager.requestHIstory(fromId: nil, count: 10)
     }
-    
+
     func assembleInteractions() {
         chatManager.onChatMessage
             .observeOn(MainScheduler.instance)
             .bind(to: self.onChatMessage)
             .disposed(by: disposeBag)
-        
+
         // TODO: Move this to the chatManager?
         sessionManager.onLoginState
             .bind { [weak self] isLoggedIn in
                 guard let self = self else { return }
-                
+
                 DispatchQueue.main.async {
                     self.activityIndicatorView.isHidden = isLoggedIn
                 }
-                
+
                 guard isLoggedIn else { return }
-                
+
                 firstly {
                     self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
                     }.then(on: .main) {
@@ -119,29 +120,29 @@ extension ChatViewController {
                 }
             }.disposed(by: disposeBag)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         view.bringSubviewToFront(activityIndicatorView)
         view.bringSubviewToFront(logoutButton)
     }
 }
 
-extension ChatViewController {
+extension ChatViewControllerOld {
     private func updateViewWithMessage(_ message: ChatMessageData) {
         addMessage(message: message)
         messagesCollectionView.reloadData()
-        
+
         if message.user.userName == user.userName || isLastSectionVisible() {
             messagesCollectionView.scrollToBottom(animated: true)
         } else {
             // TODO: show arrow button to scroll down or badge
         }
     }
-    
+
     private func updateViewWithHistory(_ chatMessages: [ChatMessageData]) {
         let messagesWereEmpty = (messages.count == 0)
         chatMessages?.forEach(addMessage)
-        
+
         if messagesWereEmpty {
             messagesCollectionView.reloadData()
             messagesCollectionView.scrollToBottom(animated: false)
@@ -149,12 +150,12 @@ extension ChatViewController {
             refreshControl.endRefreshing()
             messagesCollectionView.reloadDataAndKeepOffset()
         }
-        
+
         if self.messages.count == 0 || messages.first?.id == 0 {
             messagesCollectionView.refreshControl = nil
         }
     }
-    
+
     private func addMessage(message: ChatV) {
         if let idx = messages.firstIndex(where: { $0.id >= message.id }) {
             if messages[idx].id != message.id {
@@ -164,7 +165,7 @@ extension ChatViewController {
             messages.append(message)
         }
     }
-    
+
     private func isLastSectionVisible() -> Bool {
         guard messages.isEmpty == false else { return false }
         let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
@@ -172,25 +173,25 @@ extension ChatViewController {
     }
 }
 
-extension ChatViewController: MessagesDataSource {
+extension ChatViewControllerOld: MessagesDataSource {
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }
-    
+
     func currentSender() -> SenderType {
         return Sender(id: user.userName, displayName: user.userName)
     }
-    
+
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         return messages[indexPath.section]
     }
-    
+
     func messageTopLabelHeight(for message: MessageType,
                                at indexPath: IndexPath,
                                in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 12
     }
-    
+
     func messageTopLabelAttributedText(for message: MessageType,
                                        at indexPath: IndexPath) -> NSAttributedString? {
         return NSAttributedString(string: message.sender.displayName,
@@ -198,7 +199,7 @@ extension ChatViewController: MessagesDataSource {
     }
 }
 
-extension ChatViewController: MessagesLayoutDelegate {
+extension ChatViewControllerOld: MessagesLayoutDelegate {
     func heightForLocation(message: MessageType,
                            at indexPath: IndexPath,
                            with maxWidth: CGFloat,
@@ -207,7 +208,7 @@ extension ChatViewController: MessagesLayoutDelegate {
     }
 }
 
-extension ChatViewController: MessagesDisplayDelegate {
+extension ChatViewControllerOld: MessagesDisplayDelegate {
     func configureAvatarView(_ avatarView: AvatarView,
                              for message: MessageType,
                              at indexPath: IndexPath,
@@ -217,7 +218,7 @@ extension ChatViewController: MessagesDisplayDelegate {
     }
 }
 
-extension ChatViewController: MessageInputBarDelegate {
+extension ChatViewControllerOld: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         firstly {
             self.chatManager.send(messageText: text)
@@ -228,3 +229,4 @@ extension ChatViewController: MessageInputBarDelegate {
         }
     }
 }
+*/

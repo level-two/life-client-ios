@@ -22,6 +22,8 @@ import RxSwift
 import RxCocoa
 
 class ChatPresenter {
+    public let onSendButton = PublishSubject<String>()
+
     public var inputBarText: String {
         get {
             return chatViewController.messageInputBar.inputTextView.text
@@ -30,50 +32,42 @@ class ChatPresenter {
             chatViewController.messageInputBar.inputTextView.text = newValue
         }
     }
-    
-    init() {
-        chatViewController.refreshControl.rx.controlEvent(.valueChanged)
-            .bind(to: loadMoreMessages)
-            .disposed(by: disposeBag)
+
+    init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
+        self.chatViewController = chatViewController
+        self.user = currentUser
+
+        chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
     }
-    
-    fileprivate let chatViewController = ChatViewController()
+
+    public func addMessage(_ message: ChatMessageData) {
+        chatViewController.add(newMessages: message)
+
+        if message.user.userName == user.userName || chatViewController.isLastSectionVisible() {
+            chatViewController.updateScrollingToBottom(animated: true)
+        } else {
+            chatViewController.updateKeepingOffset()
+        }
+    }
+
+    public func addHistory(_ messages: [ChatMessageData]) {
+        let messagesWereEmpty = chatViewController.numberOfMessages == 0
+
+        chatViewController.add(newMessages: messages)
+
+        if messagesWereEmpty {
+            chatViewController.updateScrollingToBottom(animated: false)
+        } else {
+            chatViewController.updateKeepingOffset()
+            chatViewController.endRefreshing()
+        }
+
+        if messages.contains(where: {$0.id == 0}) {
+            chatViewController.disableRefreshControl()
+        }
+    }
+
+    fileprivate weak var chatViewController: ChatViewController!
+    fileprivate let user: UserData
     fileprivate let disposeBag = DisposeBag()
 }
-
-//extension ChatPresenter {
-//    private func updateViewWithMessage(_ message: ChatMessageData) {
-//        addMessage(message: message)
-//        messagesCollectionView.reloadData()
-//
-//        if message.user.userName == user.userName || isLastSectionVisible() {
-//            messagesCollectionView.scrollToBottom(animated: true)
-//        } else {
-//            // TODO: show arrow button to scroll down or badge
-//        }
-//    }
-//
-//    private func updateViewWithHistory(_ chatMessages: [ChatMessageData]) {
-//        let messagesWereEmpty = (messages.count == 0)
-//        chatMessages?.forEach(addMessage)
-//
-//        if messagesWereEmpty {
-//            messagesCollectionView.reloadData()
-//            messagesCollectionView.scrollToBottom(animated: false)
-//        } else {
-//            refreshControl.endRefreshing()
-//            messagesCollectionView.reloadDataAndKeepOffset()
-//        }
-//
-//        if self.messages.count == 0 || messages.first?.id == 0 {
-//            messagesCollectionView.refreshControl = nil
-//        }
-//    }
-//
-//    private func isLastSectionVisible() -> Bool {
-//        guard messages.isEmpty == false else { return false }
-//        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
-//        return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
-//    }
-//}
-

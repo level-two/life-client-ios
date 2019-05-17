@@ -18,71 +18,95 @@
 import Foundation
 import UIKit
 import MessageKit
-import PromiseKit
 import RxSwift
 
 class ChatViewController: MessagesViewController {
-    public let onMessageSend = PublishSubject<String>()
-    public let loadMoreMessages = PublishSubject<Void>()
-    
-    
+    public let onSendButton = PublishSubject<String>()
+    public let onLoadMoreMessages = PublishSubject<Void>()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         maintainPositionOnKeyboardFrameChanged = true // default false
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
+
+        refreshControl.rx.controlEvent(.valueChanged)
+            .bind(to: onLoadMoreMessages)
+            .disposed(by: disposeBag)
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        view.bringSubviewToFront(activityIndicatorView)
-//        view.bringSubviewToFront(logoutButton)
-//    }
-    
-    func enableRefreshControl() {
+
+    override func viewWillAppear(_ animated: Bool) {
+        view.bringSubviewToFront(logoutButton)
+    }
+
+    public func enableRefreshControl() {
         messagesCollectionView.refreshControl = self.refreshControl
     }
-    
-    func disableRefreshControl() {
+
+    public func disableRefreshControl() {
         messagesCollectionView.refreshControl = nil
     }
-    
-    func beginRefreshing() {
+
+    public func beginRefreshing() {
         refreshControl.beginRefreshing()
     }
-    
-    func endRefreshing() {
+
+    public func endRefreshing() {
         refreshControl.endRefreshing()
     }
-    
-    //@IBOutlet weak var activityIndicatorView: UIView!
+
+    public func setUser(_ user: UserData) {
+        self.user = user
+    }
+
+    public func add(newMessages: ChatViewMessage...) {
+        newMessages.forEach { messages[$0.id] = $0 }
+    }
+
+    public func reloadDataAndKeepOffset() {
+        messagesCollectionView.reloadDataAndKeepOffset()
+    }
+
+    public func reloadDataScrollingToBottom(animated: Bool = false) {
+        messagesCollectionView.reloadData()
+        messagesCollectionView.scrollToBottom(animated: animated)
+    }
+
+    public var numberOfMessages: Int {
+        return messages.count
+    }
+
     @IBOutlet weak var logoutButton: UIButton!
     let refreshControl = UIRefreshControl()
+
+    var user: UserData!
+    var messages: [Int: ChatViewMessage] = [:]
+    var disposeBag = DisposeBag()
 }
 
-
 extension ChatViewController: MessagesDataSource {
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return presenter?.sectionsCount
+    public func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+        return messages.count
     }
-    
-    func currentSender() -> SenderType {
-        return presenter?.currentSender
+
+    public func currentSender() -> SenderType {
+        return Sender(id: user.userName, displayName: user.userName)
     }
-    
-    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return presener?.messageForItem(at: indexPath)
+
+    public func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        return Array(messages)[indexPath.section].value
     }
-    
-    func messageTopLabelHeight(for message: MessageType,
+
+    public func messageTopLabelHeight(for message: MessageType,
                                at indexPath: IndexPath,
                                in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 12
     }
-    
-    func messageTopLabelAttributedText(for message: MessageType,
+
+    public func messageTopLabelAttributedText(for message: MessageType,
                                        at indexPath: IndexPath) -> NSAttributedString? {
         return NSAttributedString(string: message.sender.displayName,
                                   attributes: [.font: UIFont.systemFont(ofSize: 12)])
@@ -90,7 +114,7 @@ extension ChatViewController: MessagesDataSource {
 }
 
 extension ChatViewController: MessagesLayoutDelegate {
-    func heightForLocation(message: MessageType,
+    public func heightForLocation(message: MessageType,
                            at indexPath: IndexPath,
                            with maxWidth: CGFloat,
                            in messagesCollectionView: MessagesCollectionView) -> CGFloat {
@@ -99,16 +123,17 @@ extension ChatViewController: MessagesLayoutDelegate {
 }
 
 extension ChatViewController: MessagesDisplayDelegate {
-    func configureAvatarView(_ avatarView: AvatarView,
+    public func configureAvatarView(_ avatarView: AvatarView,
                              for message: MessageType,
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
-        avatarView.backgroundColor = presenter?.avatarColor(at: indexPath).uiColor ?? .clear
+        let message = Array(messages)[indexPath.section].value
+        avatarView.backgroundColor = message.color.uiColor
     }
 }
 
 extension ChatViewController: MessageInputBarDelegate {
-    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        onMessageSend.onNext(text)
+    public func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+        onSendButton.onNext(text)
     }
 }
