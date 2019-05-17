@@ -40,25 +40,25 @@ class ChatPresenter {
         chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
     }
 
-    public func addMessage(_ message: ChatMessageData) {
+    public func addMessage(_ message: ChatViewMessage) {
         chatViewController.add(newMessages: message)
 
-        if message.user.userName == user.userName || chatViewController.isLastSectionVisible() {
-            chatViewController.updateScrollingToBottom(animated: true)
+        if message.userName == user.userName || chatViewController.isLastSectionVisible {
+            chatViewController.reloadDataScrollingToBottom(animated: true)
         } else {
-            chatViewController.updateKeepingOffset()
+            chatViewController.reloadDataKeepingOffset()
         }
     }
 
-    public func addHistory(_ messages: [ChatMessageData]) {
+    public func addHistory(_ messages: [ChatViewMessage]) {
         let messagesWereEmpty = chatViewController.numberOfMessages == 0
 
         chatViewController.add(newMessages: messages)
 
         if messagesWereEmpty {
-            chatViewController.updateScrollingToBottom(animated: false)
+            chatViewController.reloadDataScrollingToBottom(animated: false)
         } else {
-            chatViewController.updateKeepingOffset()
+            chatViewController.reloadDataKeepingOffset()
             chatViewController.endRefreshing()
         }
 

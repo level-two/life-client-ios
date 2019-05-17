@@ -66,7 +66,11 @@ class ChatViewController: MessagesViewController {
         newMessages.forEach { messages[$0.id] = $0 }
     }
 
-    public func reloadDataAndKeepOffset() {
+    public func add(newMessages: [ChatViewMessage]) {
+        newMessages.forEach { messages[$0.id] = $0 }
+    }
+
+    public func reloadDataKeepingOffset() {
         messagesCollectionView.reloadDataAndKeepOffset()
     }
 
@@ -77,6 +81,12 @@ class ChatViewController: MessagesViewController {
 
     public var numberOfMessages: Int {
         return messages.count
+    }
+
+    public var isLastSectionVisible: Bool {
+        guard messages.isEmpty == false else { return false }
+        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
+        return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
 
     @IBOutlet weak var logoutButton: UIButton!
