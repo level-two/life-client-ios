@@ -39,19 +39,19 @@ class ChatInteractions {
     
     let chatPresenter: ChatPresenter
 
-    var messages: [ChatViewMessage] = []
+    var messages = [MessageViewData]()
     var user: UserData?
     let disposeBag = DisposeBag()
 }
 
 extension ChatInteractions {
     func assembleInteractions() {
-        chatManager.onMessage.bind { message in
-            firstly {
-                self.usersManager.getUserData(for: message.userId)
-            }.then { userData in
-                let chatViewMessage = .init(with: message, and: userData)
-                self.chatPresenter.addMessage(chatViewMessage)
+        chatManager.onMessage.bind { [weak self] message in
+            self?.addViewData(for: message)
+            self?.chatPresenter.
+            
+            self?.usersManager.getUserData(for: message.userId).map { [weak self] userData in
+                self?.updateViewData(for: message.messageId, with: userData)
             }
         }.disposed(by: disposeBag)
         
@@ -114,4 +114,52 @@ extension ChatInteractions {
             }
         }.disposed(by: disposeBag)
     }
+    
+    
+    func addViewData(for messageData: ChatMessageData) {
+        let messageViewData = MessageViewData(with: messageData)
+        
+        if let idx = messages.firstIndex(where: { $0.messageData.messageId >= messageViewData.messageData.messageId }) {
+            if messages[idx].messageData.messageId != messageViewData.messageData.messageId {
+                messages.insert(messageViewData, at: idx)
+            }
+        } else {
+            messages.append(messageViewData)
+        }
+    }
+
+    func updateViewData(for messageId: Int, with userData: UserData) {
+        guard let idx = messages.firstIndex(where: { $0.messageData.messageId == messageId }) else { return }
+        var messageViewData = messages[idx]
+        messageViewData.userData = userData
+        messages[idx] = messageViewData
+    }
+    
+//    func addMessage(_ message: ChatViewMessage) {
+//        chatViewController.add(newMessages: message)
+//
+//        if message.userData.userName == user.userName || chatViewController.isLastSectionVisible {
+//            chatViewController.reloadDataScrollingToBottom(animated: true)
+//        } else {
+//            chatViewController.reloadDataKeepingOffset()
+//        }
+//    }
+//
+//    func addHistory(_ messages: [ChatViewMessage]) {
+//        let messagesWereEmpty = chatViewController.numberOfMessages == 0
+//
+//        chatViewController.add(newMessages: messages)
+//
+//        if messagesWereEmpty {
+//            chatViewController.reloadDataScrollingToBottom(animated: false)
+//        } else {
+//            chatViewController.reloadDataKeepingOffset()
+//            //chatViewController.endRefreshing()
+//        }
+//
+//        if messages.contains(where: {$0.messageData.messageId == 0}) {
+//            chatViewController.disableRefreshControl()
+//        }
+//    }
+
 }

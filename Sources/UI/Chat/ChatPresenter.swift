@@ -25,7 +25,6 @@ class ChatPresenter {
     
     init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
         self.chatViewController = chatViewController
-        self.user = currentUser
 
         chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
         chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
@@ -41,7 +40,15 @@ class ChatPresenter {
         }
     }
 
-    public func addMessage(_ message: ChatViewMessage) {
+    public func startedHistoryRequest() {
+        chatViewController.beginRefreshing()
+    }
+
+    public func finishedHistoryRequest() {
+        chatViewController.endRefreshing()
+    }
+    
+    func addMessage(_ message: ChatViewMessage) {
         chatViewController.add(newMessages: message)
 
         if message.userData.userName == user.userName || chatViewController.isLastSectionVisible {
@@ -50,16 +57,8 @@ class ChatPresenter {
             chatViewController.reloadDataKeepingOffset()
         }
     }
-    
-    public func startedHistoryRequest() {
-        chatViewController.beginRefreshing()
-    }
-    
-    public func finishedHistoryRequest() {
-        chatViewController.endRefreshing()
-    }
 
-    public func addHistory(_ messages: [ChatViewMessage]) {
+    func addHistory(_ messages: [ChatViewMessage]) {
         let messagesWereEmpty = chatViewController.numberOfMessages == 0
 
         chatViewController.add(newMessages: messages)
@@ -77,6 +76,5 @@ class ChatPresenter {
     }
 
     fileprivate weak var chatViewController: ChatViewController!
-    fileprivate let user: UserData
     fileprivate let disposeBag = DisposeBag()
 }

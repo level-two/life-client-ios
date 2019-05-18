@@ -9,14 +9,19 @@
 import Foundation
 import MessageKit
 
-struct ChatViewMessage {
+struct MessageViewData {
     var messageData: ChatMessageData
-    var userData: UserData
+    var userData: UserData?
+    
+    init(with messageData: ChatMessageData) {
+        self.messageData = messageData
+    }
 }
 
-extension ChatViewMessage: MessageType {
+extension MessageViewData: MessageType {
     var sender: SenderType {
-        return Sender(senderId: String(userData.userId), displayName: userData.userName)
+        return Sender(senderId: String(messageData.userId),
+                      displayName: userData?.userName ?? "")
     }
 
     var messageId: String {
@@ -32,9 +37,9 @@ extension ChatViewMessage: MessageType {
     }
 }
 
-extension ChatViewMessage {
-    static var dummy: ChatViewMessage {
-        return .init(messageData: ChatMessageData(id: 0, userId: 0, text: ""),
-                     userData: UserData(userId: 0, userName: "", color: UIColor.black.color))
+extension MessageViewData {
+    static var dummy: MessageViewData {
+        return .init(messageData: ChatMessageData(messageId: 0, userId: 0, text: ""),
+                     userData: UserData(userId: 0, userName: "", color: UIColor.clear.color))
     }
 }

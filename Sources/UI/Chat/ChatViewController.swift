@@ -62,14 +62,6 @@ class ChatViewController: MessagesViewController {
         self.user = user
     }
 
-    public func add(newMessages: ChatViewMessage...) {
-        newMessages.forEach { messages[$0.messageData.messageId] = $0 }
-    }
-
-    public func add(newMessages: [ChatViewMessage]) {
-        newMessages.forEach { messages[$0.messageData.messageId] = $0 }
-    }
-
     public func reloadDataKeepingOffset() {
         messagesCollectionView.reloadDataAndKeepOffset()
     }
@@ -93,7 +85,7 @@ class ChatViewController: MessagesViewController {
     let refreshControl = UIRefreshControl()
 
     var user: UserData!
-    var messages: [Int: ChatViewMessage] = [:]
+    var messages = [MessageViewData]()
     var disposeBag = DisposeBag()
 }
 
