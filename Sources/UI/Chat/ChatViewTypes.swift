@@ -12,7 +12,7 @@ import MessageKit
 struct MessageViewData {
     var messageData: ChatMessageData
     var userData: UserData?
-    
+
     init(with messageData: ChatMessageData) {
         self.messageData = messageData
     }

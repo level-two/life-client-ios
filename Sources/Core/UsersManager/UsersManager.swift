@@ -23,28 +23,45 @@ import PromiseKit
 class UsersManager {
     public enum UsersManagerError: Error {
         case operationTimeout
+        case userCreateError(error: String)
+        case userDataRequestError(error: String)
     }
 
     init(_ networkManager: NetworkManager) {
         self.networkManager = networkManager
     }
 
-//    public func userData(for userId: UserId) -> Promise<UserData> {
-//    }
-//
-//    public func userData(for userName: String) -> Promise<UserData> {
-//        return database.userData(with: userName)
-//    }
+    public func userData(for userId: UserId) -> Promise<UserData> {
+        return .init { promise in
+            var userData: UserData?
 
-//    func requestUserData(for userId: UserId) -> Promise<Void> {
-//        return networkManager.send(message)
-//    }
-//
-//    func waitForUserDataResponse() -> Promise<UserData> {
-//        return .init() { [weak self] promise in
-//
-//        }
-//    }
+            serialQueue.sync {
+                userData = self.usersData.first(where: { $0.userId == userId })
+            }
+
+            if let userData = userData {
+                promise.fulfill(userData)
+                return
+            }
+
+            firstly {
+                self.sendUserDataRequest(with: userId)
+            }.then {
+                self.waitUserDataResponse()
+            }.done { userData in
+                guard userData.userId == userId else { return }
+
+                promise.fulfill(userData)
+
+                self.serialQueue.async {
+                    guard !self.usersData.contains(where: { $0.userId == userData.userId }) else { return }
+                    self.usersData.append(userData)
+                }
+            }.catch { error in
+                promise.reject(error)
+            }
+        }
+    }
 
     public func createUser(with userName: String, color: Color) -> Promise<UserData> {
         return firstly {
@@ -54,6 +71,8 @@ class UsersManager {
         }
     }
 
+    var usersData: [UserData] = []
+    let serialQueue = DispatchQueue(label: "life.client.usersManagerQueue")
     let networkManager: NetworkManager
 }
 
@@ -64,7 +83,7 @@ extension UsersManager {
     }
 
     func waitCreateUserResponse() -> Promise<UserData> {
-        return .init() { [weak self] promise in
+        return .init() { promise in
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
@@ -78,9 +97,44 @@ extension UsersManager {
 
             decodedMessage.bind { message in
                     guard case .createUserError(let error) = message else { return }
-                    promise.reject(error)
+                    promise.reject(UsersManagerError.userCreateError(error: error))
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
+
+            let timeout = ApplicationSettings.operationTimeout
+
+            Observable<Int>
+                .timer(.init(timeout), period: nil, scheduler: MainScheduler.instance)
+                .bind { _ in
+                    promise.reject(UsersManagerError.operationTimeout)
+                    compositeDisposable.dispose()
+                }.disposed(by: compositeDisposable)
+        }
+    }
+
+    func sendUserDataRequest(with userId: UserId) -> Promise<Void> {
+        let message = UsersManagerMessage.userDataRequest(userId: userId)
+        return networkManager.send(message.json)
+    }
+
+    func waitUserDataResponse() -> Promise<UserData> {
+        return .init() { promise in
+            let compositeDisposable = CompositeDisposable()
+
+            let decodedMessage = networkManager.onMessage
+                .compactMap { try UsersManagerMessage(from: $0) }
+
+            decodedMessage.bind { message in
+                guard case .userDataRequestSuccess(let userData) = message else { return }
+                promise.fulfill(userData)
+                compositeDisposable.dispose()
+            }.disposed(by: compositeDisposable)
+
+            decodedMessage.bind { message in
+                guard case .userDataRequestError(let error) = message else { return }
+                promise.reject(UsersManagerError.userDataRequestError(error: error))
+                compositeDisposable.dispose()
+            }.disposed(by: compositeDisposable)
 
             let timeout = ApplicationSettings.operationTimeout
 

@@ -27,7 +27,7 @@ class ChatInteractions {
         self.usersManager = usersManager
         self.chatManager = chatManager
         self.chatPresenter = chatPresenter
-        
+
         self.user = sessionManager.loggedInUserData
         chatPresenter.user = sessionManager.loggedInUserData
     }
@@ -36,7 +36,7 @@ class ChatInteractions {
     let sessionManager: SessionManager
     let usersManager: UsersManager
     let chatManager: ChatManager
-    
+
     let chatPresenter: ChatPresenter
 
     var messages = [MessageViewData]()
@@ -49,12 +49,12 @@ extension ChatInteractions {
         chatManager.onMessage.bind { [weak self] message in
             self?.addViewData(for: message)
             self?.chatPresenter.
-            
+
             self?.usersManager.getUserData(for: message.userId).map { [weak self] userData in
                 self?.updateViewData(for: message.messageId, with: userData)
             }
         }.disposed(by: disposeBag)
-        
+
         /*
         sessionManager.onLoginState.bind { [weak self] isLoggedIn in
             guard let self = self else { return }
@@ -70,16 +70,16 @@ extension ChatInteractions {
             }
         }.disposed(by: disposeBag)
          */
-        
+
         chatPresenter.onLoadMoreMessages.bind {
             guard let firstIndex = self.messages.first?.messageData.messageId else { return }
             assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
 
             let count = firstIndex >= 10 ? 10 : firstIndex
             let fromId = firstIndex - count
-            
+
             var chatMessageData: [ChatMessageData]?
-            
+
             firstly {
                 self.chatPresenter.startedHistoryRequest()
                 return self.chatManager.requestHistory(fromId: fromId, count: count)
@@ -91,7 +91,7 @@ extension ChatInteractions {
                 let chatViewMessages = chatMessageData.map { messageData
                     ChatViewMessage(messageData: messageData, userData: usersData.first { $0.userId == messageData.userId })
                 }
-                
+
                 //self.messages.append(chatViewMessages)
                 self.chatPresenter.addHistory(chatViewMessages)
             }.ensure(on: DispatchQueue.main) {
@@ -114,11 +114,10 @@ extension ChatInteractions {
             }
         }.disposed(by: disposeBag)
     }
-    
-    
+
     func addViewData(for messageData: ChatMessageData) {
         let messageViewData = MessageViewData(with: messageData)
-        
+
         if let idx = messages.firstIndex(where: { $0.messageData.messageId >= messageViewData.messageData.messageId }) {
             if messages[idx].messageData.messageId != messageViewData.messageData.messageId {
                 messages.insert(messageViewData, at: idx)
@@ -134,7 +133,7 @@ extension ChatInteractions {
         messageViewData.userData = userData
         messages[idx] = messageViewData
     }
-    
+
 //    func addMessage(_ message: ChatViewMessage) {
 //        chatViewController.add(newMessages: message)
 //

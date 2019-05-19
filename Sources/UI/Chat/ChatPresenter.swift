@@ -22,7 +22,7 @@ class ChatPresenter {
     public let onSendButton = PublishSubject<String>()
     public let onLoadMoreMessages = PublishSubject<Void>()
     public let onLogout = PublishSubject<Void>()
-    
+
     init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
         self.chatViewController = chatViewController
 
@@ -47,7 +47,7 @@ class ChatPresenter {
     public func finishedHistoryRequest() {
         chatViewController.endRefreshing()
     }
-    
+
     func addMessage(_ message: ChatViewMessage) {
         chatViewController.add(newMessages: message)
 
