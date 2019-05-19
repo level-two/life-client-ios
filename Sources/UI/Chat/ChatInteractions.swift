@@ -28,8 +28,8 @@ class ChatInteractions {
         self.chatManager = chatManager
         self.chatPresenter = chatPresenter
 
-        self.user = sessionManager.loggedInUserData
-        chatPresenter.user = sessionManager.loggedInUserData
+        self.user = sessionManager.loggedInUserData!
+        chatPresenter.user = sessionManager.loggedInUserData!
     }
 
     let navigator: SceneNavigatorProtocol
@@ -39,19 +39,22 @@ class ChatInteractions {
 
     let chatPresenter: ChatPresenter
 
-    var messages = [MessageViewData]()
-    var user: UserData?
+    var messages = [ChatViewData]()
+    var user: UserData
     let disposeBag = DisposeBag()
 }
 
 extension ChatInteractions {
     func assembleInteractions() {
         chatManager.onMessage.bind { [weak self] message in
-            self?.addViewData(for: message)
-            self?.chatPresenter.
+            guard let self = self else { return }
 
-            self?.usersManager.getUserData(for: message.userId).map { [weak self] userData in
-                self?.updateViewData(for: message.messageId, with: userData)
+            self.chatPresenter.addMessage(message)
+
+            firstly {
+                self.usersManager.userData(for: message.userId)
+            }.done { userData in
+                self.chatPresenter.updateViewData(for: message.messageId, with: userData)
             }
         }.disposed(by: disposeBag)
 
@@ -75,90 +78,48 @@ extension ChatInteractions {
             guard let firstIndex = self.messages.first?.messageData.messageId else { return }
             assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
 
+            self.chatPresenter.startedHistoryRequest()
+
             let count = firstIndex >= 10 ? 10 : firstIndex
             let fromId = firstIndex - count
 
-            var chatMessageData: [ChatMessageData]?
-
             firstly {
-                self.chatPresenter.startedHistoryRequest()
-                return self.chatManager.requestHistory(fromId: fromId, count: count)
-            }.then { messages in
-                chatMessageData = messages
-                let userIds = Array(Set(chatMessageData))
-                return usersManager.getUserData(for: userIds)
-            }.done { usersData in
-                let chatViewMessages = chatMessageData.map { messageData
-                    ChatViewMessage(messageData: messageData, userData: usersData.first { $0.userId == messageData.userId })
-                }
+                self.chatManager.requestHistory(fromId: fromId, count: count)
+            }.done { messages in
+                self.chatPresenter.addHistory(messages)
 
-                //self.messages.append(chatViewMessages)
-                self.chatPresenter.addHistory(chatViewMessages)
-            }.ensure(on: DispatchQueue.main) {
+                messages.map { $0.userId }.unique.forEach { userId in
+                    firstly {
+                        self.usersManager.userData(for: userId)
+                    }.done { userData in
+                        messages.filter { $0.userId == userId }.forEach { message in
+                            self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                        }
+                    }.catch { error in
+                        print(error)
+                    }
+                }
+            }.ensure(on: .main) {
                 self.chatPresenter.finishedHistoryRequest()
+            }.catch { error in
+                print(error)
             }
         }.disposed(by: disposeBag)
 
         chatPresenter.onLogout.bind {
-            //presenter.showActivityIndicator()
+            //self.chatPresenter.showActivityIndicator()
 
             firstly {
                 self.sessionManager.logout(userName: self.user.userName)
             }.done { _ in
                 ApplicationSettings.autologinEnabled = false
                 self.navigator.navigate(to: .login)
-            }.ensure(on: .main) {
-                //presenter.hideActivityIndicator()
+//            }.ensure(on: .main) {
+//                self.chatPresenter.hideActivityIndicator()
             }.catch { error in
-                self.alert(error.localizedDescription)
+                //self.alert(error.localizedDescription)
+                print(error)
             }
         }.disposed(by: disposeBag)
     }
-
-    func addViewData(for messageData: ChatMessageData) {
-        let messageViewData = MessageViewData(with: messageData)
-
-        if let idx = messages.firstIndex(where: { $0.messageData.messageId >= messageViewData.messageData.messageId }) {
-            if messages[idx].messageData.messageId != messageViewData.messageData.messageId {
-                messages.insert(messageViewData, at: idx)
-            }
-        } else {
-            messages.append(messageViewData)
-        }
-    }
-
-    func updateViewData(for messageId: Int, with userData: UserData) {
-        guard let idx = messages.firstIndex(where: { $0.messageData.messageId == messageId }) else { return }
-        var messageViewData = messages[idx]
-        messageViewData.userData = userData
-        messages[idx] = messageViewData
-    }
-
-//    func addMessage(_ message: ChatViewMessage) {
-//        chatViewController.add(newMessages: message)
-//
-//        if message.userData.userName == user.userName || chatViewController.isLastSectionVisible {
-//            chatViewController.reloadDataScrollingToBottom(animated: true)
-//        } else {
-//            chatViewController.reloadDataKeepingOffset()
-//        }
-//    }
-//
-//    func addHistory(_ messages: [ChatViewMessage]) {
-//        let messagesWereEmpty = chatViewController.numberOfMessages == 0
-//
-//        chatViewController.add(newMessages: messages)
-//
-//        if messagesWereEmpty {
-//            chatViewController.reloadDataScrollingToBottom(animated: false)
-//        } else {
-//            chatViewController.reloadDataKeepingOffset()
-//            //chatViewController.endRefreshing()
-//        }
-//
-//        if messages.contains(where: {$0.messageData.messageId == 0}) {
-//            chatViewController.disableRefreshControl()
-//        }
-//    }
-
 }

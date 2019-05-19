@@ -23,9 +23,11 @@ class ChatPresenter {
     public let onLoadMoreMessages = PublishSubject<Void>()
     public let onLogout = PublishSubject<Void>()
 
-    init(_ chatViewController: ChatViewController, _ currentUser: UserData) {
+    init(_ chatViewController: ChatViewController, _ user: UserData) {
         self.chatViewController = chatViewController
+        self.user = user
 
+        chatViewController.set(user: user)
         chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
         chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
         chatViewController.onLogout.bind(to: onLogout).disposed(by: disposeBag)
@@ -48,33 +50,65 @@ class ChatPresenter {
         chatViewController.endRefreshing()
     }
 
-    func addMessage(_ message: ChatViewMessage) {
-        chatViewController.add(newMessages: message)
+    public func addMessage(_ message: ChatMessageData) {
+        let messageViewData = ChatViewData(with: message)
+        self.addMessageViewData(messageViewData)
 
-        if message.userData.userName == user.userName || chatViewController.isLastSectionVisible {
+        chatViewController.set(viewData: viewData)
+
+        if message.userId == user.userId || chatViewController.isLastSectionVisible {
             chatViewController.reloadDataScrollingToBottom(animated: true)
         } else {
             chatViewController.reloadDataKeepingOffset()
         }
     }
 
-    func addHistory(_ messages: [ChatViewMessage]) {
+    public func addHistory(_ messages: [ChatMessageData]) {
         let messagesWereEmpty = chatViewController.numberOfMessages == 0
 
-        chatViewController.add(newMessages: messages)
+        messages.forEach { message in
+            let messageViewData = ChatViewData(with: message)
+            self.addMessageViewData(messageViewData)
+        }
+
+        chatViewController.set(viewData: viewData)
 
         if messagesWereEmpty {
             chatViewController.reloadDataScrollingToBottom(animated: false)
         } else {
             chatViewController.reloadDataKeepingOffset()
-            //chatViewController.endRefreshing()
         }
 
-        if messages.contains(where: {$0.messageData.messageId == 0}) {
+        if messages.contains(where: {$0.messageId == 0}) {
             chatViewController.disableRefreshControl()
         }
     }
 
-    fileprivate weak var chatViewController: ChatViewController!
-    fileprivate let disposeBag = DisposeBag()
+    public func updateViewData(for messageId: Int, with userData: UserData) {
+        guard let idx = viewData.firstIndex(where: { $0.messageData.messageId == messageId }) else { return }
+
+        var data = viewData[idx]
+        data.userData = userData
+        viewData[idx] = data
+
+        chatViewController.set(viewData: viewData)
+        chatViewController.reloadDataKeepingOffset()
+    }
+
+    var viewData: [ChatViewData] = []
+    let user: UserData
+    weak var chatViewController: ChatViewController!
+    let disposeBag = DisposeBag()
+}
+
+extension ChatPresenter {
+    func addMessageViewData(_ messageViewData: ChatViewData) {
+        if let idx = viewData.firstIndex(where: { $0.messageData.messageId >= messageViewData.messageData.messageId }) {
+            if viewData[idx].messageData.messageId != messageViewData.messageData.messageId {
+                viewData.insert(messageViewData, at: idx)
+            }
+        } else {
+            viewData.append(messageViewData)
+        }
+    }
 }

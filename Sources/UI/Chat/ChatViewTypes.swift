@@ -9,7 +9,7 @@
 import Foundation
 import MessageKit
 
-struct MessageViewData {
+struct ChatViewData {
     var messageData: ChatMessageData
     var userData: UserData?
 
@@ -18,7 +18,7 @@ struct MessageViewData {
     }
 }
 
-extension MessageViewData: MessageType {
+extension ChatViewData: MessageType {
     var sender: SenderType {
         return Sender(senderId: String(messageData.userId),
                       displayName: userData?.userName ?? "")
@@ -37,9 +37,14 @@ extension MessageViewData: MessageType {
     }
 }
 
-extension MessageViewData {
-    static var dummy: MessageViewData {
-        return .init(messageData: ChatMessageData(messageId: 0, userId: 0, text: ""),
-                     userData: UserData(userId: 0, userName: "", color: UIColor.clear.color))
+extension ChatViewData {
+    var avatarBackgroundColor: UIColor {
+        return userData?.color.uiColor ?? .clear
+    }
+}
+
+extension ChatViewData {
+    static var dummy: ChatViewData {
+        return .init(with: ChatMessageData(messageId: 0, userId: 0, text: ""))
     }
 }

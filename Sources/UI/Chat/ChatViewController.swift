@@ -58,8 +58,12 @@ class ChatViewController: MessagesViewController {
         refreshControl.endRefreshing()
     }
 
-    public func setUser(_ user: UserData) {
+    public func set(user: UserData) {
         self.user = user
+    }
+
+    public func set(viewData: [ChatViewData]) {
+        self.viewData = viewData
     }
 
     public func reloadDataKeepingOffset() {
@@ -72,12 +76,12 @@ class ChatViewController: MessagesViewController {
     }
 
     public var numberOfMessages: Int {
-        return messages.count
+        return viewData.count
     }
 
     public var isLastSectionVisible: Bool {
-        guard messages.isEmpty == false else { return false }
-        let lastIndexPath = IndexPath(item: 0, section: messages.count - 1)
+        guard viewData.isEmpty == false else { return false }
+        let lastIndexPath = IndexPath(item: 0, section: viewData.count - 1)
         return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
     }
 
@@ -85,13 +89,13 @@ class ChatViewController: MessagesViewController {
     let refreshControl = UIRefreshControl()
 
     var user: UserData!
-    var messages = [MessageViewData]()
+    var viewData: [ChatViewData] = []
     var disposeBag = DisposeBag()
 }
 
 extension ChatViewController: MessagesDataSource {
     public func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messages.count
+        return viewData.count
     }
 
     public func currentSender() -> SenderType {
@@ -99,7 +103,7 @@ extension ChatViewController: MessagesDataSource {
     }
 
     public func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return Array(messages)[indexPath.section].value
+        return viewData[indexPath.section]
     }
 
     public func messageTopLabelHeight(for message: MessageType,
@@ -129,8 +133,7 @@ extension ChatViewController: MessagesDisplayDelegate {
                              for message: MessageType,
                              at indexPath: IndexPath,
                              in messagesCollectionView: MessagesCollectionView) {
-        let message = Array(messages)[indexPath.section].value
-        avatarView.backgroundColor = message.color.uiColor
+        avatarView.backgroundColor = viewData[indexPath.section].avatarBackgroundColor
     }
 }
 

@@ -12,6 +12,7 @@
 		931D5D76228C17AE0054760B /* ChatInteractions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D75228C17AE0054760B /* ChatInteractions.swift */; };
 		931D5D78228C1FAF0054760B /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D77228C1FAF0054760B /* ChatViewController.swift */; };
 		931D5D7A228CA9DF0054760B /* Old.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D79228CA9DF0054760B /* Old.swift */; };
+		931D5D7C2291F7B90054760B /* Collection+unique.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931D5D7B2291F7B90054760B /* Collection+unique.swift */; };
 		9337CCFD21D2D181009A1FA3 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */; };
 		9337CD0321D5814D009A1FA3 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */; };
 		9338015221C8FF680056C349 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9338015121C8FF680056C349 /* NetworkManager.swift */; };
@@ -54,6 +55,7 @@
 		931D5D75228C17AE0054760B /* ChatInteractions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInteractions.swift; sourceTree = "<group>"; };
 		931D5D77228C1FAF0054760B /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		931D5D79228CA9DF0054760B /* Old.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Old.swift; sourceTree = "<group>"; };
+		931D5D7B2291F7B90054760B /* Collection+unique.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+unique.swift"; sourceTree = "<group>"; };
 		9337CCFC21D2D181009A1FA3 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
 		9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		9338015121C8FF680056C349 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				936E8ED622019F8A00FB7689 /* CGFloat+Random.swift */,
 				936E8ED522019F8A00FB7689 /* UIColor+Random.swift */,
 				9337CD0221D5814D009A1FA3 /* UIViewController+Alert.swift */,
+				931D5D7B2291F7B90054760B /* Collection+unique.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -503,6 +506,7 @@
 				9392845521D030FD00F6C55B /* GameplayViewController.swift in Sources */,
 				93A5DBFF2286E0430015D602 /* Disposable+CompositeDisposale.swift in Sources */,
 				9392844F21CE3A9200F6C55B /* ColorPickSlider.swift in Sources */,
+				931D5D7C2291F7B90054760B /* Collection+unique.swift in Sources */,
 				93A5DBE2227EF5C60015D602 /* BridgeChannelHandler.swift in Sources */,
 				93A5DBEF227EF5C60015D602 /* Cell.swift in Sources */,
 				93A5DBDD227EF5C60015D602 /* ChatMessage.swift in Sources */,
