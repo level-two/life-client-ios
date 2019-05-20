@@ -32,7 +32,7 @@ class DependencyContainer {
     private let sessionManager: SessionManager!
     private let chatManager: ChatManager!
     private let gameplay: Gameplay!
-    private let sceneNavigator: SceneNavigatorProtocol!
+    private weak var sceneNavigator: SceneNavigatorProtocol!
 
     init(_ storyboard: UIStoryboard,
          _ networkManager: NetworkManager,

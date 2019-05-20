@@ -28,23 +28,20 @@ enum Destination {
     case chat
 }
 
-protocol SceneNavigatorProtocol {
+protocol SceneNavigatorProtocol: class {
     func navigate(to destination: Destination)
 }
 
 class SceneNavigator: SceneNavigatorProtocol {
-    // In most cases it's totally safe to make this a strong
-    // reference, but in some situations it could end up
-    // causing a retain cycle, so better be safe than sorry :)
-    private weak var navigationController: UINavigationController?
-    private      var factory: ViewControllerFactory
-
-    init(_ factory: ViewControllerFactory, _ navigationController: UINavigationController) {
-        self.factory = factory
+    init(_ navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
-    func navigate(to destination: Destination) {
+    public func setViewControllerFactory(_ factory: ViewControllerFactory) {
+        self.factory = factory
+    }
+
+    public func navigate(to destination: Destination) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             let viewController = self.makeViewController(for: destination)
@@ -52,7 +49,15 @@ class SceneNavigator: SceneNavigatorProtocol {
         }
     }
 
-    private func makeViewController(for destination: Destination) -> UIViewController {
+    // In most cases it's totally safe to make this a strong
+    // reference, but in some situations it could end up
+    // causing a retain cycle, so better be safe than sorry :)
+    private weak var navigationController: UINavigationController?
+    private      var factory: ViewControllerFactory!
+}
+
+extension SceneNavigator {
+    func makeViewController(for destination: Destination) -> UIViewController {
         switch destination {
         case .login:
             return factory.makeLoginViewController()

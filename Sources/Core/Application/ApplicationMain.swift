@@ -20,7 +20,7 @@ import UIKit
 @UIApplicationMain
 class ApplicationMain: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    var dependencyContainer: DependencyContainer!
+    var sceneNavigator: SceneNavigator!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Build
@@ -32,8 +32,10 @@ class ApplicationMain: UIResponder, UIApplicationDelegate {
 
         let navigationController = UINavigationController()
         let storyboard           = UIStoryboard(name: "Main", bundle: nil)
-        let sceneNavigator       = SceneNavigator(dependencyContainer, navigationController)
-        self.dependencyContainer = DependencyContainer(storyboard, networkManager, usersManager, sessionManager, sceneNavigator, chatManager, gameplay)
+        self.sceneNavigator      = SceneNavigator(navigationController)
+
+        let dependencyContainer = DependencyContainer(storyboard, networkManager, usersManager, sessionManager, sceneNavigator, chatManager, gameplay)
+        sceneNavigator.setViewControllerFactory(dependencyContainer)
 
         window?.rootViewController = navigationController
         navigationController.isNavigationBarHidden = true
