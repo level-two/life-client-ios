@@ -26,24 +26,24 @@ class FrameChannelHandler: ChannelInboundHandler {
         case unableGetDataChunk
     }
 
-    public func channelRead(ctx: ChannelHandlerContext, data: NIOAny) {
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
         let byteBuf = self.unwrapInboundIn(data)
         guard let chunk = byteBuf.getString(at: byteBuf.readerIndex, length: byteBuf.readableBytes) else {
-            ctx.fireErrorCaught(FrameError.unableGetDataChunk)
+            context.fireErrorCaught(FrameError.unableGetDataChunk)
             return
         }
         collected += chunk
 
         while let jsonRange = jsonRange(in: collected) {
             let message = collected[jsonRange]
-            ctx.fireChannelRead(self.wrapInboundOut(String(message)))
+            context.fireChannelRead(self.wrapInboundOut(String(message)))
             collected.removeSubrange(...jsonRange.upperBound)
         }
     }
 
-    public func errorCaught(ctx: ChannelHandlerContext, error: Error) {
+    func errorCaught(context: ChannelHandlerContext, error: Error) {
         print("CollectingInboundHandler caught error: ", error)
-        ctx.close(promise: nil)
+        context.close(promise: nil)
     }
 
     func jsonRange(in string: String) -> ClosedRange<String.Index>? {
