@@ -25,6 +25,12 @@ class ChatViewController: MessagesViewController {
     public let onLoadMoreMessages = PublishSubject<Void>()
     public let onLogout = PublishSubject<Void>()
 
+    public func setupDependencies(_ sceneNavigator: SceneNavigatorProtocol, _ sessionManager: SessionManager,
+                                  _ usersManager: UsersManager, _ chatManager: ChatManager) {
+        self.presenter = ChatPresenter(self, sessionManager.loggedInUserData!)
+        self.interactions = ChatInteractions(sceneNavigator, sessionManager, usersManager, chatManager, presenter)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -91,6 +97,9 @@ class ChatViewController: MessagesViewController {
     var user: UserData!
     var viewData: [ChatViewData] = []
     var disposeBag = DisposeBag()
+
+    var presenter: ChatPresenter!
+    var interactions: ChatInteractions!
 }
 
 extension ChatViewController: MessagesDataSource {

@@ -21,7 +21,9 @@ import PromiseKit
 import RxSwift
 
 class ChatInteractions {
-    init(_ navigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ usersManager: UsersManager, _ chatManager: ChatManager, _ chatPresenter: ChatPresenter) {
+    init(_ navigator: SceneNavigatorProtocol, _ sessionManager: SessionManager,
+         _ usersManager: UsersManager, _ chatManager: ChatManager, _ chatPresenter: ChatPresenter) {
+
         self.navigator = navigator
         self.sessionManager = sessionManager
         self.usersManager = usersManager
@@ -29,15 +31,13 @@ class ChatInteractions {
         self.chatPresenter = chatPresenter
 
         self.user = sessionManager.loggedInUserData!
-        chatPresenter.user = sessionManager.loggedInUserData!
     }
 
+    weak var chatPresenter: ChatPresenter!
     let navigator: SceneNavigatorProtocol
     let sessionManager: SessionManager
     let usersManager: UsersManager
     let chatManager: ChatManager
-
-    let chatPresenter: ChatPresenter
 
     var messages = [ChatViewData]()
     var user: UserData

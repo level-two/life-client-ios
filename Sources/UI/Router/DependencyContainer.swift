@@ -66,7 +66,7 @@ extension DependencyContainer: ViewControllerFactory {
 
     func makeChatViewController() -> ChatViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "ChatViewController") as! ChatViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, chatManager: chatManager)
+        vc.setupDependencies(sceneNavigator, sessionManager, usersManager, chatManager)
         return vc
     }
 
