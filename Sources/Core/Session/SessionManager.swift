@@ -23,6 +23,8 @@ import PromiseKit
 class SessionManager {
     public enum SessionManagerError: Error {
         case operationTimeout
+        case loginResponseError(error: String)
+        case logoutResponseError(error: String)
     }
 
     init(_ networkManager: NetworkManager, _ usersManager: UsersManager) {
@@ -112,7 +114,7 @@ extension SessionManager {
 
             decodedMessage.bind { message in
                     guard case .loginResponseError(let error) = message else { return }
-                    promise.reject(error)
+                    promise.reject(SessionManagerError.loginResponseError(error: error))
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
@@ -142,7 +144,7 @@ extension SessionManager {
 
             decodedMessage.bind { message in
                     guard case .logoutResponseError(let error) = message else { return }
-                    promise.reject(error)
+                    promise.reject(SessionManagerError.logoutResponseError(error: error))
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 

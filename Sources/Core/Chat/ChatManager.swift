@@ -23,6 +23,7 @@ import PromiseKit
 class ChatManager {
     public enum ChatManagerError: Error {
         case operationTimeout
+        case historyError(error: String)
     }
 
     public let onMessage = PublishSubject<ChatMessageData>()
@@ -82,7 +83,7 @@ extension ChatManager {
 
             decodedMessage.bind { message in
                     guard case .chatHistoryError(let error) = message else { return }
-                    promise.reject(error)
+                    promise.reject(ChatManagerError.historyError(error: error))
                     compositeDisposable.dispose()
                 }.disposed(by: compositeDisposable)
 
