@@ -29,16 +29,18 @@ class ApplicationSettings {
     }
 
     static public var host: String {
-        if let host = ProcessInfo.processInfo.environment["host"] as? String {
+        if let host = ProcessInfo.processInfo.environment["host"] {
             return host
         }
+
         return "gameoflife.ddns.net"
     }
 
     static public var port: Int {
-        if let port = ProcessInfo.processInfo.environment["port"] as? Int {
+        if let portString = ProcessInfo.processInfo.environment["port"], let port = Int(portString) {
             return port
         }
+
         return 1337
     }
 

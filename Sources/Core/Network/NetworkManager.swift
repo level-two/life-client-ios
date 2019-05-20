@@ -47,9 +47,15 @@ class NetworkManager {
         return .init() { promise in
             guard let channel = self.channel else { throw NetworkManagerError.noConnection }
 
-            let writeFuture = channel.writeAndFlush(json)
-            writeFuture.whenSuccess { promise.fulfill($0) }
+            var buffer = channel.allocator.buffer(capacity: json.count)
+            buffer.writeString(json)
+
+            let writeFuture = channel.writeAndFlush(buffer)
             writeFuture.whenFailure { promise.reject($0) }
+            writeFuture.whenSuccess {
+                print("Sent: \(json)")
+                promise.fulfill($0)
+            }
         }
     }
 

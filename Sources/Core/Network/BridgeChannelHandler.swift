@@ -30,6 +30,7 @@ class BridgeChannelHandler: ChannelInboundHandler {
         let unwrappedData = self.unwrapInboundIn(data)
         // Think about json validation before using it
         // we could have also sanitized the user input by using a regular expression in our route path to make sure that the incoming value was a single letter
+        print("Got: \(unwrappedData)")
         onMessage.onNext(unwrappedData)
     }
 
