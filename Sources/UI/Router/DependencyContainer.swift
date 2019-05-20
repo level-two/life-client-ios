@@ -26,21 +26,22 @@ protocol ViewControllerFactory {
 }
 
 class DependencyContainer {
-    private var storyboard: UIStoryboard!
-    private var networkManager: NetworkManager!
-    private var usersManager: UsersManager!
-    private var sessionManager: SessionManager!
-    private var chatManager: ChatManager!
-    private var gameplay: Gameplay!
-    private var sceneNavigator: SceneNavigatorProtocol!
+    private let storyboard: UIStoryboard!
+    private let networkManager: NetworkManager!
+    private let usersManager: UsersManager!
+    private let sessionManager: SessionManager!
+    private let chatManager: ChatManager!
+    private let gameplay: Gameplay!
+    private let sceneNavigator: SceneNavigatorProtocol!
 
-    func setupDependencies(storyboard: UIStoryboard,
-                           networkManager: NetworkManager,
-                           usersManager: UsersManager,
-                           sessionManager: SessionManager,
-                           sceneNavigator: SceneNavigatorProtocol,
-                           chatManager: ChatManager,
-                           gameplay: Gameplay) {
+    init(_ storyboard: UIStoryboard,
+         _ networkManager: NetworkManager,
+         _ usersManager: UsersManager,
+         _ sessionManager: SessionManager,
+         _ sceneNavigator: SceneNavigatorProtocol,
+         _ chatManager: ChatManager,
+         _ gameplay: Gameplay) {
+
         self.storyboard = storyboard
         self.networkManager = networkManager
         self.usersManager = usersManager

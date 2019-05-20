@@ -27,11 +27,13 @@ class ApplicationMain: UIResponder, UIApplicationDelegate {
         let networkManager       = NetworkManager()
         let usersManager         = UsersManager(networkManager)
         let sessionManager       = SessionManager(networkManager, usersManager)
+        let chatManager          = ChatManager(networkManager)
+        let gameplay             = Gameplay(networkManager)
 
         let navigationController = UINavigationController()
         let storyboard           = UIStoryboard(name: "Main", bundle: nil)
         let sceneNavigator       = SceneNavigator(dependencyContainer, navigationController)
-        self.dependencyContainer = DependencyContainer(storyboard, networkManager, usersManager, sessionManager, sceneNavigator)
+        self.dependencyContainer = DependencyContainer(storyboard, networkManager, usersManager, sessionManager, sceneNavigator, chatManager, gameplay)
 
         window?.rootViewController = navigationController
         navigationController.isNavigationBarHidden = true

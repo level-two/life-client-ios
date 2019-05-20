@@ -36,10 +36,10 @@ class SceneNavigator: SceneNavigatorProtocol {
     // In most cases it's totally safe to make this a strong
     // reference, but in some situations it could end up
     // causing a retain cycle, so better be safe than sorry :)
-    private weak var navigationController: UINavigationController!
-    private      var factory: ViewControllerFactory!
+    private weak var navigationController: UINavigationController?
+    private      var factory: ViewControllerFactory
 
-    func setupDependencies(viewControllerFactory factory: ViewControllerFactory, navigationController: UINavigationController) {
+    init(_ factory: ViewControllerFactory, _ navigationController: UINavigationController) {
         self.factory = factory
         self.navigationController = navigationController
     }
