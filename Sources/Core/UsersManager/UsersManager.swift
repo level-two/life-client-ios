@@ -87,7 +87,7 @@ extension UsersManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try UsersManagerMessage(from: $0) }
+                .compactMap { try? UsersManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .createUserSuccess(let userData) = message else { return }
@@ -122,7 +122,7 @@ extension UsersManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try UsersManagerMessage(from: $0) }
+                .compactMap { try? UsersManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                 guard case .userDataRequestSuccess(let userData) = message else { return }

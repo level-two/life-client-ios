@@ -91,7 +91,9 @@ extension NetworkManager {
                 let bridge = BridgeChannelHandler()
 
                 bridge.onMessage
-                    .bind { [weak self] in self?.onMessage.onNext($0) }
+                    .bind { [weak self] msg in
+                        self?.onMessage.onNext(msg)
+                    }
                     .disposed(by: bridge.disposeBag)
 
                 let frameHandler = FrameChannelHandler()

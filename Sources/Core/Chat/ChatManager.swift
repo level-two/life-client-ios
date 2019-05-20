@@ -54,7 +54,7 @@ class ChatManager {
 extension ChatManager {
     func assembleInteractions() {
         networkManager.onMessage
-            .compactMap { try ChatMessage(from: $0) }
+            .compactMap { try? ChatMessage(from: $0) }
             .bind { [weak self] message in
                 guard let self = self else { return }
                 guard case .chatMessage(let chatMessageData) = message else { return }
@@ -73,7 +73,7 @@ extension ChatManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try ChatMessage(from: $0) }
+                .compactMap { try? ChatMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .chatHistoryResponse(let messages) = message else { return }

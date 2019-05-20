@@ -50,7 +50,7 @@ class Gameplay {
 extension Gameplay {
     func assembleInteractions() {
         let decodedMessage = networkManager.onMessage
-            .compactMap { try GameplayMessage(from: $0) }
+            .compactMap { try? GameplayMessage(from: $0) }
 
         decodedMessage.bind { [weak self] message in
             guard let self = self else { return }

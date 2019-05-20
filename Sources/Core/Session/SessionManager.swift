@@ -104,7 +104,9 @@ extension SessionManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { try SessionManagerMessage(from: $0) }
+                .compactMap { msg in
+                    return try? SessionManagerMessage(from: msg)
+            }
 
             decodedMessage.bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }
