@@ -54,9 +54,9 @@ extension SessionManager {
     // FIXME: Deal with weak self everywhere!
     @discardableResult
     public func login(userName: String) -> Promise<UserData> {
+        _ = self.sendLogin(for: userName)
+
         return firstly {
-            self.sendLogin(for: userName)
-        }.then {
             self.waitLoginResponse()
         }.map { userData in
             self.loggedInUserData = userData
@@ -66,9 +66,9 @@ extension SessionManager {
 
     @discardableResult
     public func logout(userName: String) -> Promise<UserData> {
+        _ = self.sendLogout(for: userName)
+
         return firstly {
-            self.sendLogout(for: userName)
-        }.then {
             self.waitLogoutResponse()
         }.map { userData in
             self.loggedInUserData = nil
@@ -104,9 +104,7 @@ extension SessionManager {
             let compositeDisposable = CompositeDisposable()
 
             let decodedMessage = networkManager.onMessage
-                .compactMap { msg in
-                    return try? SessionManagerMessage(from: msg)
-            }
+                .compactMap { try? SessionManagerMessage(from: $0) }
 
             decodedMessage.bind { message in
                     guard case .loginResponseSuccess(let userData) = message else { return }

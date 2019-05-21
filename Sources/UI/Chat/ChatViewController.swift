@@ -18,10 +18,11 @@
 import Foundation
 import UIKit
 import MessageKit
+import InputBarAccessoryView
 import RxSwift
 
 class ChatViewController: MessagesViewController {
-    public let onSendButton = PublishSubject<String>()
+    public let onMessageSend = PublishSubject<String>()
     public let onLoadMoreMessages = PublishSubject<Void>()
     public let onLogout = PublishSubject<Void>()
 
@@ -49,19 +50,27 @@ class ChatViewController: MessagesViewController {
     }
 
     public func enableRefreshControl() {
-        messagesCollectionView.refreshControl = self.refreshControl
+        DispatchQueue.main.async {
+            self.messagesCollectionView.refreshControl = self.refreshControl
+        }
     }
 
     public func disableRefreshControl() {
-        messagesCollectionView.refreshControl = nil
+        DispatchQueue.main.async {
+            self.messagesCollectionView.refreshControl = nil
+        }
     }
 
     public func beginRefreshing() {
-        refreshControl.beginRefreshing()
+        DispatchQueue.main.async {
+            self.refreshControl.beginRefreshing()
+        }
     }
 
     public func endRefreshing() {
-        refreshControl.endRefreshing()
+        DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
+        }
     }
 
     public func set(user: UserData) {
@@ -73,12 +82,16 @@ class ChatViewController: MessagesViewController {
     }
 
     public func reloadDataKeepingOffset() {
-        messagesCollectionView.reloadDataAndKeepOffset()
+        DispatchQueue.main.async {
+            self.messagesCollectionView.reloadDataAndKeepOffset()
+        }
     }
 
     public func reloadDataScrollingToBottom(animated: Bool = false) {
-        messagesCollectionView.reloadData()
-        messagesCollectionView.scrollToBottom(animated: animated)
+        DispatchQueue.main.async {
+            self.messagesCollectionView.reloadData()
+            self.messagesCollectionView.scrollToBottom(animated: animated)
+        }
     }
 
     public var numberOfMessages: Int {
@@ -89,6 +102,10 @@ class ChatViewController: MessagesViewController {
         guard viewData.isEmpty == false else { return false }
         let lastIndexPath = IndexPath(item: 0, section: viewData.count - 1)
         return messagesCollectionView.indexPathsForVisibleItems.contains(lastIndexPath)
+    }
+
+    public func clearMessageInputBar() {
+        messageInputBar.inputTextView.text = ""
     }
 
     @IBOutlet weak var logoutButton: UIButton!
@@ -147,7 +164,7 @@ extension ChatViewController: MessagesDisplayDelegate {
 }
 
 extension ChatViewController: MessageInputBarDelegate {
-    public func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        onSendButton.onNext(text)
+    public func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
+        onMessageSend.onNext(text)
     }
 }

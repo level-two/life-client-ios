@@ -40,11 +40,8 @@ class ChatManager {
     }
 
     public func requestHistory(fromId: Int, count: Int) -> Promise<[ChatMessageData]> {
-        return firstly {
-            self.sendHistoryRequest(fromId: fromId, count: count)
-        }.then {
-            self.waitHistoryResponse()
-        }
+        _ = self.sendHistoryRequest(fromId: fromId, count: count)
+        return waitHistoryResponse()
     }
 
     let networkManager: NetworkManager

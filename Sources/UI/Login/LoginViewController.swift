@@ -37,7 +37,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             else { return }
 
         playerNameTextField.text = autologinUserName
-        login(userName: autologinUserName )
+        login(userName: autologinUserName)
     }
 
     func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager) {
@@ -73,7 +73,7 @@ extension LoginViewController {
         }.done { _ in
             ApplicationSettings.autologinEnabled = true
             ApplicationSettings.autologinUserName = userName
-            self.navigator.navigate(to: .gameplay)
+            self.navigator.navigate(to: .chat)
         }.ensure(on: .main) {
             self.activityIndicatorView.isHidden = true
         }.catch { error in

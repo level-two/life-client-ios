@@ -19,7 +19,7 @@ import Foundation
 import RxSwift
 
 class ChatPresenter {
-    public let onSendButton = PublishSubject<String>()
+    public let onMessageSend = PublishSubject<String>()
     public let onLoadMoreMessages = PublishSubject<Void>()
     public let onLogout = PublishSubject<Void>()
 
@@ -28,18 +28,9 @@ class ChatPresenter {
         self.user = user
 
         chatViewController.set(user: user)
-        chatViewController.onSendButton.bind(to: onSendButton).disposed(by: disposeBag)
+        chatViewController.onMessageSend.bind(to: onMessageSend).disposed(by: disposeBag)
         chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
         chatViewController.onLogout.bind(to: onLogout).disposed(by: disposeBag)
-    }
-
-    public var inputBarText: String {
-        get {
-            return chatViewController.messageInputBar.inputTextView.text
-        }
-        set {
-            chatViewController.messageInputBar.inputTextView.text = newValue
-        }
     }
 
     public func startedHistoryRequest() {
@@ -93,6 +84,10 @@ class ChatPresenter {
 
         chatViewController.set(viewData: viewData)
         chatViewController.reloadDataKeepingOffset()
+    }
+
+    public func messageSent() {
+        chatViewController.clearMessageInputBar()
     }
 
     var viewData: [ChatViewData] = []

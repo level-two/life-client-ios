@@ -44,9 +44,9 @@ class UsersManager {
                 return
             }
 
+            _ = self.sendUserDataRequest(with: userId)
+
             firstly {
-                self.sendUserDataRequest(with: userId)
-            }.then {
                 self.waitUserDataResponse()
             }.done { userData in
                 guard userData.userId == userId else { return }
@@ -64,11 +64,8 @@ class UsersManager {
     }
 
     public func createUser(with userName: String, color: Color) -> Promise<UserData> {
-        return firstly {
-            self.sendCreateUserMessage(with: userName, color: color)
-        }.then {
-            self.waitCreateUserResponse()
-        }
+        _ = self.sendCreateUserMessage(with: userName, color: color)
+        return waitCreateUserResponse()
     }
 
     var usersData: [UserData] = []

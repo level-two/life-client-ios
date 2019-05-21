@@ -31,6 +31,8 @@ class ChatInteractions {
         self.chatPresenter = chatPresenter
 
         self.user = sessionManager.loggedInUserData!
+
+        assembleInteractions()
     }
 
     weak var chatPresenter: ChatPresenter!
@@ -74,6 +76,14 @@ extension ChatInteractions {
         }.disposed(by: disposeBag)
          */
 
+        chatPresenter.onMessageSend.bind { text in
+            firstly {
+                self.chatManager.send(messageText: text)
+            }.done {
+                self.chatPresenter.messageSent()
+            }
+        }.disposed(by: disposeBag)
+
         chatPresenter.onLoadMoreMessages.bind {
             guard let firstIndex = self.messages.first?.messageData.messageId else { return }
             assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
@@ -99,7 +109,7 @@ extension ChatInteractions {
                         print(error)
                     }
                 }
-            }.ensure(on: .main) {
+            }.ensure {
                 self.chatPresenter.finishedHistoryRequest()
             }.catch { error in
                 print(error)
@@ -114,7 +124,7 @@ extension ChatInteractions {
             }.done { _ in
                 ApplicationSettings.autologinEnabled = false
                 self.navigator.navigate(to: .login)
-//            }.ensure(on: .main) {
+//            }.ensure {
 //                self.chatPresenter.hideActivityIndicator()
             }.catch { error in
                 //self.alert(error.localizedDescription)
