@@ -48,19 +48,21 @@ class ChatInteractions {
 
 extension ChatInteractions {
     func assembleInteractions() {
-        chatManager.onMessage.bind { [weak self] message in
-            guard let self = self else { return }
+        chatManager.onMessage
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] message in
+                guard let self = self else { return }
 
-            self.chatPresenter.addMessage(message)
+                self.chatPresenter.addMessage(message)
 
-            firstly {
-                self.usersManager.userData(for: message.userId)
-            }.done { userData in
-                self.chatPresenter.updateViewData(for: message.messageId, with: userData)
-            }.catch { error in
-                print("Error: \(error)")
-            }
-        }.disposed(by: disposeBag)
+                firstly {
+                    self.usersManager.userData(for: message.userId)
+                }.done(on: .main) { userData in
+                    self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                }.catch { error in
+                    print("Error: \(error)")
+                }
+            }.disposed(by: disposeBag)
 
         /*
         sessionManager.onLoginState.bind { [weak self] isLoggedIn in
@@ -82,37 +84,39 @@ extension ChatInteractions {
             _ = self?.chatManager.send(messageText: text)
         }.disposed(by: disposeBag)
 
-        chatPresenter.onLoadMoreMessages.bind {
-            guard let firstIndex = self.messages.first?.messageData.messageId else { return }
-            assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
+        chatPresenter.onLoadMoreMessages
+            .observeOn(MainScheduler.instance)
+            .bind {
+                guard let firstIndex = self.messages.first?.messageData.messageId else { return }
+                assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
 
-            self.chatPresenter.startedHistoryRequest()
+                self.chatPresenter.startedHistoryRequest()
 
-            let count = firstIndex >= 10 ? 10 : firstIndex
-            let fromId = firstIndex - count
+                let count = firstIndex >= 10 ? 10 : firstIndex
+                let fromId = firstIndex - count
 
-            firstly {
-                self.chatManager.requestHistory(fromId: fromId, count: count)
-            }.done { messages in
-                self.chatPresenter.addHistory(messages)
+                firstly {
+                    self.chatManager.requestHistory(fromId: fromId, count: count)
+                }.done(on: .main) { messages in
+                    self.chatPresenter.addHistory(messages)
 
-                messages.map { $0.userId }.unique.forEach { userId in
-                    firstly {
-                        self.usersManager.userData(for: userId)
-                    }.done { userData in
-                        messages.filter { $0.userId == userId }.forEach { message in
-                            self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                    messages.map { $0.userId }.unique.forEach { userId in
+                        firstly {
+                            self.usersManager.userData(for: userId)
+                        }.done(on: .main) { userData in
+                            messages.filter { $0.userId == userId }.forEach { message in
+                                self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                            }
+                        }.catch { error in
+                            print(error)
                         }
-                    }.catch { error in
-                        print(error)
                     }
+                }.ensure(on: .main) {
+                    self.chatPresenter.finishedHistoryRequest()
+                }.catch { error in
+                    print(error)
                 }
-            }.ensure {
-                self.chatPresenter.finishedHistoryRequest()
-            }.catch { error in
-                print(error)
-            }
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
 
         chatPresenter.onLogout.bind {
             //self.chatPresenter.showActivityIndicator()
@@ -122,8 +126,6 @@ extension ChatInteractions {
             }.done { _ in
                 ApplicationSettings.autologinEnabled = false
                 self.navigator.navigate(to: .login)
-//            }.ensure {
-//                self.chatPresenter.hideActivityIndicator()
             }.catch { error in
                 //self.alert(error.localizedDescription)
                 print(error)

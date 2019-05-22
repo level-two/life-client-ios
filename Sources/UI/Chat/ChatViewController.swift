@@ -50,27 +50,19 @@ class ChatViewController: MessagesViewController {
     }
 
     public func enableRefreshControl() {
-        DispatchQueue.main.async {
-            self.messagesCollectionView.refreshControl = self.refreshControl
-        }
+        self.messagesCollectionView.refreshControl = self.refreshControl
     }
 
     public func disableRefreshControl() {
-        DispatchQueue.main.async {
-            self.messagesCollectionView.refreshControl = nil
-        }
+        self.messagesCollectionView.refreshControl = nil
     }
 
     public func beginRefreshing() {
-        DispatchQueue.main.async {
-            self.refreshControl.beginRefreshing()
-        }
+        self.refreshControl.beginRefreshing()
     }
 
     public func endRefreshing() {
-        DispatchQueue.main.async {
-            self.refreshControl.endRefreshing()
-        }
+        self.refreshControl.endRefreshing()
     }
 
     public func set(user: UserData) {
@@ -82,16 +74,12 @@ class ChatViewController: MessagesViewController {
     }
 
     public func reloadDataKeepingOffset() {
-        DispatchQueue.main.async {
-            self.messagesCollectionView.reloadDataAndKeepOffset()
-        }
+        self.messagesCollectionView.reloadDataAndKeepOffset()
     }
 
     public func reloadDataScrollingToBottom(animated: Bool = false) {
-        DispatchQueue.main.async {
-            self.messagesCollectionView.reloadData()
-            self.messagesCollectionView.scrollToBottom(animated: animated)
-        }
+        self.messagesCollectionView.reloadData()
+        self.messagesCollectionView.scrollToBottom(animated: animated)
     }
 
     public var numberOfMessages: Int {
