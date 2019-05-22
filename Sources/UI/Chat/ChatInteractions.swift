@@ -41,7 +41,6 @@ class ChatInteractions {
     let usersManager: UsersManager
     let chatManager: ChatManager
 
-    var messages = [ChatViewData]()
     var user: UserData
     let disposeBag = DisposeBag()
 }
@@ -84,16 +83,36 @@ extension ChatInteractions {
             _ = self?.chatManager.send(messageText: text)
         }.disposed(by: disposeBag)
 
+        chatPresenter.onViewWillAppear.bind { _ in
+            self.chatPresenter.startedHistoryRequest()
+
+            firstly {
+                self.chatManager.requestRecentHistory()
+            }.done(on: .main) { messages in
+                self.chatPresenter.addHistory(messages)
+
+                messages.map { $0.userId }.unique.forEach { userId in
+                    firstly {
+                        self.usersManager.userData(for: userId)
+                    }.done(on: .main) { userData in
+                        messages.filter { $0.userId == userId }.forEach { message in
+                            self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                        }
+                    }.catch { error in
+                        print(error)
+                    }
+                }
+            }.ensure(on: .main) {
+                self.chatPresenter.finishedHistoryRequest()
+            }.catch { error in
+                print(error)
+            }
+        }.disposed(by: disposeBag)
+
         chatPresenter.onLoadMoreMessages
             .observeOn(MainScheduler.instance)
-            .bind {
-                guard let firstIndex = self.messages.first?.messageData.messageId else { return }
-                assert(firstIndex > 0, "UIRefreshControl expected be hidden or disabled when we already received all messages")
-
+            .bind { fromId, count in
                 self.chatPresenter.startedHistoryRequest()
-
-                let count = firstIndex >= 10 ? 10 : firstIndex
-                let fromId = firstIndex - count
 
                 firstly {
                     self.chatManager.requestHistory(fromId: fromId, count: count)

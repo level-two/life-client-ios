@@ -20,6 +20,7 @@ import Foundation
 enum ChatMessage: Codable {
     case sendChatMessage(message: String)
     case chatHistoryRequest(fromId: Int, count: Int)
+    case chatRecentHistoryRequest(count: Int)
 
     case chatMessage(message: ChatMessageData)
     case chatError(error: String)
@@ -43,6 +44,7 @@ extension ChatMessage {
     private enum CodingKeys: String, CodingKey {
         case sendChatMessage
         case chatHistoryRequest
+        case chatRecentHistoryRequest
         case chatMessage
         case chatError
         case chatHistoryResponse
@@ -68,12 +70,13 @@ extension ChatMessage {
                 .decode(T.self, forKey: auxKey)
         }
         switch key {
-        case .sendChatMessage:     self = try .sendChatMessage(message: dec())
-        case .chatHistoryRequest:  self = try .chatHistoryRequest(fromId: dec(.fromId), count: dec(.count))
-        case .chatMessage:         self = try .chatMessage(message: dec())
-        case .chatError:           self = try .chatError(error: dec())
-        case .chatHistoryResponse: self = try .chatHistoryResponse(messages: dec())
-        case .chatHistoryError:    self = try .chatHistoryError(error: dec())
+        case .sendChatMessage:          self = try .sendChatMessage(message: dec())
+        case .chatHistoryRequest:       self = try .chatHistoryRequest(fromId: dec(.fromId), count: dec(.count))
+        case .chatRecentHistoryRequest: self = try .chatRecentHistoryRequest(count: dec())
+        case .chatMessage:              self = try .chatMessage(message: dec())
+        case .chatError:                self = try .chatError(error: dec())
+        case .chatHistoryResponse:      self = try .chatHistoryResponse(messages: dec())
+        case .chatHistoryError:         self = try .chatHistoryError(error: dec())
         }
     }
 
@@ -87,6 +90,8 @@ extension ChatMessage {
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .chatHistoryRequest)
             try nestedContainter.encode(fromId, forKey: .fromId)
             try nestedContainter.encode(count, forKey: .count)
+        case .chatRecentHistoryRequest(let count):
+            try container.encode(count, forKey: .chatRecentHistoryRequest)
         case .chatMessage(let message):
             try container.encode(message, forKey: .chatMessage)
         case .chatError(let error):

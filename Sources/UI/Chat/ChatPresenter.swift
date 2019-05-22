@@ -20,20 +20,31 @@ import RxSwift
 
 class ChatPresenter {
     public let onMessageSend = PublishSubject<String>()
-    public let onLoadMoreMessages = PublishSubject<Void>()
+    public let onLoadMoreMessages = PublishSubject<(Int, Int)>()
     public let onLogout = PublishSubject<Void>()
+    public let onViewWillAppear = PublishSubject<Bool>()
 
     init(_ chatViewController: ChatViewController, _ user: UserData) {
         self.chatViewController = chatViewController
         self.user = user
 
         chatViewController.set(user: user)
-        chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
         chatViewController.onLogout.bind(to: onLogout).disposed(by: disposeBag)
+        chatViewController.rx.viewWillAppear.bind(to: onViewWillAppear).disposed(by: disposeBag)
+        chatViewController.enableRefreshControl()
 
         chatViewController.onMessageSend.bind { [weak self] text in
             self?.onMessageSend.onNext(text)
             self?.chatViewController.clearMessageInputBar()
+        }.disposed(by: disposeBag)
+
+        chatViewController.onLoadMoreMessages.bind { [weak self] in
+            guard let firstIndex = self?.viewData.first?.messageData.messageId else { return }
+
+            let count = firstIndex >= 10 ? 10 : firstIndex
+            let fromId = firstIndex - count
+
+            self?.onLoadMoreMessages.onNext((fromId, count))
         }.disposed(by: disposeBag)
     }
 
