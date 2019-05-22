@@ -49,6 +49,11 @@ class ChatManager {
         return waitHistoryResponse()
     }
 
+    public func requestRecentHistory(fromId: Int) -> Promise<[ChatMessageData]> {
+        _ = self.sendRecentHistoryRequest(fromId: fromId)
+        return waitHistoryResponse()
+    }
+
     let networkManager: NetworkManager
     let disposeBag = DisposeBag()
 }
@@ -72,6 +77,11 @@ extension ChatManager {
 
     func sendRecentHistoryRequest() -> Promise<Void> {
         let message = ChatMessage.chatRecentHistoryRequest(count: 30)
+        return networkManager.send(message.json)
+    }
+
+    func sendRecentHistoryRequest(fromId: Int) -> Promise<Void> {
+        let message = ChatMessage.chatHistoryFromIdRequest(fromId: fromId)
         return networkManager.send(message.json)
     }
 

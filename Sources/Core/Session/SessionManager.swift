@@ -27,6 +27,8 @@ class SessionManager {
         case logoutResponseError(error: String)
     }
 
+    public let onLoginState = PublishSubject<Bool>()
+
     init(_ networkManager: NetworkManager, _ usersManager: UsersManager) {
         self.networkManager = networkManager
         self.usersManager = usersManager
@@ -79,12 +81,22 @@ extension SessionManager {
 
 extension SessionManager {
     public func assembleInteractions() {
-        networkManager.onConnectionEstablished
-            .bind { [weak self] in
-                guard let self = self else { return }
-                guard let userName = self.loggedInUserData?.userName else { return }
+        networkManager.onConnectionEstablished.bind { [weak self] in
+            guard let self = self else { return }
+            guard let userName = self.loggedInUserData?.userName else { return }
+
+            firstly {
                 self.login(userName: userName)
-            }.disposed(by: disposeBag)
+            }.done { _ in
+                self.onLoginState.onNext(true)
+            }.catch {
+                print("Failed to login after connection being established: \($0)")
+            }
+        }.disposed(by: disposeBag)
+
+        networkManager.onConnectionClosed.bind { [weak self] in
+            self?.onLoginState.onNext(false)
+        }.disposed(by: disposeBag)
     }
 }
 

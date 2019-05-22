@@ -63,21 +63,33 @@ extension ChatInteractions {
                 }
             }.disposed(by: disposeBag)
 
-        /*
         sessionManager.onLoginState.bind { [weak self] isLoggedIn in
             guard let self = self else { return }
-
-//                self.activityIndicatorView.isHidden = isLoggedIn
-
             guard isLoggedIn else { return }
-            
+            guard let lastMessageId = self.chatPresenter.lastMessageId else { return }
+
             firstly {
-                self.chatManager.requestHistory(fromId: self.messages.last?.id, count: nil)
-            }.then {
-                
+                self.chatManager.requestRecentHistory(fromId: lastMessageId + 1)
+            }.done(on: .main) { messages in
+                self.chatPresenter.addHistory(messages)
+
+                messages.map { $0.userId }.unique.forEach { userId in
+                    firstly {
+                        self.usersManager.userData(for: userId)
+                    }.done(on: .main) { userData in
+                        messages.filter { $0.userId == userId }.forEach { message in
+                            self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+                        }
+                    }.catch { error in
+                        print(error)
+                    }
+                }
+            }.ensure(on: .main) {
+                self.chatPresenter.finishedHistoryRequest()
+            }.catch { error in
+                print(error)
             }
         }.disposed(by: disposeBag)
-         */
 
         chatPresenter.onMessageSend.bind { [weak self] text in
             _ = self?.chatManager.send(messageText: text)

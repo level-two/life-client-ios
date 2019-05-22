@@ -101,6 +101,10 @@ class ChatPresenter {
         chatViewController.reloadDataKeepingOffset()
     }
 
+    public var lastMessageId: Int? {
+        return viewData.last?.messageData.messageId
+    }
+
     var viewData: [ChatViewData] = []
     let user: UserData
     weak var chatViewController: ChatViewController!
