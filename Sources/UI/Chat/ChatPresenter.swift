@@ -28,9 +28,13 @@ class ChatPresenter {
         self.user = user
 
         chatViewController.set(user: user)
-        chatViewController.onMessageSend.bind(to: onMessageSend).disposed(by: disposeBag)
         chatViewController.onLoadMoreMessages.bind(to: onLoadMoreMessages).disposed(by: disposeBag)
         chatViewController.onLogout.bind(to: onLogout).disposed(by: disposeBag)
+
+        chatViewController.onMessageSend.bind { [weak self] text in
+            self?.onMessageSend.onNext(text)
+            self?.chatViewController.clearMessageInputBar()
+        }.disposed(by: disposeBag)
     }
 
     public func startedHistoryRequest() {
@@ -84,10 +88,6 @@ class ChatPresenter {
 
         chatViewController.set(viewData: viewData)
         chatViewController.reloadDataKeepingOffset()
-    }
-
-    public func messageSent() {
-        chatViewController.clearMessageInputBar()
     }
 
     var viewData: [ChatViewData] = []

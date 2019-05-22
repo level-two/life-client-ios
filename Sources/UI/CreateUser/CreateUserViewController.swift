@@ -61,7 +61,7 @@ class CreateUserViewController: UIViewController, UITextFieldDelegate {
         firstly {
             sessionManager.createUserAndLogin(userName: userName, color: color)
         }.done { _ in
-            self.navigator.navigate(to: .gameplay)
+            self.navigator.navigate(to: .chat)
         }.ensure(on: .main) {
             self.activityIndicatorView.isHidden = true
         }.catch { error in

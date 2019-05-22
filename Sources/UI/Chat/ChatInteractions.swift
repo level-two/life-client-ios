@@ -57,6 +57,8 @@ extension ChatInteractions {
                 self.usersManager.userData(for: message.userId)
             }.done { userData in
                 self.chatPresenter.updateViewData(for: message.messageId, with: userData)
+            }.catch { error in
+                print("Error: \(error)")
             }
         }.disposed(by: disposeBag)
 
@@ -76,12 +78,8 @@ extension ChatInteractions {
         }.disposed(by: disposeBag)
          */
 
-        chatPresenter.onMessageSend.bind { text in
-            firstly {
-                self.chatManager.send(messageText: text)
-            }.done {
-                self.chatPresenter.messageSent()
-            }
+        chatPresenter.onMessageSend.bind { [weak self] text in
+            _ = self?.chatManager.send(messageText: text)
         }.disposed(by: disposeBag)
 
         chatPresenter.onLoadMoreMessages.bind {
