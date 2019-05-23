@@ -73,7 +73,7 @@ extension LoginViewController {
         }.done { _ in
             ApplicationSettings.autologinEnabled = true
             ApplicationSettings.autologinUserName = userName
-            self.navigator.navigate(to: .chat)
+            self.navigator.navigate(to: .gameplay)
         }.ensure(on: .main) {
             self.activityIndicatorView.isHidden = true
         }.catch { error in

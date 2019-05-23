@@ -35,76 +35,62 @@ class GameplayViewController: UIViewController {
     var numCellsY: CGFloat = 0
     var players: [PlayerCells] = []
 
-    var navigator: SceneNavigatorProtocol!
-    var sessionManager: SessionManager!
-    var gameplay: Gameplay!
-
-    func setupDependencies(navigator: SceneNavigatorProtocol, sessionManager: SessionManager, gameplay: Gameplay) {
-        self.navigator = navigator
-        self.sessionManager = sessionManager
-        self.gameplay = gameplay
+    func setupDependencies(_ sceneNavigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ gameplay: Gameplay) {
+        self.presenter = GameplayPresenter(self)
+        self.interactions = GameplayInteractions(sceneNavigator, sessionManager, gameplay, presenter)
     }
-
-    override func viewDidAppear(_ animated: Bool) {
-        //self.gameFieldView.frame = self.scrollView.bounds
-        print(self.view.frame)
-        print(self.scrollView.frame)
-        print(self.gameFieldView.frame)
-        print(self.gameFieldView.bounds)
+    
+    override func viewDidLoad() {
         cellSize = 10.0
         numCellsX = (self.gameFieldView.bounds.width  / cellSize).rounded(.down)
         numCellsY = (self.gameFieldView.bounds.height / cellSize).rounded(.down)
-
-        // Create random players and cells
-        let numPlayers = 4
-        for _ in 0..<numPlayers {
-            var cells = [Cell]()
-            let cellsNum = arc4random() % 200
-            for _ in 0..<cellsNum {
-                let x = CGFloat(arc4random()).truncatingRemainder(dividingBy: numCellsX)
-                let y = CGFloat(arc4random()).truncatingRemainder(dividingBy: numCellsY)
-                cells.append(Cell(pos: CGPoint(x: x, y: y)))
-            }
-            players.append(PlayerCells(color: .random, cells: cells))
-        }
-
+    }
+    
+    func drawGameField(with viewData: GameFieldViewData) {
         // Draw player cells
-        players.forEach { [weak self] player in
-            guard let self = self else { return }
-
-            let cellSize = self.cellSize
+        viewData.users.forEach { user in
             let cellsPath = CGMutablePath()
 
-            player.cells.forEach { cell in
-                cellsPath.addRect(CGRect(x: cell.pos.x * cellSize,
-                                         y: cell.pos.y * cellSize,
+            let userCells = viewData.gameField.allCells().filter { $0.userId == user.userId }
+            
+            userCells.forEach { cell in
+                cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
+                                         y: CGFloat(cell.pos.y) * cellSize,
                                          width: cellSize,
                                          height: cellSize))
             }
+            
             let layer = CAShapeLayer()
             layer.path = cellsPath
-            layer.fillColor = player.color.cgColor
-            layer.strokeColor = player.color.cgColor
+            layer.fillColor = user.color.cgColor
+            layer.strokeColor = user.color.cgColor
 
             self.gameFieldView.layer.addSublayer(layer)
         }
 
         // Draw grid
         let grid = CGMutablePath()
+
         for x in 0...Int(numCellsX) {
             grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y: 0))
             grid.addLine(to: CGPoint(x: CGFloat(x)*cellSize, y: cellSize*numCellsY))
         }
+        
         for y in 0...Int(numCellsY) {
             grid.move(to: CGPoint(x: 0, y: CGFloat(y)*cellSize))
             grid.addLine(to: CGPoint(x: cellSize*numCellsX, y: CGFloat(y)*cellSize))
         }
+        
         let gridLayer = CAShapeLayer()
         gridLayer.path = grid
         gridLayer.strokeColor = UIColor.black.cgColor
         gridLayer.lineWidth = 1
+
         self.gameFieldView.layer.addSublayer(gridLayer)
     }
+    
+    var presenter: GameplayPresenter!
+    var interactions: GameplayInteractions!
 }
 
 extension GameplayViewController: UIScrollViewDelegate {
