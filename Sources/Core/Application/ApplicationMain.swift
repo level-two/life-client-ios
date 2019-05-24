@@ -28,7 +28,7 @@ class ApplicationMain: UIResponder, UIApplicationDelegate {
         let usersManager         = UsersManager(networkManager)
         let sessionManager       = SessionManager(networkManager, usersManager)
         let chatManager          = ChatManager(networkManager)
-        let gameplay             = Gameplay(networkManager)
+        let gameplay             = Gameplay(networkManager, sessionManager)
 
         let navigationController = UINavigationController()
         let storyboard           = UIStoryboard(name: "Main", bundle: nil)
@@ -39,7 +39,6 @@ class ApplicationMain: UIResponder, UIApplicationDelegate {
 
         window?.rootViewController = navigationController
         navigationController.isNavigationBarHidden = true
-        //navigationController.viewControllers = []
 
         // run!
         networkManager.run()

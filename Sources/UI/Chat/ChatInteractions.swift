@@ -63,6 +63,7 @@ extension ChatInteractions {
                 }
             }.disposed(by: disposeBag)
 
+        // TODO: Move to the ChatManager
         sessionManager.onLoginState.bind { [weak self] isLoggedIn in
             guard let self = self else { return }
             guard isLoggedIn else { return }

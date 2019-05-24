@@ -28,7 +28,7 @@ class GameField {
     public let width: Int
     public let height: Int
 
-    public init(_ width: Int, _ height: Int) {
+    public init(_ width: Int, _ height: Int, _ cells: [Cell] = []) {
         self.width               = width
         self.height              = height
         self.acceptedCells       = []
@@ -36,17 +36,9 @@ class GameField {
         self.prevUnacceptedCells = []
         self.gameField           = GameFieldArray(width, height)
         self.prevGameField       = GameFieldArray(width, height)
-    }
 
-    /*
-    init(with cells: [Cell], cycle: Int) {
-        placeCells     = []
-        prevPlaceCells = []
-        gameField     = .init(repeating: nil, count: width*height)
-        prevGameField = .init(repeating: nil, count: width*height)
-        cells.forEach(placeCell)
+        cells.forEach(gameField.put)
     }
-    */
 
     public func updateForNewCycle() {
         // Discard unaccepted cells from the prev game cycle

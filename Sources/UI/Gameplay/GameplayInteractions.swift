@@ -16,6 +16,7 @@
 // -----------------------------------------------------------------------------
 
 import Foundation
+import RxSwift
 
 class GameplayInteractions {
     init(_ sceneNavigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ gameplay: Gameplay, _ presenter: GameplayPresenter) {
@@ -23,16 +24,20 @@ class GameplayInteractions {
         self.sessionManager = sessionManager
         self.gameplay = gameplay
         self.presenter = presenter
-        
+
         assembleInteractions()
     }
-    
+
     func assembleInteractions() {
-        
+//        self.sessionManager.onLoginState.bind { [weak self] isLoggedIn in
+//            guard isLoggedIn else { return }
+//            self?.gameplay.requestGameField()
+//        }.disposed(by: disposeBag)
     }
-    
+
     weak var presenter: GameplayPresenter!
     var sceneNavigator: SceneNavigatorProtocol
     var sessionManager: SessionManager
     var gameplay: Gameplay
+    let disposeBag = DisposeBag()
 }

@@ -20,8 +20,8 @@ import Foundation
 class GameplayPresenter {
     init(_ gameplayViewController: GameplayViewController) {
         self.gameplayViewController = gameplayViewController
-        
+
     }
-    
+
     weak var gameplayViewController: GameplayViewController!
 }

@@ -23,8 +23,9 @@ class Gameplay {
     public let onNewCycle = PublishSubject<Int>()
     public let onPlaceCell = PublishSubject<Cell>()
 
-    init(_ networkManager: NetworkManager) {
+    init(_ networkManager: NetworkManager, _ sessionManager: SessionManager) {
         self.networkManager = networkManager
+        self.sessionManager = sessionManager
 
         let fieldWidth = ApplicationSettings.fieldWidth
         let fieldHeight = ApplicationSettings.fieldHeight
@@ -42,8 +43,9 @@ class Gameplay {
     }
 
     var cycle = 0
-    let gameField: GameField
+    var gameField: GameField
     let networkManager: NetworkManager
+    let sessionManager: SessionManager
     let disposeBag = DisposeBag()
 }
 
@@ -52,27 +54,51 @@ extension Gameplay {
         let decodedMessage = networkManager.onMessage
             .compactMap { try? GameplayMessage(from: $0) }
 
-        decodedMessage.bind { [weak self] message in
-            guard let self = self else { return }
-            guard case .newGameCycle(let gameCycle) = message else { return }
+        decodedMessage
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] message in
+                guard let self = self else { return }
+                guard case .newGameCycle(let gameCycle) = message else { return }
 
-            // TODO Handle case when game cycle is out of sync
-            self.cycle = gameCycle
-            self.gameField.updateForNewCycle()
-            self.onNewCycle.onNext(self.cycle)
-        }.disposed(by: disposeBag)
+                // TODO Handle case when game cycle is out of sync
+                self.cycle = gameCycle
+                self.gameField.updateForNewCycle()
+                self.onNewCycle.onNext(self.cycle)
+            }.disposed(by: disposeBag)
 
-        decodedMessage.bind { [weak self] message in
-            guard let self = self else { return }
-            guard case .placeCell(let cell, let gameCycle) = message else { return }
+        decodedMessage
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] message in
+                guard let self = self else { return }
+                guard case .placeCell(let cell, let gameCycle) = message else { return }
 
-            if gameCycle == self.cycle {
-                self.gameField.placeAcceptedCell(cell)
-                self.onPlaceCell.onNext(cell)
-            } else if gameCycle == self.cycle-1 {
-                self.gameField.placeCellInPrevCycle(cell)
-                self.onPlaceCell.onNext(cell)
-            }
-        }.disposed(by: disposeBag)
+                if gameCycle == self.cycle {
+                    self.gameField.placeAcceptedCell(cell)
+                    self.onPlaceCell.onNext(cell)
+                } else if gameCycle == self.cycle-1 {
+                    self.gameField.placeCellInPrevCycle(cell)
+                    self.onPlaceCell.onNext(cell)
+                }
+            }.disposed(by: disposeBag)
+
+        decodedMessage
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] message in
+                guard let self = self else { return }
+                guard case .gameField(let cells, let fieldWidth, let fieldHeight, let gameCycle) = message else { return }
+
+                self.gameField = GameField(fieldWidth, fieldHeight, cells)
+                self.cycle = gameCycle
+                self.onNewCycle.onNext(self.cycle)
+            }.disposed(by: disposeBag)
+
+        self.sessionManager.onLoginState
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] isLoggedIn in
+                guard isLoggedIn else { return }
+
+                let message = GameplayMessage.requestGameField
+                _ = self?.networkManager.send(message.json)
+            }.disposed(by: disposeBag)
     }
 }

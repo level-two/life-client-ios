@@ -73,7 +73,7 @@ extension DependencyContainer: ViewControllerFactory {
 
     func makeGameplayViewController() -> GameplayViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "GameplayViewController") as! GameplayViewController
-        vc.setupDependencies(navigator: sceneNavigator, sessionManager: sessionManager, gameplay: gameplay)
+        vc.setupDependencies(sceneNavigator, sessionManager, gameplay)
         return vc
     }
 }
