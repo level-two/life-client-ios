@@ -50,6 +50,7 @@ extension GameplayMessage {
         case gameCycle
         case fieldWidth
         case fieldHeight
+        case requestGameField
     }
 
     private enum DecodeError: Error {
@@ -82,7 +83,7 @@ extension GameplayMessage {
         case .newGameCycle(let gameCycle):
             try container.encode(gameCycle, forKey: .newGameCycle)
         case .requestGameField:
-            ()
+            try container.encode("", forKey: .requestGameField)
         case .gameField(let cells, let fieldWidth, let fieldHeight, let gameCycle):
             var nestedContainter = container.nestedContainer(keyedBy: AuxCodingKeys.self, forKey: .gameField)
             try nestedContainter.encode(cells, forKey: .cells)
