@@ -61,6 +61,7 @@ extension SessionManager {
         return firstly {
             self.waitLoginResponse()
         }.map { userData in
+            self.onLoginState.onNext(true)
             self.loggedInUserData = userData
             return userData
         }
