@@ -44,6 +44,13 @@ extension GameplayInteractions {
                 self.presenter.drawGameField(self.gameplay.gameField)
             }.disposed(by: disposeBag)
 
-        // TODO: Send color instead of userId + reduce color to just one byte value
+        self.presenter.onTap.bind { [weak self] pos in
+            guard let self = self else { return }
+
+            let cell = Cell(pos: pos, color: self.sessionManager.loggedInUserData!.color)
+            self.gameplay.place(cell)
+        }.disposed(by: disposeBag)
+
+        // TODO: Reduce color to just one byte value
     }
 }

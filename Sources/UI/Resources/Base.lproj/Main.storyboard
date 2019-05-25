@@ -265,7 +265,6 @@
                                 </constraints>
                                 <connections>
                                     <outlet property="delegate" destination="FT7-HE-0y9" id="59f-Q9-FA5"/>
-                                    <outletCollection property="gestureRecognizers" destination="Y4B-0Z-y7K" appends="YES" id="wnx-jd-4RY"/>
                                 </connections>
                             </scrollView>
                         </subviews>
@@ -285,11 +284,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ESs-3e-fsz" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer numberOfTapsRequired="2" id="Y4B-0Z-y7K">
-                    <connections>
-                        <action selector="handleDoubleTapScrollViewWithRecognizer:" destination="FT7-HE-0y9" id="kxH-Vk-wJ7"/>
-                    </connections>
-                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1684" y="-510"/>
         </scene>

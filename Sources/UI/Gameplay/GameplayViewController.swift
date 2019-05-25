@@ -21,16 +21,8 @@ class GameplayViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var gameFieldView: UIView!
 
-    struct Cell {
-        var pos: CGPoint
-    }
-
-    struct PlayerCells {
-        var color: UIColor
-        var cells: [Cell]
-    }
-
-    var players: [PlayerCells] = []
+    var fieldWidth: Int = 0
+    var fieldHeight: Int = 0
 
     func setupDependencies(_ sceneNavigator: SceneNavigatorProtocol, _ sessionManager: SessionManager, _ gameplay: Gameplay) {
         self.presenter = GameplayPresenter(self)
@@ -38,9 +30,12 @@ class GameplayViewController: UIViewController {
     }
 
     func drawGameField(with viewData: GameFieldViewData) {
+        self.fieldWidth = viewData.fieldWidth
+        self.fieldHeight = viewData.fieldHeight
+
         let viewSize = self.gameFieldView.bounds.size
-        let cellSize = min(viewSize.width  / CGFloat(viewData.fieldWidth),
-                           viewSize.height / CGFloat(viewData.fieldHeight))
+        let cellSize = min(viewSize.width  / CGFloat(fieldWidth),
+                           viewSize.height / CGFloat(fieldHeight))
 
         // Draw player cells
         let colors = viewData.cells.map { $0.color }.unique
@@ -66,14 +61,14 @@ class GameplayViewController: UIViewController {
         // Draw grid
         let grid = CGMutablePath()
 
-        for x in 0...viewData.fieldWidth {
+        for x in 0...fieldWidth {
             grid.move(to: .init(x: CGFloat(x)*cellSize, y: 0))
-            grid.addLine(to: .init(x: CGFloat(x) * cellSize, y: CGFloat(viewData.fieldHeight) * cellSize))
+            grid.addLine(to: .init(x: CGFloat(x) * cellSize, y: CGFloat(fieldHeight) * cellSize))
         }
 
-        for y in 0...viewData.fieldHeight {
+        for y in 0...fieldHeight {
             grid.move(to: .init(x: 0, y: CGFloat(y) * cellSize))
-            grid.addLine(to: .init(x: CGFloat(viewData.fieldWidth) * cellSize, y: CGFloat(y) * cellSize))
+            grid.addLine(to: .init(x: CGFloat(fieldWidth) * cellSize, y: CGFloat(y) * cellSize))
         }
 
         let gridLayer = CAShapeLayer()
@@ -84,32 +79,37 @@ class GameplayViewController: UIViewController {
         self.gameFieldView.layer.addSublayer(gridLayer)
     }
 
+    var isZoomed: Bool {
+        return self.scrollView.zoomScale != 1
+    }
+
+    func zoomOut() {
+        self.scrollView.setZoomScale(1, animated: true)
+    }
+
+    func zoomIn(to center: CGPoint) {
+        func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+            var zoomRect = CGRect.zero
+            zoomRect.size.height = self.gameFieldView.frame.size.height / scale
+            zoomRect.size.width  = self.gameFieldView.frame.size.width  / scale
+            let newCenter = self.scrollView.convert(center, from: self.gameFieldView)
+            zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
+            zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
+            return zoomRect
+        }
+
+        let rect = zoomRectForScale(scale: self.scrollView.maximumZoomScale,
+                                    center: center)
+
+        self.scrollView.zoom(to: rect, animated: true)
+    }
+
     private var presenter: GameplayPresenter!
     private var interactions: GameplayInteractions!
 }
 
 extension GameplayViewController: UIScrollViewDelegate {
-    private func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.gameFieldView
-    }
-}
-
-extension GameplayViewController {
-    @IBAction func handleDoubleTapScrollView(recognizer: UITapGestureRecognizer) {
-        if self.scrollView.zoomScale == 1 {
-            self.scrollView.zoom(to: zoomRectForScale(scale: self.scrollView.maximumZoomScale, center: recognizer.location(in: recognizer.view)), animated: true)
-        } else {
-            self.scrollView.setZoomScale(1, animated: true)
-        }
-    }
-
-    private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
-        var zoomRect = CGRect.zero
-        zoomRect.size.height = self.gameFieldView.frame.size.height / scale
-        zoomRect.size.width  = self.gameFieldView.frame.size.width  / scale
-        let newCenter = self.scrollView.convert(center, from: self.gameFieldView)
-        zoomRect.origin.x = newCenter.x - (zoomRect.size.width / 2.0)
-        zoomRect.origin.y = newCenter.y - (zoomRect.size.height / 2.0)
-        return zoomRect
     }
 }
