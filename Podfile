@@ -10,6 +10,7 @@ target 'LifeClient' do
   pod 'MessageKit'
   pod 'RxSwift'
   pod 'RxAppState'
+  pod 'RxGesture'
   pod 'PromiseKit'
   pod 'SwiftLint'
 end
