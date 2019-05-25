@@ -18,9 +18,7 @@
 import Foundation
 
 struct GameFieldViewData {
-    var gameField: GameFieldArray
-    var users: [UserData]
-
+    var cells: [Cell]
     var fieldWidth: Int
     var fieldHeight: Int
 }

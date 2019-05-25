@@ -43,22 +43,22 @@ class GameplayViewController: UIViewController {
                            viewSize.height / CGFloat(viewData.fieldHeight))
 
         // Draw player cells
-        viewData.users.forEach { user in
-            let cellsPath = CGMutablePath()
+        let colors = viewData.cells.map { $0.color }.unique
 
-            let userCells = viewData.gameField.allCells().filter { $0.userId == user.userId }
+        colors.forEach { color in
+            let path = CGMutablePath()
 
-            userCells.forEach { cell in
-                cellsPath.addRect(CGRect(x: CGFloat(cell.pos.x) * cellSize,
-                                         y: CGFloat(cell.pos.y) * cellSize,
-                                         width: cellSize,
-                                         height: cellSize))
+            viewData.cells.filter { $0.color == color }.forEach { cell in
+                path.addRect(.init(x: CGFloat(cell.pos.x) * cellSize,
+                                   y: CGFloat(cell.pos.y) * cellSize,
+                                   width: cellSize,
+                                   height: cellSize))
             }
 
             let layer = CAShapeLayer()
-            layer.path = cellsPath
-            layer.fillColor = user.color.cgColor
-            layer.strokeColor = user.color.cgColor
+            layer.path = path
+            layer.fillColor = color.cgColor
+            layer.strokeColor = color.cgColor
 
             self.gameFieldView.layer.addSublayer(layer)
         }
@@ -67,13 +67,13 @@ class GameplayViewController: UIViewController {
         let grid = CGMutablePath()
 
         for x in 0...viewData.fieldWidth {
-            grid.move(to: CGPoint(x: CGFloat(x)*cellSize, y: 0))
-            grid.addLine(to: CGPoint(x: CGFloat(x) * cellSize, y: CGFloat(viewData.fieldHeight) * cellSize))
+            grid.move(to: .init(x: CGFloat(x)*cellSize, y: 0))
+            grid.addLine(to: .init(x: CGFloat(x) * cellSize, y: CGFloat(viewData.fieldHeight) * cellSize))
         }
 
         for y in 0...viewData.fieldHeight {
-            grid.move(to: CGPoint(x: 0, y: CGFloat(y) * cellSize))
-            grid.addLine(to: CGPoint(x: CGFloat(viewData.fieldWidth) * cellSize, y: CGFloat(y) * cellSize))
+            grid.move(to: .init(x: 0, y: CGFloat(y) * cellSize))
+            grid.addLine(to: .init(x: CGFloat(viewData.fieldWidth) * cellSize, y: CGFloat(y) * cellSize))
         }
 
         let gridLayer = CAShapeLayer()
@@ -84,12 +84,12 @@ class GameplayViewController: UIViewController {
         self.gameFieldView.layer.addSublayer(gridLayer)
     }
 
-    var presenter: GameplayPresenter!
-    var interactions: GameplayInteractions!
+    private var presenter: GameplayPresenter!
+    private var interactions: GameplayInteractions!
 }
 
 extension GameplayViewController: UIScrollViewDelegate {
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    private func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.gameFieldView
     }
 }
@@ -103,7 +103,7 @@ extension GameplayViewController {
         }
     }
 
-    func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
+    private func zoomRectForScale(scale: CGFloat, center: CGPoint) -> CGRect {
         var zoomRect = CGRect.zero
         zoomRect.size.height = self.gameFieldView.frame.size.height / scale
         zoomRect.size.width  = self.gameFieldView.frame.size.width  / scale

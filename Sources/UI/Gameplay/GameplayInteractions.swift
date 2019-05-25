@@ -28,16 +28,22 @@ class GameplayInteractions {
         assembleInteractions()
     }
 
-    func assembleInteractions() {
-//        self.sessionManager.onLoginState.bind { [weak self] isLoggedIn in
-//            guard isLoggedIn else { return }
-//            self?.gameplay.requestGameField()
-//        }.disposed(by: disposeBag)
-    }
+    private weak var presenter: GameplayPresenter!
+    private var sceneNavigator: SceneNavigatorProtocol
+    private var sessionManager: SessionManager
+    private var gameplay: Gameplay
+    private let disposeBag = DisposeBag()
+}
 
-    weak var presenter: GameplayPresenter!
-    var sceneNavigator: SceneNavigatorProtocol
-    var sessionManager: SessionManager
-    var gameplay: Gameplay
-    let disposeBag = DisposeBag()
+extension GameplayInteractions {
+    private func assembleInteractions() {
+        self.gameplay.onNewCycle
+            .observeOn(MainScheduler.instance)
+            .bind { [weak self] _ in
+                guard let self = self else { return }
+                self.presenter.drawGameField(self.gameplay.gameField)
+            }.disposed(by: disposeBag)
+
+        // TODO: Send color instead of userId + reduce color to just one byte value
+    }
 }

@@ -26,11 +26,11 @@ struct UserData: Codable {
     var color: Color
 }
 
-struct Color: Codable {
+struct Color: Hashable {
     let red, green, blue, alpha: Double
 }
 
-extension Color {
+extension Color: Codable {
     public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
         let redComponent = try container.decode(Int.self)
@@ -75,4 +75,14 @@ extension Color {
     var cgColor: CGColor { return uiColor.cgColor }
     var ciColor: CIColor { return CIColor(color: uiColor) }
     //var data: Data { return try! JSONEncoder().encode(self) }
+}
+
+extension Color: Equatable {
+    static func == (lhs: Color, rhs: Color) -> Bool {
+        return
+            lhs.red == rhs.red &&
+            lhs.green == rhs.green &&
+            lhs.blue == rhs.blue &&
+            lhs.alpha == rhs.alpha
+    }
 }

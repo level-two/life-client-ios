@@ -23,5 +23,12 @@ class GameplayPresenter {
 
     }
 
-    weak var gameplayViewController: GameplayViewController!
+    func drawGameField(_ gameField: GameField) {
+        let viewData = GameFieldViewData(cells: gameField.cells,
+                                         fieldWidth: gameField.width,
+                                         fieldHeight: gameField.height)
+        gameplayViewController.drawGameField(with: viewData)
+    }
+
+    private weak var gameplayViewController: GameplayViewController!
 }

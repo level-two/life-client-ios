@@ -20,8 +20,10 @@ import RxSwift
 import RxCocoa
 
 class Gameplay {
-    public let onNewCycle = PublishSubject<Int>()
-    public let onPlaceCell = PublishSubject<Cell>()
+    var gameField: GameField
+
+    let onNewCycle = PublishSubject<Int>()
+    let onPlaceCell = PublishSubject<Cell>()
 
     init(_ networkManager: NetworkManager, _ sessionManager: SessionManager) {
         self.networkManager = networkManager
@@ -34,7 +36,7 @@ class Gameplay {
         assembleInteractions()
     }
 
-    public func place(_ cell: Cell) {
+    func place(_ cell: Cell) {
         guard gameField.canPlaceCell(cell) else { return }
         gameField.placeUnacceptedCell(cell)
         onPlaceCell.onNext(cell)
@@ -42,15 +44,14 @@ class Gameplay {
         _ = networkManager.send(message.json)
     }
 
-    var cycle = 0
-    var gameField: GameField
-    let networkManager: NetworkManager
-    let sessionManager: SessionManager
-    let disposeBag = DisposeBag()
+    private var cycle = 0
+    private let networkManager: NetworkManager
+    private let sessionManager: SessionManager
+    private let disposeBag = DisposeBag()
 }
 
 extension Gameplay {
-    func assembleInteractions() {
+    private func assembleInteractions() {
         let decodedMessage = networkManager.onMessage
             .compactMap { try? GameplayMessage(from: $0) }
 

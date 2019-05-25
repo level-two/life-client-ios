@@ -18,17 +18,14 @@
 import Foundation
 
 class GameField {
-    public var acceptedCells: [Cell]
-    public var unacceptedCells: [Cell]
-    public var gameField: GameFieldArray
+    let width: Int
+    let height: Int
 
-    var prevUnacceptedCells: [Cell]
-    var prevGameField: GameFieldArray
+    var cells: [Cell] {
+        return gameField.allCells + acceptedCells + unacceptedCells
+    }
 
-    public let width: Int
-    public let height: Int
-
-    public init(_ width: Int, _ height: Int, _ cells: [Cell] = []) {
+    init(_ width: Int, _ height: Int, _ cells: [Cell] = []) {
         self.width               = width
         self.height              = height
         self.acceptedCells       = []
@@ -40,7 +37,7 @@ class GameField {
         cells.forEach(gameField.put)
     }
 
-    public func updateForNewCycle() {
+    func updateForNewCycle() {
         // Discard unaccepted cells from the prev game cycle
         prevUnacceptedCells = []
 
@@ -65,13 +62,13 @@ class GameField {
         calcCurrentGameField()
     }
 
-    public func canPlaceCell(_ cell: Cell) -> Bool {
+    func canPlaceCell(_ cell: Cell) -> Bool {
         return gameField.isEmpty(at: cell.pos)
             && acceptedCells.allSatisfy {$0.pos != cell.pos}
             && unacceptedCells.allSatisfy {$0.pos != cell.pos}
     }
 
-    public func placeAcceptedCell(_ cell: Cell) {
+    func placeAcceptedCell(_ cell: Cell) {
         acceptedCells.append(cell)
         unacceptedCells.removeAll {$0.pos == cell.pos}
         prevUnacceptedCells.removeAll {$0.pos == cell.pos}
@@ -83,16 +80,16 @@ class GameField {
         removeCurrentlyPlacedCellsIfConflicts()
     }
 
-    public func placeUnacceptedCell(_ cell: Cell) {
+    func placeUnacceptedCell(_ cell: Cell) {
         unacceptedCells.append(cell)
     }
 
-    public func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
+    func canPlaceCellInPrevCycle(_ cell: Cell) -> Bool {
         return prevGameField.isEmpty(at: cell.pos)
             && prevUnacceptedCells.allSatisfy {$0.pos != cell.pos}
     }
 
-    public func placeCellInPrevCycle(_ cell: Cell) {
+    func placeCellInPrevCycle(_ cell: Cell) {
         // remove from unaccepted if exists
         prevUnacceptedCells.removeAll { $0.pos == cell.pos }
 
@@ -106,7 +103,7 @@ class GameField {
         removeCurrentlyPlacedCellsIfConflicts()
     }
 
-    public func calcCurrentGameField() {
+    func calcCurrentGameField() {
         gameField = GameFieldArray(with: prevGameField)
         prevUnacceptedCells.forEach(gameField.put)
 
@@ -134,9 +131,9 @@ class GameField {
 
                 // give birth if there are min two cells of the same user
                 if cell == nil && neighbors.count == 3 {
-                    let midCell = neighbors.sorted {$0.userId < $1.userId}[1]
-                    if (neighbors.filter {$0.userId == midCell.userId}).count >= 2 {
-                        let newCell = Cell(pos: (x:x, y:y), userId: midCell.userId)
+                    let midCell = neighbors.sorted {$0.color.hashValue < $1.color.hashValue}[1]
+                    if (neighbors.filter {$0.color.hashValue == midCell.color.hashValue}).count >= 2 {
+                        let newCell = Cell(pos: (x:x, y:y), color: midCell.color)
                         cellsToPut.append(newCell)
                     }
                 }
@@ -152,8 +149,15 @@ class GameField {
         cellsToRemove.forEach {gameField[$0.pos] = nil}
     }
 
-    public func removeCurrentlyPlacedCellsIfConflicts() {
+    func removeCurrentlyPlacedCellsIfConflicts() {
         acceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) == false }
         unacceptedCells.removeAll { self.gameField.isEmpty(at: $0.pos) == false }
     }
+
+    private var acceptedCells: [Cell]
+    private var unacceptedCells: [Cell]
+    private var gameField: GameFieldArray
+
+    private var prevUnacceptedCells: [Cell]
+    private var prevGameField: GameFieldArray
 }
